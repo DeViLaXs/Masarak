@@ -1,4 +1,4 @@
-import axiosInstance from "./axiosInstance";
+import axiosInstance from "../lib/axios";
 import type {User} from '@/auth/types'
 
 export interface LoginDto{

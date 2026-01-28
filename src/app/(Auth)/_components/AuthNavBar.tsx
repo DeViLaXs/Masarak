@@ -5,10 +5,10 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+} from "../../../components/ui/dropdown-menu";
 import { Sun, Moon } from "lucide-react";
-import { Button } from "./ui/button";
-import { useTheme } from "./theme-provider";
+import { Button } from "../../../components/ui/button";
+import { useTheme } from "../../../components/theme-provider";
 
 export default function AuthNavBar() {
   const { setTheme } = useTheme();
