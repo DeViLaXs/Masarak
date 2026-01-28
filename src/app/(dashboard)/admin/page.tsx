@@ -1,5 +1,5 @@
-import HomeCard1 from "@/components/admin-component/HomeCard-1";
-import HomeCard2 from "@/components/admin-component/HomeCard-2";
+import HomeCard1 from "@/app/(dashboard)/admin/_component/HomeCard-1";
+import HomeCard2 from "@/app/(dashboard)/admin/_component/HomeCard-2";
 
 export default function AdminPage() {
   return (
