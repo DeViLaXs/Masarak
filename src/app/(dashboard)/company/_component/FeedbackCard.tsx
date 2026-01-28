@@ -22,47 +22,47 @@ import {
 
 export default function FeedbackCard() {
   return (
-    <div className="grid grid-cols-4 gap-4 ">
+    <div className="grid grid-cols-4 gap-4 max-sm:grid-cols-2">
       <Card>
         <CardHeader>
-          <CardTitle>إجمالي الرسائل</CardTitle>
+          <CardTitle className="max-sm:text-xs">إجمالي الرسائل</CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-blue-500">156</h1>
-          <div className="bg-blue-400/25 p-3 rounded-[12px]">
+          <div className="bg-blue-400/25 p-3 rounded-[12px] max-sm:hidden">
             <Mails className="text-blue-500" />
           </div>
         </CardContent>
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle>غير مقروء</CardTitle>
+          <CardTitle className="max-sm:text-xs">غير مقروء</CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-orange-500">23</h1>
-          <div className="bg-orange-400/25 p-3 rounded-[12px]">
+          <div className="bg-orange-400/25 p-3 rounded-[12px] max-sm:hidden">
             <Mail className="text-orange-500" />
           </div>
         </CardContent>
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle>مقروءة</CardTitle>
+          <CardTitle className="max-sm:text-xs">مقروءة</CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-green-500">98</h1>
-          <div className="bg-green-400/25 p-3 rounded-[12px]">
+          <div className="bg-green-400/25 p-3 rounded-[12px] max-sm:hidden">
             <MailOpen className="text-green-700" />
           </div>
         </CardContent>
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle>تم الرد عليها</CardTitle>
+          <CardTitle className="max-sm:text-xs">تم الرد عليها</CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-purple-500">35</h1>
-          <div className="bg-purple-400/25 p-3 rounded-[12px]">
+          <div className="bg-purple-400/25 p-3 rounded-[12px] max-sm:hidden">
             <Reply className="text-purple-500" />
           </div>
         </CardContent>

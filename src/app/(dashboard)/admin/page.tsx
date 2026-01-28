@@ -3,7 +3,7 @@ import HomeCard2 from "@/app/(dashboard)/admin/_component/HomeCard-2";
 
 export default function AdminPage() {
   return (
-    <div className="px-6 py-1">
+    <div className="px-6 max-sm:px-4 py-1">
       <HomeCard1 />
       <HomeCard2 />
     </div>

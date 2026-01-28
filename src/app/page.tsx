@@ -56,28 +56,24 @@ export default function HomePage() {
   return (
     <div className="min-h-screen w-full bg-background text-foreground font-['Cairo'] text-right">
       {/* Navbar */}
-      <nav className="sticky top-0 z-50 flex flex-col md:flex-row items-center justify-between bg-card px-4 py-4 shadow-sm md:px-12 border-b gap-4">
-        <div className="flex w-full md:w-auto justify-between items-center md:gap-10 ">
-          <div className="text-2xl font-bold text-primary">GoWork</div>
-          <div>{userInfo?.name ? userInfo.name : "null"}</div>
-          <div>
-            <Button onClick={handleRegister}>Register</Button>
-            <Button onClick={handleLogin}>Login</Button>
-            <Button onClick={handleLogout}>Logout</Button>
+      <nav className="sticky top-0 z-50 flex items-center justify-between bg-card px-12 py-4 shadow-sm border-b gap-4 max-md:px-4 max-md:py-3">
+        <div className="flex items-center">
+          <div className="text-2xl font-bold text-primary max-sm:text-xl">
+            GoWork
           </div>
         </div>
 
-        <div className="flex items-center gap-4 md:gap-6">
+        <div className="flex items-center gap-6 max-sm:gap-3">
           <Link
             href="/login"
-            className="text-xs sm:text-sm font-semibold text-muted-foreground hover:text-primary transition-colors"
+            className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors max-sm:text-xs"
           >
             تسجيل الدخول
           </Link>
 
           <Link
             href="/register"
-            className="rounded-md bg-primary px-3 py-2 sm:px-5 sm:py-2.5 text-xs sm:text-sm font-semibold text-primary-foreground transition hover:bg-primary/90"
+            className="rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 max-sm:px-3 max-sm:py-2 max-sm:text-xs"
           >
             تسجيل شركة جديدة
           </Link>
@@ -87,10 +83,10 @@ export default function HomePage() {
               <Button
                 variant="outline"
                 size="icon"
-                className="h-8 w-8 sm:h-9 sm:w-9"
+                className="h-9 w-9 max-sm:h-8 max-sm:w-8"
               >
-                <Sun className="h-4 w-4 sm:h-[1.2rem] sm:w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                <Moon className="absolute h-4 w-4 sm:h-[1.2rem] sm:w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                <Sun className="h-[1.2rem] w-[1.2rem] max-sm:h-4 max-sm:w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                <Moon className="absolute h-[1.2rem] w-[1.2rem] max-sm:h-4 max-sm:w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -148,10 +144,12 @@ export default function HomePage() {
       </section>
 
       {/* Features */}
-      <section className="py-20 px-6">
-        <div className="mb-12 text-center">
-          <h3 className="mb-2 text-3xl font-bold">مميزات النظام</h3>
-          <p className="text-muted-foreground">
+      <section className="py-20 max-sm:py-12 px-6 max-sm:px-4">
+        <div className="mb-12 max-sm:mb-8 text-center">
+          <h3 className="mb-2 text-3xl max-sm:text-2xl font-bold text-foreground">
+            مميزات النظام
+          </h3>
+          <p className="text-muted-foreground text-sm sm:text-base">
             كل ما تحتاجه لإدارة عمليات التوظيف في مكان واحد
           </p>
         </div>

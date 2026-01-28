@@ -12,7 +12,7 @@ import { Button } from "../../../../components/ui/button";
 
 export default function HomeCard2() {
   return (
-    <div className="grid grid-cols-3 gap-4 mt-4 ">
+    <div className="grid grid-cols-3 gap-4 mt-4 max-md:grid-cols-1">
       <Card className="bg-linear-to-r from-blue-500 to-blue-600 py-8">
         <CardHeader>
           <CardTitle size={"bold"} className="text-white ">

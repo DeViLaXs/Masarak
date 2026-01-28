@@ -1,19 +1,19 @@
-import { GalleryVerticalEnd } from "lucide-react"
+import { GalleryVerticalEnd } from "lucide-react";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field"
+} from "@/components/ui/field";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSeparator,
   InputOTPSlot,
-} from "@/components/ui/input-otp"
+} from "@/components/ui/input-otp";
 
 export function OTPForm({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -28,7 +28,6 @@ export function OTPForm({ className, ...props }: React.ComponentProps<"div">) {
               <div className="flex size-8 text-primary text-xl font-bold items-center justify-center rounded-md mb-5">
                 GoWork
               </div>
-              
             </a>
             <h1 className="text-xl font-bold">رمز التحقق</h1>
             <FieldDescription>
@@ -43,15 +42,15 @@ export function OTPForm({ className, ...props }: React.ComponentProps<"div">) {
               maxLength={6}
               id="otp"
               required
-              containerClassName="gap-4"
+              containerClassName="gap-2 sm:gap-4 item-center justify-center"
             >
-              <InputOTPGroup className="gap-2.5 *:data-[slot=input-otp-slot]:h-16 *:data-[slot=input-otp-slot]:w-12 *:data-[slot=input-otp-slot]:rounded-md *:data-[slot=input-otp-slot]:border *:data-[slot=input-otp-slot]:text-xl">
-                <InputOTPSlot index={5} />
+              <InputOTPGroup className="gap-1.5 sm:gap-2.5 *:data-[slot=input-otp-slot]:h-14 sm:*:data-[slot=input-otp-slot]:h-16 *:data-[slot=input-otp-slot]:w-10 sm:*:data-[slot=input-otp-slot]:w-12 *:data-[slot=input-otp-slot]:rounded-md *:data-[slot=input-otp-slot]:border *:data-[slot=input-otp-slot]:text-lg sm:*:data-[slot=input-otp-slot]:text-xl">
+                <InputOTPSlot index={5}  />
                 <InputOTPSlot index={4} />
                 <InputOTPSlot index={3} />
               </InputOTPGroup>
               <InputOTPSeparator />
-              <InputOTPGroup className="gap-2.5 *:data-[slot=input-otp-slot]:h-16 *:data-[slot=input-otp-slot]:w-12 *:data-[slot=input-otp-slot]:rounded-md *:data-[slot=input-otp-slot]:border *:data-[slot=input-otp-slot]:text-xl">
+              <InputOTPGroup className="gap-1.5 sm:gap-2.5 *:data-[slot=input-otp-slot]:h-14 sm:*:data-[slot=input-otp-slot]:h-16 *:data-[slot=input-otp-slot]:w-10 sm:*:data-[slot=input-otp-slot]:w-12 *:data-[slot=input-otp-slot]:rounded-md *:data-[slot=input-otp-slot]:border *:data-[slot=input-otp-slot]:text-lg sm:*:data-[slot=input-otp-slot]:text-xl">
                 <InputOTPSlot index={2} />
                 <InputOTPSlot index={1} />
                 <InputOTPSlot index={0} />
@@ -67,5 +66,5 @@ export function OTPForm({ className, ...props }: React.ComponentProps<"div">) {
         </FieldGroup>
       </form>
     </div>
-  )
+  );
 }
