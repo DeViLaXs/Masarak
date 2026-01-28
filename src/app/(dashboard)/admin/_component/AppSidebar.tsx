@@ -27,7 +27,7 @@ import {
 } from "../../../../components/ui/dropdown-menu";
 import { Avatar, AvatarImage } from "../../../../components/ui/avatar";
 
-const adminLinks = [
+const links = [
   {
     title: "لوحة التحكم ",
     path: "/admin",
@@ -50,42 +50,15 @@ const adminLinks = [
   },
 ];
 
-const companyLinks = [
-  {
-    title: "لوحة التحكم ",
-    path: "/company",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "إدارة الوظائف",
-    path: "/company/manage-job",
-    icon: Building2,
-  },
-  {
-    title: "إضافة وظيفة جديدة",
-    path: "/company/new-job",
-    icon: MessagesSquare,
-  },
-  {
-    title: "طلبات التوظيف ",
-    path: "/company/requested-job",
-    icon: Settings,
-  },
-  {
-    title: "سجل التوظيف ",
-    path: "/company/job-history",
-    icon: Settings,
-  },
-];
 
-export function AdminSidebar() {
+export function AppSidebar() {
   const pathname = usePathname();
   console.log("الصفحة الحالية:", pathname);
 
   // const {user, logout} = useAuth();
   // const links = user?.role === "Company" ? companyLinks : adminLinks;
 
-  const links = adminLinks;
+ 
   return (
     <Sidebar side="right">
       <SidebarHeader className="text-primary font-bold text-2xl me-2 mb-5 mt-2">

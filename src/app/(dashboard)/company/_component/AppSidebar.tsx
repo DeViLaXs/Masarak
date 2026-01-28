@@ -55,7 +55,7 @@ const links = [
   },
 ];
 
-export function CompanySidebar() {
+export function AppSidebar() {
   const pathname = usePathname();
   console.log("الصفحة الحالية:", pathname);
 

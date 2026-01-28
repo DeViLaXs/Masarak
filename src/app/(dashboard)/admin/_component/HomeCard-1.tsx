@@ -1,24 +1,15 @@
 import {
   Card,
-  CardAction,
   CardContent,
   CardHeader,
   CardTitle,
-} from "../ui/card";
-import {
-  Building2,
-  User,
-  Mails,
-  CircleDollarSign,
-  Clock,
-  Verified,
-  ShieldCheck,
-  CircleX,
-} from "lucide-react";
+} from "../../../../components/ui/card";
+import { Building2, User, Mails, CircleDollarSign } from "lucide-react";
 
-export default function CompaniesCard() {
+export default function HomeCard1() {
   return (
     <div className="grid grid-cols-4 gap-4 ">
+        
       <Card>
         <CardHeader>
           <CardTitle>إجمالي الشركات</CardTitle>
@@ -32,37 +23,38 @@ export default function CompaniesCard() {
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle>في انتظار التوثيق</CardTitle>
+          <CardTitle>المستخدمين النشطين </CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-orange-500">18</h1>
+          <h1 className="text-2xl font-bold text-orange-500">1456</h1>
           <div className="bg-orange-400/25 p-3 rounded-[12px]">
-            <Clock className="text-orange-500"/>
+            <User className="text-orange-500"/>
           </div>
         </CardContent>
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle>شركات موثقة</CardTitle>
+          <CardTitle>إجمالي الرسائل</CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-green-500">195</h1>
+          <h1 className="text-2xl font-bold text-green-500">156</h1>
           <div className="bg-green-400/25 p-3 rounded-[12px]">
-            <ShieldCheck className="text-green-700" />
+            <Mails className="text-green-500"/>
           </div>
-        </CardContent>
+        </CardContent> 
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle>شركات مرفوضة</CardTitle>
-        </CardHeader>
+          <CardTitle>إيرادات الشهر</CardTitle>
+        </CardHeader>   
         <CardContent className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-red-500">34</h1>
-          <div className="bg-red-400/25 p-3 rounded-[12px]">
-            <CircleX className="text-red-500" />
+          <h1 className="text-2xl font-bold text-purple-500">285K</h1>
+          <div className="bg-purple-400/25 p-3 rounded-[12px]">
+            <CircleDollarSign className="text-purple-500"/>
           </div>
         </CardContent>
       </Card>
+      
     </div>
   );
 }

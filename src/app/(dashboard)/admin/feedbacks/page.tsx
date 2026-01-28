@@ -1,4 +1,4 @@
-import FeedbackCard from "@/components/company-component/FeedbackCard";
+import FeedbackCard from "@/app/(dashboard)/company/_component/FeedbackCard";
 
 export default function FeedbacksPage() {
   return (

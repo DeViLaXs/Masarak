@@ -4,7 +4,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "../ui/card";
+} from "../../../../components/ui/card";
 import {
   Building2,
   User,
