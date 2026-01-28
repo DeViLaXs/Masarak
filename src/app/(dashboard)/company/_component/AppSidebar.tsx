@@ -45,7 +45,7 @@ const links = [
   },
   {
     title: "طلبات التوظيف ",
-    path: "/company/requested-job",
+    path: "/company/job-order",
     icon: Settings,
   },
   {
@@ -94,7 +94,7 @@ export function AppSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <DropdownMenu>
+            <DropdownMenu dir="rtl">
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton className=" transition-all">
                   <Avatar className="ms-2">
@@ -104,9 +104,13 @@ export function AppSidebar() {
                   <EllipsisVertical className="ms-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
-              <DropdownMenuContent side="top" sideOffset={2}>
+              <DropdownMenuContent
+                side="top"
+                sideOffset={2}
+                className="text-right"
+              >
                 <DropdownMenuItem>
-                  <span>Profile</span>
+                  <span>الملف الشخصي</span>
                 </DropdownMenuItem>
                 <Link href="/">
                   {/* <DropdownMenuItem variant="destructive" onClick={() => logout()} > */}

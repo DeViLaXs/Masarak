@@ -10,12 +10,22 @@ import {
 } from "./ui/dropdown-menu";
 import { useTheme } from "@/components/theme-provider";
 import { SidebarTrigger } from "./ui/sidebar";
+import { usePathname } from "next/navigation";
+import { routeTitles } from "@/lib/routeTitles";
 
 export default function NavBar() {
   const { setTheme } = useTheme();
+
+  const pathname = usePathname();
+
+  const title=routeTitles.find((r)=>pathname===r.path)?.title??"";
+
   return (
     <div className="flex items-center justify-between border-b-2 p-2 bg-sidebar">
-      <SidebarTrigger className="-ms-1" />
+      <div className="flex items-center gap-15">
+        <SidebarTrigger className="-ms-1" />
+        <h1 className="text-xl font-bold">{title}</h1>
+      </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="icon">

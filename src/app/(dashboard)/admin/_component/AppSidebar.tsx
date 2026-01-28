@@ -43,13 +43,7 @@ const links = [
     path: "/admin/feedbacks",
     icon: MessagesSquare,
   },
-  {
-    title: "الإعدادات ",
-    path: "/admin/settings",
-    icon: Settings,
-  },
 ];
-
 
 export function AppSidebar() {
   const pathname = usePathname();
@@ -58,7 +52,6 @@ export function AppSidebar() {
   // const {user, logout} = useAuth();
   // const links = user?.role === "Company" ? companyLinks : adminLinks;
 
- 
   return (
     <Sidebar side="right">
       <SidebarHeader className="text-primary font-bold text-2xl me-2 mb-5 mt-2">
@@ -89,9 +82,9 @@ export function AppSidebar() {
         </SidebarGroupContent>
       </SidebarContent>
       <SidebarFooter>
-        <SidebarMenu>
+        <SidebarMenu className="mt-3">
           <SidebarMenuItem>
-            <DropdownMenu>
+            <DropdownMenu dir="rtl">
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton className=" transition-all">
                   <Avatar className="ms-2">
@@ -101,14 +94,21 @@ export function AppSidebar() {
                   <EllipsisVertical className="ms-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
-              <DropdownMenuContent side="top" sideOffset={2}>
+              <DropdownMenuContent
+                side="top"
+                sideOffset={2}
+              >
                 <DropdownMenuItem>
-                  <span>Profile</span>
+                  <span>الملف الشخصي</span>
                 </DropdownMenuItem>
                 <Link href="/">
                   {/* <DropdownMenuItem variant="destructive" onClick={() => logout()} > */}
+                  <DropdownMenuItem>الإعدادات</DropdownMenuItem>
+                </Link>
+                <Link href="/">
+                  {/* <DropdownMenuItem variant="destructive" onClick={() => logout()} > */}
                   <DropdownMenuItem variant="destructive">
-                    Sign out
+                    الخروج
                   </DropdownMenuItem>
                 </Link>
               </DropdownMenuContent>

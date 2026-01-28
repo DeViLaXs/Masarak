@@ -1,3 +1,3 @@
-export default function JobHistoryPage() {
-  return <div>Hello "/Company/JobHistory"!</div>;
+export default function RequestedJobPage() {
+  return <div>Hello "/Company/RequestedJob"!</div>;
 }

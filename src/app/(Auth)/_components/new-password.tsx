@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-export function LoginForm({
+export function NewPassword({
   className,
   ...props
 }: React.ComponentProps<"div">) {
@@ -22,39 +22,29 @@ export function LoginForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">مرحباً بك مجدداً</CardTitle>
+          <CardTitle className="text-xl mb-7">إعادة تعيين كلمة المرور</CardTitle>
         </CardHeader>
         <CardContent>
           <form>
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor="email">البريد الإلكتروني</FieldLabel>
+                <FieldLabel htmlFor="password">ادخل كلمة المرور الجديدة</FieldLabel>
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
+                  id="password"
+                  type="password"
                   required
                 />
               </Field>
               <Field>
                 <div className="flex items-center">
-                  <FieldLabel htmlFor="password">كلمة المرور</FieldLabel>
+                  <FieldLabel htmlFor="password">ادخل كلمة المرور الجديدة مرة أخرى</FieldLabel>
                 </div>
                 <Input id="password" type="password" required />
-                <a
-                  href="/forget-password"
-                  className="ml-auto text-sm underline-offset-4 hover:underline"
-                >
-                  نسيت كلمة المرور
-                </a>
               </Field>
               <Field>
-                <Button type="submit" onClick={() => router.push("/admin")}>
-                  تسجيل الدخول
+                <Button type="submit" onClick={() => router.push("/login")}>
+                  تأكيد
                 </Button>
-                <FieldDescription className="text-center">
-                  ليس لديك حساب؟<Link href="/register">سجل الأن</Link>
-                </FieldDescription>
               </Field>
             </FieldGroup>
           </form>

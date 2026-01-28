@@ -13,16 +13,16 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-export function LoginForm({
+export function ForgetPassword({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const router = useRouter();
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
+      <Card className="mt-20">
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">مرحباً بك مجدداً</CardTitle>
+          <CardTitle className="text-xl mb-5">نسيت كلمة المرور</CardTitle>
         </CardHeader>
         <CardContent>
           <form>
@@ -37,24 +37,9 @@ export function LoginForm({
                 />
               </Field>
               <Field>
-                <div className="flex items-center">
-                  <FieldLabel htmlFor="password">كلمة المرور</FieldLabel>
-                </div>
-                <Input id="password" type="password" required />
-                <a
-                  href="/forget-password"
-                  className="ml-auto text-sm underline-offset-4 hover:underline"
-                >
-                  نسيت كلمة المرور
-                </a>
-              </Field>
-              <Field>
                 <Button type="submit" onClick={() => router.push("/admin")}>
-                  تسجيل الدخول
+                  ارسال
                 </Button>
-                <FieldDescription className="text-center">
-                  ليس لديك حساب؟<Link href="/register">سجل الأن</Link>
-                </FieldDescription>
               </Field>
             </FieldGroup>
           </form>

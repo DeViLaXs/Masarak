@@ -55,10 +55,10 @@ export default function CompaniesPage() {
   ];
 
   return (
-    <div className="p-6 max-sm:p-4">
-      <h1 className="text-2xl max-sm:text-xl font-bold mb-6 max-sm:mb-4">
+    <div className="px-6 max-sm:p-4 py-1">
+      {/* <h1 className="text-2xl max-sm:text-xl font-bold mb-6 max-sm:mb-4">
         إدارة الشركات
-      </h1>
+      </h1> */}
       <CompaniesCard />
       <div className="w-full h-full flex-col justify-center items-center mt-6 p-10 max-sm:p-0 border-2 max-sm:border-none">
         <DataTable<UserTable, any> columns={columns} data={data} />

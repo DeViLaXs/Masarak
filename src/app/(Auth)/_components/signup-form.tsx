@@ -152,10 +152,6 @@ export function SignupForm({
           </form>
         </CardContent>
       </Card>
-      <FieldDescription className="px-6 text-center">
-        بالضغط على التسجيل، أنت توافق على <a href="#">شروط الخدمة</a> و{" "}
-        <a href="#">سياسة الخصوصية</a>.
-      </FieldDescription>
     </div>
   );
 }
