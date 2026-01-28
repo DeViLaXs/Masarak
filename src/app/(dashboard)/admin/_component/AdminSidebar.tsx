@@ -24,8 +24,8 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import { Avatar, AvatarImage } from "./ui/avatar";
+} from "../../../../components/ui/dropdown-menu";
+import { Avatar, AvatarImage } from "../../../../components/ui/avatar";
 
 const adminLinks = [
   {
@@ -78,7 +78,7 @@ const companyLinks = [
   },
 ];
 
-export function AppSidebar() {
+export function AdminSidebar() {
   const pathname = usePathname();
   console.log("الصفحة الحالية:", pathname);
 
@@ -88,7 +88,7 @@ export function AppSidebar() {
   const links = adminLinks;
   return (
     <Sidebar side="right">
-      <SidebarHeader className="text-primary font-bold text-2xl mr-2 mb-5 mt-2">
+      <SidebarHeader className="text-primary font-bold text-2xl me-2 mb-5 mt-2">
         GoWork
       </SidebarHeader>
       <SidebarContent>
@@ -121,11 +121,11 @@ export function AppSidebar() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton className=" transition-all">
-                  <Avatar className="ml-2">
+                  <Avatar className="ms-2">
                     <AvatarImage src="https://github.com/shadcn.png" />
                   </Avatar>
                   {/* {user?.name} */}
-                  <EllipsisVertical className="mr-auto" />
+                  <EllipsisVertical className="ms-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent side="top" sideOffset={2}>

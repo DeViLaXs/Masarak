@@ -15,7 +15,7 @@ export default function NavBar() {
   const { setTheme } = useTheme();
   return (
     <div className="flex items-center justify-between border-b-2 p-2 bg-sidebar">
-      <SidebarTrigger className="-ml-1" />
+      <SidebarTrigger className="-ms-1" />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="icon">

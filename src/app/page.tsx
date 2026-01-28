@@ -56,8 +56,8 @@ export default function HomePage() {
   return (
     <div className="min-h-screen w-full bg-background text-foreground font-['Cairo'] text-right">
       {/* Navbar */}
-      <nav className="sticky top-0 z-50 flex items-center justify-between bg-card px-6 py-4 shadow-sm md:px-12 border-b">
-        <div className="flex justify-between items-center gap-10 ">
+      <nav className="sticky top-0 z-50 flex flex-col md:flex-row items-center justify-between bg-card px-4 py-4 shadow-sm md:px-12 border-b gap-4">
+        <div className="flex w-full md:w-auto justify-between items-center md:gap-10 ">
           <div className="text-2xl font-bold text-primary">GoWork</div>
           <div>{userInfo?.name ? userInfo.name : "null"}</div>
           <div>
@@ -67,26 +67,30 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4 md:gap-6">
           <Link
             href="/login"
-            className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors"
+            className="text-xs sm:text-sm font-semibold text-muted-foreground hover:text-primary transition-colors"
           >
             تسجيل الدخول
           </Link>
 
           <Link
             href="/register"
-            className="rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90"
+            className="rounded-md bg-primary px-3 py-2 sm:px-5 sm:py-2.5 text-xs sm:text-sm font-semibold text-primary-foreground transition hover:bg-primary/90"
           >
             تسجيل شركة جديدة
           </Link>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon">
-                <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8 sm:h-9 sm:w-9"
+              >
+                <Sun className="h-4 w-4 sm:h-[1.2rem] sm:w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                <Moon className="absolute h-4 w-4 sm:h-[1.2rem] sm:w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -116,26 +120,26 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
 
         <div className="relative z-10 max-w-4xl px-5 text-center animate-in fade-in slide-in-from-bottom-8 duration-1000">
-          <h1 className="mb-6 text-5xl font-bold md:text-6xl text leading-20">
+          <h1 className="mb-6 text-3xl sm:text-4xl md:text-6xl font-bold leading-tight md:leading-20">
             منصة GoWork لإدارة توظيف الشركات
           </h1>
 
-          <p className="mx-auto mb-12 max-w-2xl text-xl opacity-90">
+          <p className="mx-auto mb-12 max-w-2xl text-lg md:text-xl opacity-90">
             نظام شامل يمكن الشركات من نشر الوظائف وإدارة طلبات التوظيف ومتابعة
             عمليات التوظيف بكفاءة عالية
           </p>
 
-          <div className="flex flex-col gap-4 md:flex-row justify-center">
+          <div className="flex flex-col gap-4 sm:flex-row justify-center">
             <Link
               href="/register"
-              className="rounded-lg bg-secondary px-10 py-3.5 text-lg font-bold text-secondary-foreground hover:bg-secondary/90 transition"
+              className="rounded-lg bg-secondary px-8 py-3 md:px-10 md:py-3.5 text-base md:text-lg font-bold text-secondary-foreground hover:bg-secondary/90 transition text-center"
             >
               ابدأ الآن مجاناً
             </Link>
 
             <Link
               href="/login"
-              className="rounded-lg border border-border bg-primary px-10 py-3.5 text-lg font-semibold backdrop-blur hover:bg-background/30 transition"
+              className="rounded-lg border border-border bg-primary/20 px-8 py-3 md:px-10 md:py-3.5 text-base md:text-lg font-semibold backdrop-blur hover:bg-background/30 transition text-center"
             >
               تسجيل الدخول
             </Link>
