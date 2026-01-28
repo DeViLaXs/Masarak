@@ -1,6 +1,6 @@
 "use client";
 
-import CompaniesCard from "@/components/admin-component/CompaniesCard";
+import CompaniesCard from "@/app/(dashboard)/admin/_component/CompaniesCard";
 import { DataTable } from "@/components/data-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { data, type UserTable } from "@/lib/data";
