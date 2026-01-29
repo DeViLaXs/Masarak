@@ -26,25 +26,25 @@ export function SignupForm({
   const register = useRegister();
 
   const [registerForm, setRegisterForm] = useState<RegisterDto>({
-    companyName: "",
-    email: "",
-    phoneNumber: "",
-    password: "",
-    passwordConfirmation: "",
-    industry: "",
+    CompanyName: "",
+    Email: "",
+    Password: "",
+    PasswordConfirmation: "",
+    PhoneNumber: "",
+    Industry: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    register.mutate(registerForm);
-    // Navigate to OTP
-    if(register.isSuccess){
-      router.push("/otp");
-    }
-    else if(register.isError){
-      alert("error");
-      console.log(register.error)
-    }
+    register.mutate(registerForm, {
+      onSuccess: () => {
+        router.push("/otp");
+      },
+      onError: (error) => {
+        alert("Registration failed");
+        console.log(error);
+      },
+    });
   };
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -64,7 +64,7 @@ export function SignupForm({
                   onChange={(e) =>
                     setRegisterForm({
                       ...registerForm,
-                      companyName: e.target.value,
+                      CompanyName: e.target.value,
                     })
                   }
                 />
@@ -76,7 +76,7 @@ export function SignupForm({
                   type="email"
                   required
                   onChange={(e) =>
-                    setRegisterForm({ ...registerForm, email: e.target.value })
+                    setRegisterForm({ ...registerForm, Email: e.target.value })
                   }
                 />
               </Field>
@@ -89,7 +89,7 @@ export function SignupForm({
                   onChange={(e) =>
                     setRegisterForm({
                       ...registerForm,
-                      phoneNumber: e.target.value,
+                      PhoneNumber: e.target.value,
                     })
                   }
                 />
@@ -105,7 +105,7 @@ export function SignupForm({
                       onChange={(e) =>
                         setRegisterForm({
                           ...registerForm,
-                          password: e.target.value,
+                          Password: e.target.value,
                         })
                       }
                     />
@@ -121,7 +121,7 @@ export function SignupForm({
                       onChange={(e) =>
                         setRegisterForm({
                           ...registerForm,
-                          passwordConfirmation: e.target.value,
+                          PasswordConfirmation: e.target.value,
                         })
                       }
                     />
@@ -136,14 +136,16 @@ export function SignupForm({
                     onChange={(e) =>
                       setRegisterForm({
                         ...registerForm,
-                        industry: e.target.value,
+                        Industry: e.target.value,
                       })
                     }
                   />
                 </Field>
               </Field>
               <Field>
-                <Button type="submit" disabled={register.isPending}>تسجيل</Button>
+                <Button type="submit" disabled={register.isPending}>
+                  تسجيل
+                </Button>
                 <FieldDescription className="text-center">
                   لديك حساب بالفعل؟ <Link href="/login">تسجيل الدخول</Link>
                 </FieldDescription>
