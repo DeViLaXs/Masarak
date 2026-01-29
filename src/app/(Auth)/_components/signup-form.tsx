@@ -15,8 +15,9 @@ import { useRouter } from "next/navigation";
 
 import { useState } from "react";
 import { RegisterDto } from "@/services/authService";
-import { Mutation } from "@tanstack/react-query";
+import { Mutation, useMutation } from "@tanstack/react-query";
 import { useRegister } from "@/hooks/useAuth";
+import api from "@/lib/axios";
 
 export function SignupForm({
   className,
@@ -35,17 +36,24 @@ export function SignupForm({
     LogoUrl: "",
   });
 
+  const createUser =useMutation({
+    mutationFn:()=>api.post("/Account/Register",registerForm)
+  })
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    register.mutate(registerForm, {
-      onSuccess: () => {
-        router.push("/otp");
-      },
-      onError: (error) => {
-        alert("Registration failed");
-        console.log(error);
-      },
-    });
+    createUser.mutate()
+
+    // register.mutate(registerForm, {
+    //   onSuccess: () => {
+    //     router.push("/otp");
+    //   },
+    //   onError: (error) => {
+    //     alert("Registration failed");
+    //     console.log(error);
+    //     console.log(registerForm);
+    //   },
+    // });
   };
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
