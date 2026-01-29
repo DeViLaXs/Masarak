@@ -43,6 +43,7 @@ export function SignupForm({
     }
     else if(register.isError){
       alert("error");
+      console.log(register.error)
     }
   };
   return (
