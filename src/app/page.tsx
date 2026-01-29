@@ -135,7 +135,7 @@ export default function HomePage() {
 
             <Link
               href="/login"
-              className="rounded-lg border border-border bg-primary/20 px-8 py-3 md:px-10 md:py-3.5 text-base md:text-lg font-semibold backdrop-blur hover:bg-background/30 transition text-center"
+              className="rounded-lg border border-border bg-primary px-8 py-3 md:px-10 md:py-3.5 text-base md:text-lg font-semibold backdrop-blur hover:bg-background/30 transition text-center"
             >
               تسجيل الدخول
             </Link>

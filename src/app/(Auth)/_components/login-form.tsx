@@ -41,17 +41,19 @@ export function LoginForm({
                   <FieldLabel htmlFor="password">كلمة المرور</FieldLabel>
                 </div>
                 <Input id="password" type="password" required />
-                <a
+                <Link
                   href="/forget-password"
                   className="ml-auto text-sm underline-offset-4 hover:underline"
                 >
                   نسيت كلمة المرور
-                </a>
+                </Link>
               </Field>
               <Field>
-                <Button type="submit" onClick={() => router.push("/admin")}>
-                  تسجيل الدخول
-                </Button>
+                <Link href="/admin" className="w-full">
+                  <Button type="submit" className="w-full">
+                    تسجيل الدخول
+                  </Button>
+                </Link>
                 <FieldDescription className="text-center">
                   ليس لديك حساب؟<Link href="/register">سجل الأن</Link>
                 </FieldDescription>

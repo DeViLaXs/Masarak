@@ -12,32 +12,38 @@ import {
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/auth/AuthContext";
+
 import { useState } from "react";
-import type { User } from "@/auth/types";
+import { RegisterDto } from "@/services/authService";
+import { Mutation } from "@tanstack/react-query";
+import { useRegister } from "@/hooks/useAuth";
 
 export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const router = useRouter();
-  const { login } = useAuth();
-  const [userData, setUserData] = useState<User>({
-    name: "",
+  const register = useRegister();
+
+  const [registerForm, setRegisterForm] = useState<RegisterDto>({
+    companyName: "",
     email: "",
-    phone: "",
+    phoneNumber: "",
     password: "",
-    confirmPassword: "",
+    passwordConfirmation: "",
     industry: "",
-    role: "Company",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(userData);
-    login(userData);
+    register.mutate(registerForm);
     // Navigate to OTP
-    router.push("/otp");
+    if(register.isSuccess){
+      router.push("/otp");
+    }
+    else if(register.isError){
+      alert("error");
+    }
   };
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -55,7 +61,10 @@ export function SignupForm({
                   type="text"
                   required
                   onChange={(e) =>
-                    setUserData({ ...userData, name: e.target.value })
+                    setRegisterForm({
+                      ...registerForm,
+                      companyName: e.target.value,
+                    })
                   }
                 />
               </Field>
@@ -66,7 +75,7 @@ export function SignupForm({
                   type="email"
                   required
                   onChange={(e) =>
-                    setUserData({ ...userData, email: e.target.value })
+                    setRegisterForm({ ...registerForm, email: e.target.value })
                   }
                 />
               </Field>
@@ -77,7 +86,10 @@ export function SignupForm({
                   type="text"
                   required
                   onChange={(e) =>
-                    setUserData({ ...userData, phone: e.target.value })
+                    setRegisterForm({
+                      ...registerForm,
+                      phoneNumber: e.target.value,
+                    })
                   }
                 />
               </Field>
@@ -90,7 +102,10 @@ export function SignupForm({
                       type="password"
                       required
                       onChange={(e) =>
-                        setUserData({ ...userData, password: e.target.value })
+                        setRegisterForm({
+                          ...registerForm,
+                          password: e.target.value,
+                        })
                       }
                     />
                   </Field>
@@ -103,9 +118,9 @@ export function SignupForm({
                       type="password"
                       required
                       onChange={(e) =>
-                        setUserData({
-                          ...userData,
-                          confirmPassword: e.target.value,
+                        setRegisterForm({
+                          ...registerForm,
+                          passwordConfirmation: e.target.value,
                         })
                       }
                     />
@@ -118,32 +133,16 @@ export function SignupForm({
                     type="text"
                     required
                     onChange={(e) =>
-                      setUserData({ ...userData, industry: e.target.value })
+                      setRegisterForm({
+                        ...registerForm,
+                        industry: e.target.value,
+                      })
                     }
                   />
                 </Field>
-                <Field>
-                  <FieldLabel htmlFor="industry">Role</FieldLabel>
-                  <select
-                    value={userData.role}
-                    onChange={(e) =>
-                      setUserData({
-                        ...userData,
-                        role: e.target.value as "Admin" | "Company",
-                      })
-                    }
-                    className="w-full rounded border p-2"
-                  >
-                    <option value="Admin">Admin</option>
-                    <option value="Company">Company</option>
-                  </select>
-                </Field>
-                <FieldDescription>
-                  يجب أن يكون على الأقل 8 أحرف.
-                </FieldDescription>
               </Field>
               <Field>
-                <Button type="submit">تسجيل</Button>
+                <Button type="submit" disabled={register.isPending}>تسجيل</Button>
                 <FieldDescription className="text-center">
                   لديك حساب بالفعل؟ <Link href="/login">تسجيل الدخول</Link>
                 </FieldDescription>
