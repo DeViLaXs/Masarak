@@ -24,7 +24,6 @@ export function SignupForm({
   ...props
 }: React.ComponentProps<"div">) {
   const router = useRouter();
-  const register = useRegister();
 
   const [registerForm, setRegisterForm] = useState<RegisterDto>({
     CompanyName: "",
@@ -36,24 +35,20 @@ export function SignupForm({
     LogoUrl: "",
   });
 
-  const createUser =useMutation({
-    mutationFn:()=>api.post("/Account/Register",registerForm)
-  })
+  const createUser = useMutation({
+    mutationFn: (data: RegisterDto) => api.post("/Account/Register", data),
+    onSuccess: () => {
+      router.push("/otp");
+    },
+    onError: (error) => {
+      console.error("Registration Error:", error);
+      alert("فشل التسجيل. يرجى التحقق من البيانات.");
+    },
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    createUser.mutate()
-
-    // register.mutate(registerForm, {
-    //   onSuccess: () => {
-    //     router.push("/otp");
-    //   },
-    //   onError: (error) => {
-    //     alert("Registration failed");
-    //     console.log(error);
-    //     console.log(registerForm);
-    //   },
-    // });
+    createUser.mutate(registerForm);
   };
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -166,7 +161,7 @@ export function SignupForm({
                 </Field>
               </Field>
               <Field>
-                <Button type="submit" disabled={register.isPending}>
+                <Button type="submit" disabled={createUser.isPending}>
                   تسجيل
                 </Button>
                 <FieldDescription className="text-center">
