@@ -36,7 +36,7 @@ export function SignupForm({
   });
 
   const createUser = useMutation({
-    mutationFn: (data: RegisterDto) => api.post("/Account/Register", data),
+    mutationFn: (registerForm: RegisterDto) => api.post("/Account/Register", registerForm),
     onSuccess: () => {
       router.push("/otp");
     },
