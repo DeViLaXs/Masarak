@@ -3,10 +3,11 @@ import api from "@/lib/axios";
 export type RegisterDto = {
   CompanyName: string;
   Email: string;
+  PhoneNumber: string;
   Password: string;
   PasswordConfirmation: string;
-  PhoneNumber: string;
   Industry: string;
+  LogoUrl:string;
 };
 
 export const authService = {

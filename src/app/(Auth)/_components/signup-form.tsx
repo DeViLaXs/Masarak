@@ -32,6 +32,7 @@ export function SignupForm({
     PasswordConfirmation: "",
     PhoneNumber: "",
     Industry: "",
+    LogoUrl: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -137,6 +138,20 @@ export function SignupForm({
                       setRegisterForm({
                         ...registerForm,
                         Industry: e.target.value,
+                      })
+                    }
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="logo">شعار الشركة</FieldLabel>
+                  <Input
+                    id="logo"
+                    type="file"
+                    required
+                    onChange={(e) =>
+                      setRegisterForm({
+                        ...registerForm,
+                        LogoUrl: e.target.value,
                       })
                     }
                   />
