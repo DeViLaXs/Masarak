@@ -1,5 +1,5 @@
+'use client'
 import { GalleryVerticalEnd } from "lucide-react";
-
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,11 +14,41 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import { useState } from "react";
+import { VerifyOtpDto } from "@/services/authService";
+import { useVerifyOtp } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 export function OTPForm({ className, ...props }: React.ComponentProps<"div">) {
+
+  const searchParams = useSearchParams();
+
+  console.log(searchParams.get("email"));
+
+  const router = useRouter();
+  const [otp,setOtp] = useState<VerifyOtpDto>({
+    Email:searchParams.get("email") || "",
+    EmailConfirmationCode:"",
+  })
+
+  const verifyOtp = useVerifyOtp();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    verifyOtp.mutate(otp)
+    if(verifyOtp.isSuccess){
+      router.push("/company");
+    }
+    else{
+      alert("Invalid OTP");
+    }
+    console.log(otp);
+  }
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <form>
+      <form onSubmit={handleSubmit}>
         <FieldGroup>
           <div className="flex flex-col items-center gap-2 text-center">
             <a
@@ -39,6 +69,8 @@ export function OTPForm({ className, ...props }: React.ComponentProps<"div">) {
               رمز التحقق
             </FieldLabel>
             <InputOTP
+              value={otp.EmailConfirmationCode}
+              onChange={(e) => setOtp({...otp,EmailConfirmationCode:e})}
               maxLength={6}
               id="otp"
               required

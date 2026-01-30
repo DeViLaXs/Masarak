@@ -1,5 +1,4 @@
 "use client";
-
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,15 +14,14 @@ import { useRouter } from "next/navigation";
 
 import { useState } from "react";
 import { RegisterDto } from "@/services/authService";
-import { Mutation, useMutation } from "@tanstack/react-query";
 import { useRegister } from "@/hooks/useAuth";
-import api from "@/lib/axios";
 
 export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const router = useRouter();
+  const register = useRegister();
 
   const [registerForm, setRegisterForm] = useState<RegisterDto>({
     CompanyName: "",
@@ -32,23 +30,21 @@ export function SignupForm({
     PasswordConfirmation: "",
     PhoneNumber: "",
     Industry: "",
-    LogoUrl: "",
-  });
-
-  const createUser = useMutation({
-    mutationFn: (registerForm: RegisterDto) => api.post("/Account/Register", registerForm),
-    onSuccess: () => {
-      router.push("/otp");
-    },
-    onError: (error) => {
-      console.error("Registration Error:", error);
-      alert("فشل التسجيل. يرجى التحقق من البيانات.");
-    },
+    LogoUrl: null,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    createUser.mutate(registerForm);
+    register.mutate(registerForm, {
+      onSuccess: () => {
+        router.push(`/otp?email=${encodeURIComponent(registerForm.Email)}`);
+        console.log("Registration successful");
+      },
+      onError: (error) => {
+        console.error("Registration failed:", error);
+        alert("Registration failed");
+      },
+    });
   };
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -154,14 +150,14 @@ export function SignupForm({
                     onChange={(e) =>
                       setRegisterForm({
                         ...registerForm,
-                        LogoUrl: e.target.value,
+                        LogoUrl: e.target.files?.[0] || null,
                       })
                     }
                   />
                 </Field>
               </Field>
               <Field>
-                <Button type="submit" disabled={createUser.isPending}>
+                <Button type="submit" disabled={register.isPending}>
                   تسجيل
                 </Button>
                 <FieldDescription className="text-center">

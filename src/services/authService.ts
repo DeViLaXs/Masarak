@@ -7,12 +7,63 @@ export type RegisterDto = {
   Password: string;
   PasswordConfirmation: string;
   Industry: string;
-  LogoUrl: string;
+  LogoUrl?: File | null;
+};
+
+export type LoginDto = {
+  Email: string;
+  Password: string;
+};
+
+export type VerifyOtpDto = {
+  Email: string;
+  EmailConfirmationCode: string;
 };
 
 export const authService = {
   register: async (data: RegisterDto) => {
-    const res = await api.post("/Account/Register", data);
+    const formData = new FormData();
+    formData.append("CompanyName", data.CompanyName);
+    formData.append("Email", data.Email);
+    formData.append("PhoneNumber", data.PhoneNumber);
+    formData.append("Password", data.Password);
+    formData.append("PasswordConfirmation", data.PasswordConfirmation);
+    formData.append("Industry", data.Industry);
+    formData.append("LogoUrl", data.LogoUrl!);
+
+    console.log(formData)
+    try {
+        const res = await api.post("/Account/Register", formData);
     return res.data;
+    } catch (error) {
+        console.log(error);
+    }
+  },
+
+  verifyOtp:async (data: VerifyOtpDto) => {
+    try {
+      const res = await api.post("/Account/VerifyEmail", data);
+      return res.data;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  login:async (data: LoginDto) => {
+    try {
+      const res = await api.post("/Account/Login", data);
+      return res.data;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  logout:async () => {
+    try {
+      const res = await api.post("/Account/Logout");
+      return res.data;
+    } catch (error) {
+      console.log(error);
+    }
   },
 };

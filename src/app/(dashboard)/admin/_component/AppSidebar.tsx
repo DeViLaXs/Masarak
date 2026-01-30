@@ -26,6 +26,8 @@ import {
   DropdownMenuTrigger,
 } from "../../../../components/ui/dropdown-menu";
 import { Avatar, AvatarImage } from "../../../../components/ui/avatar";
+import { useLogout } from "@/hooks/useAuth";
+import { useRouter} from "next/navigation";
 
 const links = [
   {
@@ -49,8 +51,15 @@ export function AppSidebar() {
   const pathname = usePathname();
   console.log("الصفحة الحالية:", pathname);
 
-  // const {user, logout} = useAuth();
-  // const links = user?.role === "Company" ? companyLinks : adminLinks;
+  const logout = useLogout();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    logout.mutate();
+    if (logout.isSuccess) {
+      router.push("/login");
+    }
+  };
 
   return (
     <Sidebar side="right">
@@ -94,10 +103,7 @@ export function AppSidebar() {
                   <EllipsisVertical className="ms-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
-              <DropdownMenuContent
-                side="top"
-                sideOffset={2}
-              >
+              <DropdownMenuContent side="top" sideOffset={2}>
                 <DropdownMenuItem>
                   <span>الملف الشخصي</span>
                 </DropdownMenuItem>
@@ -105,12 +111,10 @@ export function AppSidebar() {
                   {/* <DropdownMenuItem variant="destructive" onClick={() => logout()} > */}
                   <DropdownMenuItem>الإعدادات</DropdownMenuItem>
                 </Link>
-                <Link href="/">
-                  {/* <DropdownMenuItem variant="destructive" onClick={() => logout()} > */}
-                  <DropdownMenuItem variant="destructive">
-                    الخروج
-                  </DropdownMenuItem>
-                </Link>
+                {/* <DropdownMenuItem variant="destructive" onClick={() => logout()} > */}
+                <DropdownMenuItem variant="destructive" onClick={handleLogout}>
+                  الخروج
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>

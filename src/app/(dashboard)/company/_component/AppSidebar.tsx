@@ -18,7 +18,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,6 +26,7 @@ import {
   DropdownMenuTrigger,
 } from "../../../../components/ui/dropdown-menu";
 import { Avatar, AvatarImage } from "../../../../components/ui/avatar";
+import { useLogout } from "@/hooks/useAuth";
 
 const links = [
   {
@@ -59,8 +60,17 @@ export function AppSidebar() {
   const pathname = usePathname();
   console.log("الصفحة الحالية:", pathname);
 
-  // const {user, logout} = useAuth();
-  // const links = user?.role === "Company" ? companyLinks : adminLinks;
+  const logout = useLogout();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    logout.mutate();
+    if (logout.isSuccess) {
+      router.push("/login");
+    }
+  };
+
+
 
   return (
     <Sidebar side="right">
@@ -114,8 +124,8 @@ export function AppSidebar() {
                 </DropdownMenuItem>
                 <Link href="/">
                   {/* <DropdownMenuItem variant="destructive" onClick={() => logout()} > */}
-                  <DropdownMenuItem variant="destructive">
-                    Sign out
+                  <DropdownMenuItem variant="destructive" onClick={handleLogout}>
+                    الخروج
                   </DropdownMenuItem>
                 </Link>
               </DropdownMenuContent>

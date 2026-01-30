@@ -3,6 +3,9 @@ import axios from "axios";
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL, // use .env var for base url
   withCredentials: true, // imp for cookies thst handled by BE
+  headers:{
+    "Accept": "application/json",
+  }
 });
 
 api.interceptors.request.use(
@@ -22,7 +25,8 @@ api.interceptors.response.use(
     if (err.response?.status === 400) {
       console.error("400 Bad Request Details:", err.response.data);
     }
-    return Promise.reject(err);
+    
+    return Promise.reject(err); 
   },
 );
 
