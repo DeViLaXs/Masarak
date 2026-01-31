@@ -63,11 +63,14 @@ export function AppSidebar() {
   const logout = useLogout();
   const router = useRouter();
 
+  
+
   const handleLogout = () => {
-    logout.mutate();
-    if (logout.isSuccess) {
-      router.push("/login");
-    }
+    logout.mutate(undefined, {
+      onSuccess: () => {
+        router.replace("/login");
+      },
+    });
   };
 
 

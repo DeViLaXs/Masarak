@@ -1,3 +1,4 @@
+
 import api from "@/lib/axios";
 import { authService, LoginDto, RegisterDto, VerifyOtpDto } from "@/services/authService";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -28,7 +29,11 @@ export const useLogout = () => {
     })
 };
 const checkAdminAccess = async () => {
-  await api.get("/Account/TEST");
+  await api.get("/Account/AdminTest");
+  return true;
+};
+const checkCompanyAccess = async () => {
+  await api.get("/Account/CompanyTest");
   return true;
 };
 
@@ -40,4 +45,24 @@ export const useAdminGuard = () => {
     refetchOnWindowFocus: false,
   });
 };
+
+export const useCompanyGuard = () => {
+  return useQuery({
+    queryKey: ["company-guard"],
+    queryFn: checkCompanyAccess,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useMe = () => {
+  return useQuery({
+    queryKey: ["me"],
+    queryFn: authService.me,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+};
+
+
 

@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { GalleryVerticalEnd } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -21,30 +21,30 @@ import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 
 export function OTPForm({ className, ...props }: React.ComponentProps<"div">) {
-
   const searchParams = useSearchParams();
 
   console.log(searchParams.get("email"));
 
   const router = useRouter();
-  const [otp,setOtp] = useState<VerifyOtpDto>({
-    Email:searchParams.get("email") || "",
-    EmailConfirmationCode:"",
-  })
+  const [otp, setOtp] = useState<VerifyOtpDto>({
+    Email: searchParams.get("email") || "",
+    EmailConfirmationCode: "",
+  });
 
   const verifyOtp = useVerifyOtp();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    verifyOtp.mutate(otp)
-    if(verifyOtp.isSuccess){
-      router.push("/company");
-    }
-    else{
-      alert("Invalid OTP");
-    }
-    console.log(otp);
-  }
+
+    verifyOtp.mutate(otp, {
+      onSuccess: () => {
+        router.push("/company");
+      },
+      onError: () => {
+        alert("Invalid OTP or Verification Failed");
+      },
+    });
+  };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -70,14 +70,14 @@ export function OTPForm({ className, ...props }: React.ComponentProps<"div">) {
             </FieldLabel>
             <InputOTP
               value={otp.EmailConfirmationCode}
-              onChange={(e) => setOtp({...otp,EmailConfirmationCode:e})}
+              onChange={(e) => setOtp({ ...otp, EmailConfirmationCode: e })}
               maxLength={6}
               id="otp"
               required
               containerClassName="gap-2 sm:gap-4 item-center justify-center"
             >
               <InputOTPGroup className="gap-1.5 sm:gap-2.5 *:data-[slot=input-otp-slot]:h-14 sm:*:data-[slot=input-otp-slot]:h-16 *:data-[slot=input-otp-slot]:w-10 sm:*:data-[slot=input-otp-slot]:w-12 *:data-[slot=input-otp-slot]:rounded-md *:data-[slot=input-otp-slot]:border *:data-[slot=input-otp-slot]:text-lg sm:*:data-[slot=input-otp-slot]:text-xl">
-                <InputOTPSlot index={5}  />
+                <InputOTPSlot index={5} />
                 <InputOTPSlot index={4} />
                 <InputOTPSlot index={3} />
               </InputOTPGroup>
@@ -93,7 +93,9 @@ export function OTPForm({ className, ...props }: React.ComponentProps<"div">) {
             </FieldDescription>
           </Field>
           <Field>
-            <Button type="submit">تحقق</Button>
+            <Button type="submit" disabled={verifyOtp.isPending}>
+              تحقق
+            </Button>
           </Field>
         </FieldGroup>
       </form>

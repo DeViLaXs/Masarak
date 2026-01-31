@@ -31,39 +31,28 @@ export const authService = {
     formData.append("Industry", data.Industry);
     formData.append("LogoUrl", data.LogoUrl!);
 
-    console.log(formData)
-    try {
-        const res = await api.post("/Account/Register", formData);
+    console.log(formData);
+    const res = await api.post("/Account/Register", formData);
     return res.data;
-    } catch (error) {
-        console.log(error);
-    }
   },
 
-  verifyOtp:async (data: VerifyOtpDto) => {
-    try {
-      const res = await api.post("/Account/VerifyEmail", data);
-      return res.data;
-    } catch (error) {
-      console.log(error);
-    }
+  verifyOtp: async (data: VerifyOtpDto) => {
+    const res = await api.post("/Account/VerifyEmail", data);
+    return res.data;
   },
 
-  login:async (data: LoginDto) => {
-    try {
-      const res = await api.post("/Account/Login", data);
-      return res.data;
-    } catch (error) {
-      console.log(error);
-    }
+  login: async (data: LoginDto) => {
+    const res = await api.post("/Account/Login", data);
+    return res.data;
   },
 
-  logout:async () => {
-    try {
-      const res = await api.post("/Account/Logout");
-      return res.data;
-    } catch (error) {
-      console.log(error);
-    }
+  logout: async () => {
+    const res = await api.post("/Account/Logout");
+    return res.data;
+  },
+
+  me: async () => {
+    const res = await api.get("/Account/Me");
+    return res.data;
   },
 };

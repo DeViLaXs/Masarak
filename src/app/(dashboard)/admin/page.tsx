@@ -1,6 +1,7 @@
 "use client"
 import HomeCard1 from "@/app/(dashboard)/admin/_component/HomeCard-1";
 import HomeCard2 from "@/app/(dashboard)/admin/_component/HomeCard-2";
+import { useMe } from "@/hooks/useAuth";
 import api from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 
@@ -14,6 +15,10 @@ export default function AdminPage() {
 //     return res.data
 //   },
 // })
+
+const { data, isLoading, isError } = useMe();
+
+  console.log(data)
 
   return (
     <div className="px-6 max-sm:px-4 py-1">
