@@ -36,6 +36,7 @@ export function NewPassword({
     }
   }, [token, email]);
 
+  
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
