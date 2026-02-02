@@ -1,7 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap");
 @import "tailwindcss";
 
-
 @custom-variant dark (&:is(.dark *));
 
 @custom-variant dark (&:is(.dark *));
@@ -177,4 +176,9 @@
     @apply bg-background text-foreground;
     letter-spacing: var(--tracking-normal);
   }
+}
+
+::view-transition-old(root), ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
 }

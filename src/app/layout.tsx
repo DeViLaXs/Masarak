@@ -4,7 +4,6 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import ReactQueryProvider from "@/lib/providers";
 
-
 const cairo = Cairo({
   variable: "--font-cairo",
   subsets: ["arabic", "latin"],

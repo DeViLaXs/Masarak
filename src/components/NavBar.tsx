@@ -12,6 +12,7 @@ import { useTheme } from "@/components/theme-provider";
 import { SidebarTrigger } from "./ui/sidebar";
 import { usePathname } from "next/navigation";
 import { routeTitles } from "@/lib/routeTitles";
+import { AnimatedThemeToggler } from "./ui/animated-theme-toggler";
 
 export default function NavBar() {
   const { setTheme } = useTheme();
@@ -46,6 +47,7 @@ export default function NavBar() {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      <AnimatedThemeToggler />
     </div>
   );
 }
