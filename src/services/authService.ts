@@ -20,6 +20,16 @@ export type VerifyOtpDto = {
   EmailConfirmationCode: string;
 };
 
+export type ForgetPasswordDto = {
+  Email: string;
+};
+
+export type ResetPasswordDto = {
+  Email: string | null;
+  NewPassword: string;
+  Token: string | null;
+};
+
 export const authService = {
   register: async (data: RegisterDto) => {
     const formData = new FormData();
@@ -48,6 +58,16 @@ export const authService = {
 
   logout: async () => {
     const res = await api.post("/Account/Logout");
+    return res.data;
+  },
+
+  forgetPassword: async (data: ForgetPasswordDto) => {
+    const res = await api.post("/Account/ForgetPassword", data);
+    return res.data;
+  },
+
+  resetPassword: async (data: ResetPasswordDto) => {
+    const res = await api.post("/Account/ResetPassword", data);
     return res.data;
   },
 

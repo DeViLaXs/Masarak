@@ -55,10 +55,11 @@ export function AppSidebar() {
   const router = useRouter();
 
   const handleLogout = () => {
-    logout.mutate();
-    if (logout.isSuccess) {
-      router.push("/login");
-    }
+    logout.mutate(undefined,{
+      onSuccess: () => {
+        router.push("/login");
+      }
+    });
   };
 
   return (

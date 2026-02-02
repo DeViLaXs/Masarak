@@ -1,6 +1,6 @@
 
 import api from "@/lib/axios";
-import { authService, LoginDto, RegisterDto, VerifyOtpDto } from "@/services/authService";
+import { authService, ForgetPasswordDto, LoginDto, RegisterDto, ResetPasswordDto, VerifyOtpDto } from "@/services/authService";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 
@@ -28,6 +28,19 @@ export const useLogout = () => {
         mutationFn: authService.logout,
     })
 };
+
+export const useForgetPassword = () => {
+    return useMutation({
+        mutationFn: (data:ForgetPasswordDto)=>authService.forgetPassword(data),
+    })
+};
+
+export const useResetPassword = () => {
+    return useMutation({
+        mutationFn: (data:ResetPasswordDto)=>authService.resetPassword(data),
+    })
+};
+
 const checkAdminAccess = async () => {
   await api.get("/Account/AdminTest");
   return true;
