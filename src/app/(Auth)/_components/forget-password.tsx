@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Suspense } from "react";
 import {
   Field,
   FieldDescription,
@@ -38,6 +39,9 @@ export function ForgetPassword({
     });
   };
   return (
+    <Suspense fallback={<div>Loading...</div>}>
+
+    
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="mt-20">
         <CardHeader className="text-center">
@@ -66,5 +70,6 @@ export function ForgetPassword({
         </CardContent>
       </Card>
     </div>
+    </Suspense>
   );
 }
