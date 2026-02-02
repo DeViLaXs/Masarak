@@ -1,4 +1,4 @@
-import React from 'react'
+"use client"
 import { NewPassword } from '../_components/new-password'
 
 export default function page() {
