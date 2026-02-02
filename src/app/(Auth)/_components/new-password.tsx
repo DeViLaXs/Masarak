@@ -3,7 +3,6 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Suspense } from "react";
 import {
   Field,
   FieldDescription,
@@ -25,6 +24,7 @@ export function NewPassword({
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  
   const email = useSearchParams().get("email");
   const token = useSearchParams().get("token");
   console.log(token);
@@ -55,8 +55,7 @@ export function NewPassword({
   };
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-
+    
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
@@ -91,6 +90,5 @@ export function NewPassword({
         </CardContent>
       </Card>
     </div>
-    </Suspense>
   );
 }
