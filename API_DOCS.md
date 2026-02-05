@@ -22,6 +22,7 @@ A comprehensive API reference for frontend developers integrating with the GoWor
 ## Introduction
 
 GoWork is a job platform API that supports:
+
 - **Job Seekers (Candidates):** Registration, profile management, resume upload
 - **Employers (Companies):** Company registration, job posting management
 - **Dual Authentication:** JWT tokens for mobile apps, HTTP-only cookies for web dashboard
@@ -59,11 +60,11 @@ Cookie: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 ### Roles
 
-| Role | Description |
-|------|-------------|
-| `Admin` | System administrator |
-| `Company` | Employer/Company user |
-| `Candidate` | Job seeker |
+| Role        | Description           |
+| ----------- | --------------------- |
+| `Admin`     | System administrator  |
+| `Company`   | Employer/Company user |
+| `Candidate` | Job seeker            |
 
 ---
 
@@ -107,19 +108,19 @@ Register a new job seeker account.
 
 #### Request Body
 
-| Field | Type | Required | Constraints | Description |
-|-------|------|----------|-------------|-------------|
-| `FirstName` | string | ✅ | 2-50 chars | Candidate's first name |
-| `MidName` | string | ❌ | max 50 chars | Middle name |
-| `LastName` | string | ✅ | 2-50 chars | Candidate's last name |
-| `Email` | string | ✅ | Valid email, max 100 chars | Email address |
-| `PhoneNumber` | string | ✅ | Valid phone, max 20 chars | Phone number |
-| `Password` | string | ✅ | 8-100 chars | Account password |
-| `PasswordConfirmation` | string | ✅ | Must match Password | Password confirmation |
-| `ProfilePhoto` | file | ❌ | Image file | Profile picture |
-| `Resume` | file | ❌ | PDF/DOC file | Resume document |
-| `ListOfSkills` | string[] | ✅ | Min 1 skill | List of skills |
-| `InterstedInCategoryId` | string | ✅ | - | Category ID of interest |
+| Field                   | Type     | Required | Constraints                | Description             |
+| ----------------------- | -------- | -------- | -------------------------- | ----------------------- |
+| `FirstName`             | string   | ✅       | 2-50 chars                 | Candidate's first name  |
+| `MidName`               | string   | ❌       | max 50 chars               | Middle name             |
+| `LastName`              | string   | ✅       | 2-50 chars                 | Candidate's last name   |
+| `Email`                 | string   | ✅       | Valid email, max 100 chars | Email address           |
+| `PhoneNumber`           | string   | ✅       | Valid phone, max 20 chars  | Phone number            |
+| `Password`              | string   | ✅       | 8-100 chars                | Account password        |
+| `PasswordConfirmation`  | string   | ✅       | Must match Password        | Password confirmation   |
+| `ProfilePhoto`          | file     | ❌       | Image file                 | Profile picture         |
+| `Resume`                | file     | ❌       | PDF/DOC file               | Resume document         |
+| `ListOfSkills`          | string[] | ✅       | Min 1 skill                | List of skills          |
+| `InterstedInCategoryId` | string   | ✅       | -                          | Category ID of interest |
 
 #### Success Response (200)
 
@@ -141,31 +142,31 @@ Register a new job seeker account.
 
 #### Error Responses
 
-| Status | Description |
-|--------|-------------|
-| 400 | Invalid registration data |
-| 409 | Email already exists |
+| Status | Description               |
+| ------ | ------------------------- |
+| 400    | Invalid registration data |
+| 409    | Email already exists      |
 
 #### JavaScript Example
 
 ```javascript
-const formData = new FormData();
-formData.append('FirstName', 'John');
-formData.append('LastName', 'Doe');
-formData.append('Email', 'john@example.com');
-formData.append('PhoneNumber', '+1234567890');
-formData.append('Password', 'SecurePass123!');
-formData.append('PasswordConfirmation', 'SecurePass123!');
-formData.append('ListOfSkills', 'JavaScript');
-formData.append('ListOfSkills', 'React');
-formData.append('InterstedInCategoryId', '1');
+const formData = new FormData()
+formData.append('FirstName', 'John')
+formData.append('LastName', 'Doe')
+formData.append('Email', 'john@example.com')
+formData.append('PhoneNumber', '+1234567890')
+formData.append('Password', 'SecurePass123!')
+formData.append('PasswordConfirmation', 'SecurePass123!')
+formData.append('ListOfSkills', 'JavaScript')
+formData.append('ListOfSkills', 'React')
+formData.append('InterstedInCategoryId', '1')
 
 const response = await fetch('/api/Account/Candidate/Register', {
   method: 'POST',
-  body: formData
-});
+  body: formData,
+})
 
-const result = await response.json();
+const result = await response.json()
 ```
 
 ---
@@ -180,15 +181,15 @@ Register a new employer/company account.
 
 #### Request Body
 
-| Field | Type | Required | Constraints | Description |
-|-------|------|----------|-------------|-------------|
-| `CompanyName` | string | ✅ | 2-100 chars | Company name |
-| `Email` | string | ✅ | Valid email, max 100 chars | Company email |
-| `Password` | string | ✅ | 8-100 chars | Account password |
-| `PasswordConfirmation` | string | ✅ | Must match Password | Confirmation |
-| `PhoneNumber` | string | ✅ | Valid phone, max 20 chars | Contact phone |
-| `Industry` | string | ✅ | max 100 chars | Industry sector |
-| `LogoUrl` | file | ❌ | Image file | Company logo |
+| Field                  | Type   | Required | Constraints                | Description      |
+| ---------------------- | ------ | -------- | -------------------------- | ---------------- |
+| `CompanyName`          | string | ✅       | 2-100 chars                | Company name     |
+| `Email`                | string | ✅       | Valid email, max 100 chars | Company email    |
+| `Password`             | string | ✅       | 8-100 chars                | Account password |
+| `PasswordConfirmation` | string | ✅       | Must match Password        | Confirmation     |
+| `PhoneNumber`          | string | ✅       | Valid phone, max 20 chars  | Contact phone    |
+| `Industry`             | string | ✅       | max 100 chars              | Industry sector  |
+| `LogoUrl`              | file   | ❌       | Image file                 | Company logo     |
 
 #### Success Response (200)
 
@@ -211,19 +212,19 @@ Register a new employer/company account.
 #### JavaScript Example
 
 ```javascript
-const formData = new FormData();
-formData.append('CompanyName', 'Tech Corp');
-formData.append('Email', 'hr@techcorp.com');
-formData.append('Password', 'SecurePass123!');
-formData.append('PasswordConfirmation', 'SecurePass123!');
-formData.append('PhoneNumber', '+1234567890');
-formData.append('Industry', 'Technology');
+const formData = new FormData()
+formData.append('CompanyName', 'Tech Corp')
+formData.append('Email', 'hr@techcorp.com')
+formData.append('Password', 'SecurePass123!')
+formData.append('PasswordConfirmation', 'SecurePass123!')
+formData.append('PhoneNumber', '+1234567890')
+formData.append('Industry', 'Technology')
 // formData.append('LogoUrl', logoFile); // Optional
 
 const response = await fetch('/api/Account/Register', {
   method: 'POST',
-  body: formData
-});
+  body: formData,
+})
 ```
 
 ---
@@ -245,10 +246,10 @@ Verify candidate email using OTP code.
 }
 ```
 
-| Field | Type | Required | Constraints | Description |
-|-------|------|----------|-------------|-------------|
-| `Email` | string | ✅ | Valid email, max 100 chars | Registered email |
-| `EmailConfirmationCode` | string | ✅ | 6 chars | OTP sent to email |
+| Field                   | Type   | Required | Constraints                | Description       |
+| ----------------------- | ------ | -------- | -------------------------- | ----------------- |
+| `Email`                 | string | ✅       | Valid email, max 100 chars | Registered email  |
+| `EmailConfirmationCode` | string | ✅       | 6 chars                    | OTP sent to email |
 
 #### Success Response (200)
 
@@ -276,9 +277,9 @@ const response = await fetch('/api/Account/Candidate/VerifyEmail', {
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
     email: 'john@example.com',
-    emailConfirmationCode: '123456'
-  })
-});
+    emailConfirmationCode: '123456',
+  }),
+})
 ```
 
 ---
@@ -339,10 +340,10 @@ Authenticate a job seeker.
 }
 ```
 
-| Field | Type | Required | Constraints | Description |
-|-------|------|----------|-------------|-------------|
-| `Email` | string | ✅ | Valid email, max 100 chars | Account email |
-| `Password` | string | ✅ | 8-100 chars | Account password |
+| Field      | Type   | Required | Constraints                | Description      |
+| ---------- | ------ | -------- | -------------------------- | ---------------- |
+| `Email`    | string | ✅       | Valid email, max 100 chars | Account email    |
+| `Password` | string | ✅       | 8-100 chars                | Account password |
 
 #### Success Response (200)
 
@@ -359,10 +360,10 @@ Authenticate a job seeker.
 
 #### Error Responses
 
-| Status | Description |
-|--------|-------------|
-| 400 | Invalid login data |
-| 401 | Invalid credentials or email not verified |
+| Status | Description                               |
+| ------ | ----------------------------------------- |
+| 400    | Invalid login data                        |
+| 401    | Invalid credentials or email not verified |
 
 #### JavaScript Example
 
@@ -372,13 +373,13 @@ const response = await fetch('/api/Account/Candidate/Login', {
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
     email: 'john@example.com',
-    password: 'SecurePass123!'
-  })
-});
+    password: 'SecurePass123!',
+  }),
+})
 
-const { data } = await response.json();
+const { data } = await response.json()
 // Store token for subsequent requests
-localStorage.setItem('authToken', data.token);
+localStorage.setItem('authToken', data.token)
 ```
 
 ---
@@ -429,9 +430,9 @@ const response = await fetch('/api/Account/Login', {
   credentials: 'include', // Important for cookies
   body: JSON.stringify({
     email: 'hr@techcorp.com',
-    password: 'SecurePass123!'
-  })
-});
+    password: 'SecurePass123!',
+  }),
+})
 ```
 
 ---
@@ -457,9 +458,9 @@ await fetch('/api/Account/Logout', {
   method: 'POST',
   credentials: 'include',
   headers: {
-    'Authorization': `Bearer ${token}` // For mobile
-  }
-});
+    Authorization: `Bearer ${token}`, // For mobile
+  },
+})
 ```
 
 ---
@@ -484,10 +485,10 @@ Get current authenticated user's role.
 
 ```javascript
 const response = await fetch('/api/Account/Me', {
-  headers: { 'Authorization': `Bearer ${token}` }
-});
+  headers: { Authorization: `Bearer ${token}` },
+})
 
-const { role } = await response.json();
+const { role } = await response.json()
 ```
 
 ---
@@ -520,11 +521,11 @@ Get full profile of authenticated candidate.
 
 ```javascript
 const response = await fetch('/api/Account/candidate/profile/me', {
-  headers: { 'Authorization': `Bearer ${token}` }
-});
+  headers: { Authorization: `Bearer ${token}` },
+})
 
-const { data: profile } = await response.json();
-console.log(profile.firstName, profile.skills);
+const { data: profile } = await response.json()
+console.log(profile.firstName, profile.skills)
 ```
 
 ---
@@ -539,14 +540,14 @@ Update candidate profile information.
 
 #### Request Body
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `FirstName` | string | ❌ | Updated first name |
-| `MiddleName` | string | ❌ | Updated middle name |
-| `LastName` | string | ❌ | Updated last name |
-| `ProfilePhoto` | file | ❌ | New profile photo |
-| `ResumeFile` | file | ❌ | New resume document |
-| `Skills` | string[] | ❌ | Updated skills list |
+| Field          | Type     | Required | Description         |
+| -------------- | -------- | -------- | ------------------- |
+| `FirstName`    | string   | ❌       | Updated first name  |
+| `MiddleName`   | string   | ❌       | Updated middle name |
+| `LastName`     | string   | ❌       | Updated last name   |
+| `ProfilePhoto` | file     | ❌       | New profile photo   |
+| `ResumeFile`   | file     | ❌       | New resume document |
+| `Skills`       | string[] | ❌       | Updated skills list |
 
 > **Note:** Only include fields you want to update.
 
@@ -573,17 +574,17 @@ Update candidate profile information.
 #### JavaScript Example
 
 ```javascript
-const formData = new FormData();
-formData.append('FirstName', 'John');
-formData.append('Skills', 'JavaScript');
-formData.append('Skills', 'TypeScript');
-formData.append('Skills', 'React');
+const formData = new FormData()
+formData.append('FirstName', 'John')
+formData.append('Skills', 'JavaScript')
+formData.append('Skills', 'TypeScript')
+formData.append('Skills', 'React')
 
 const response = await fetch('/api/Account/Candidate/UpdateProfile', {
   method: 'PATCH',
-  headers: { 'Authorization': `Bearer ${token}` },
-  body: formData
-});
+  headers: { Authorization: `Bearer ${token}` },
+  body: formData,
+})
 ```
 
 ---
@@ -600,10 +601,10 @@ Upload a resume file for the user.
 
 #### Request Body
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `File` | file | ✅ | Resume document (PDF, DOC, DOCX) |
-| `UserId` | integer | ✅ | User ID |
+| Field    | Type    | Required | Description                      |
+| -------- | ------- | -------- | -------------------------------- |
+| `File`   | file    | ✅       | Resume document (PDF, DOC, DOCX) |
+| `UserId` | integer | ✅       | User ID                          |
 
 #### Success Response (200)
 
@@ -630,10 +631,10 @@ Update user's profile photo.
 
 #### Request Body
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `File` | file | ✅ | Image file (JPEG, PNG) |
-| `UserId` | integer | ✅ | User ID |
+| Field    | Type    | Required | Description            |
+| -------- | ------- | -------- | ---------------------- |
+| `File`   | file    | ✅       | Image file (JPEG, PNG) |
+| `UserId` | integer | ✅       | User ID                |
 
 #### Success Response (200)
 
@@ -660,10 +661,10 @@ Update user's resume file.
 
 #### Request Body
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `File` | file | ✅ | Resume document |
-| `UserId` | integer | ✅ | User ID |
+| Field    | Type    | Required | Description     |
+| -------- | ------- | -------- | --------------- |
+| `File`   | file    | ✅       | Resume document |
+| `UserId` | integer | ✅       | User ID         |
 
 ---
 
@@ -675,9 +676,9 @@ Get a signed URL to download user's profile photo.
 
 **Path Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `UserId` | integer | Target user ID |
+| Parameter | Type    | Description    |
+| --------- | ------- | -------------- |
+| `UserId`  | integer | Target user ID |
 
 #### Success Response (200)
 
@@ -698,13 +699,13 @@ Get a signed URL to download user's profile photo.
 
 ```javascript
 const response = await fetch(`/api/Account/DownloadProfilePhoto/${userId}`, {
-  headers: { 'Authorization': `Bearer ${token}` }
-});
+  headers: { Authorization: `Bearer ${token}` },
+})
 
-const { data } = await response.json();
+const { data } = await response.json()
 
 // Use the SAS URL directly in an <img> tag
-document.getElementById('avatar').src = data.sasUrl;
+document.getElementById('avatar').src = data.sasUrl
 ```
 
 ---
@@ -717,9 +718,9 @@ Get a signed URL to download user's resume.
 
 **Path Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `UserId` | integer | Target user ID |
+| Parameter | Type    | Description    |
+| --------- | ------- | -------------- |
+| `UserId`  | integer | Target user ID |
 
 #### Success Response (200)
 
@@ -748,10 +749,10 @@ General file upload endpoint.
 
 #### Request Body
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `File` | file | ✅ | File to upload |
-| `UserId` | integer | ✅ | Associated user ID |
+| Field    | Type    | Required | Description        |
+| -------- | ------- | -------- | ------------------ |
+| `File`   | file    | ✅       | File to upload     |
+| `UserId` | integer | ✅       | Associated user ID |
 
 #### Success Response (200)
 
@@ -776,9 +777,9 @@ Get profile photo URL by user ID.
 
 #### Query Parameters
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `UserId` | integer | ✅ | Target user ID |
+| Parameter | Type    | Required | Description    |
+| --------- | ------- | -------- | -------------- |
+| `UserId`  | integer | ✅       | Target user ID |
 
 #### Success Response (200)
 
@@ -815,9 +816,9 @@ Request a password reset email.
 }
 ```
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `Email` | string | ✅ | Registered email address |
+| Field   | Type   | Required | Description              |
+| ------- | ------ | -------- | ------------------------ |
+| `Email` | string | ✅       | Registered email address |
 
 #### Success Response (200)
 
@@ -838,8 +839,8 @@ Request a password reset email.
 await fetch('/api/Account/ForgetPassword', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ email: 'john@example.com' })
-});
+  body: JSON.stringify({ email: 'john@example.com' }),
+})
 ```
 
 ---
@@ -862,11 +863,11 @@ Reset password using token from email.
 }
 ```
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `Email` | string | ✅ | Account email |
-| `Token` | string | ✅ | Reset token from email link |
-| `NewPassword` | string | ✅ | New password (min 8 chars) |
+| Field         | Type   | Required | Description                 |
+| ------------- | ------ | -------- | --------------------------- |
+| `Email`       | string | ✅       | Account email               |
+| `Token`       | string | ✅       | Reset token from email link |
+| `NewPassword` | string | ✅       | New password (min 8 chars)  |
 
 #### Success Response (200)
 
@@ -885,9 +886,9 @@ Reset password using token from email.
 
 ```javascript
 // Extract token from URL query parameter
-const urlParams = new URLSearchParams(window.location.search);
-const token = urlParams.get('token');
-const email = urlParams.get('email');
+const urlParams = new URLSearchParams(window.location.search)
+const token = urlParams.get('token')
+const email = urlParams.get('email')
 
 await fetch('/api/Account/ResetPassword', {
   method: 'POST',
@@ -895,9 +896,9 @@ await fetch('/api/Account/ResetPassword', {
   body: JSON.stringify({
     email: email,
     token: token,
-    newPassword: 'NewSecurePass456!'
-  })
-});
+    newPassword: 'NewSecurePass456!',
+  }),
+})
 ```
 
 ---
@@ -953,26 +954,26 @@ Detailed authentication test for admin users.
 
 ## Error Codes Reference
 
-| HTTP Status | Meaning | Common Causes |
-|-------------|---------|---------------|
-| 200 | Success | Request completed successfully |
-| 201 | Created | Resource created successfully |
-| 400 | Bad Request | Invalid input, validation errors |
-| 401 | Unauthorized | Missing/invalid token, unverified email |
-| 403 | Forbidden | Insufficient role permissions |
-| 404 | Not Found | Resource doesn't exist |
-| 409 | Conflict | Duplicate resource (e.g., email exists) |
-| 500 | Server Error | Internal server error |
+| HTTP Status | Meaning      | Common Causes                           |
+| ----------- | ------------ | --------------------------------------- |
+| 200         | Success      | Request completed successfully          |
+| 201         | Created      | Resource created successfully           |
+| 400         | Bad Request  | Invalid input, validation errors        |
+| 401         | Unauthorized | Missing/invalid token, unverified email |
+| 403         | Forbidden    | Insufficient role permissions           |
+| 404         | Not Found    | Resource doesn't exist                  |
+| 409         | Conflict     | Duplicate resource (e.g., email exists) |
+| 500         | Server Error | Internal server error                   |
 
 ### Common Error Messages
 
-| Error | Endpoint | Meaning |
-|-------|----------|---------|
-| `"Invalid registration data."` | Register | Form validation failed |
-| `"Invalid Login data."` | Login | Email/password validation failed |
-| `"Invalid Confirmation data."` | Verify Email | OTP validation failed |
-| `"Unauthorized: CandidateId not found."` | Profile endpoints | Invalid or missing JWT |
-| `"Invalid UserId."` | File download | UserId ≤ 0 |
+| Error                                    | Endpoint          | Meaning                          |
+| ---------------------------------------- | ----------------- | -------------------------------- |
+| `"Invalid registration data."`           | Register          | Form validation failed           |
+| `"Invalid Login data."`                  | Login             | Email/password validation failed |
+| `"Invalid Confirmation data."`           | Verify Email      | OTP validation failed            |
+| `"Unauthorized: CandidateId not found."` | Profile endpoints | Invalid or missing JWT           |
+| `"Invalid UserId."`                      | File download     | UserId ≤ 0                       |
 
 ---
 
@@ -995,35 +996,35 @@ credentials: 'include'
 
 ```javascript
 const uploadFile = async (endpoint, file, userId, token) => {
-  const formData = new FormData();
-  formData.append('File', file);
-  formData.append('UserId', userId);
+  const formData = new FormData()
+  formData.append('File', file)
+  formData.append('UserId', userId)
 
   const response = await fetch(endpoint, {
     method: 'POST',
-    headers: { 'Authorization': `Bearer ${token}` },
-    body: formData
-  });
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  })
 
-  return response.json();
-};
+  return response.json()
+}
 ```
 
 ### Error Handling Template
 
 ```javascript
 const apiCall = async (url, options) => {
-  const response = await fetch(url, options);
-  const result = await response.json();
+  const response = await fetch(url, options)
+  const result = await response.json()
 
   if (!result.success) {
-    throw new Error(result.errors.join(', '));
+    throw new Error(result.errors.join(', '))
   }
 
-  return result.data;
-};
+  return result.data
+}
 ```
 
 ---
 
-*Documentation generated on February 3, 2026*
+_Documentation generated on February 3, 2026_

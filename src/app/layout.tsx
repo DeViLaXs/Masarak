@@ -22,14 +22,15 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang='ar' dir='rtl' suppressHydrationWarning>
-      <body className={`${cairo.variable} antialiased font-['Cairo']`}>
+    <html lang="ar" dir="rtl" suppressHydrationWarning>
+      <body className={`${cairo.variable} font-['Cairo'] antialiased`}>
         <ReactQueryProvider>
           <ThemeProvider
-            attribute='class'
-            defaultTheme='system'
+            attribute="class"
+            defaultTheme="system"
             enableSystem
-            disableTransitionOnChange>
+            disableTransitionOnChange
+          >
             {children}
           </ThemeProvider>
         </ReactQueryProvider>

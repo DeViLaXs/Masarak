@@ -41,25 +41,25 @@ export function ForgetPassword({
   }
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
-      <Card className='mt-20'>
-        <CardHeader className='text-center'>
-          <CardTitle className='text-xl mb-5'>نسيت كلمة المرور</CardTitle>
+      <Card className="mt-20">
+        <CardHeader className="text-center">
+          <CardTitle className="mb-5 text-xl">نسيت كلمة المرور</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor='email'>البريد الإلكتروني</FieldLabel>
+                <FieldLabel htmlFor="email">البريد الإلكتروني</FieldLabel>
                 <Input
-                  id='email'
-                  type='email'
+                  id="email"
+                  type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </Field>
               <Field>
-                <Button type='submit' disabled={isRequestingReset}>
+                <Button type="submit" disabled={isRequestingReset}>
                   {isRequestingReset ? 'جاري الارسال...' : 'ارسال'}
                 </Button>
               </Field>

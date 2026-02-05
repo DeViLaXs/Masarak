@@ -9,7 +9,7 @@ export default function AdminPage() {
   console.log(user)
 
   return (
-    <div className='px-6 max-sm:px-4 py-1'>
+    <div className="px-6 py-1 max-sm:px-4">
       <HomeCard1 />
       <HomeCard2 />
       {/* <h1>{test.data}</h1> */}

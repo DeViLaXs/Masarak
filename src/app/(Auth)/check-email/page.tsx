@@ -4,10 +4,11 @@ import React from 'react'
 
 export default function CheckEmail() {
   return (
-    <div className='text-center mt-20'>
-        <p className='text-2xl font-bold'>check your email</p>
-        <p className='text-gray-500 mt-5'>we sent a verification code to your email</p>
-        
+    <div className="mt-20 text-center">
+      <p className="text-2xl font-bold">check your email</p>
+      <p className="mt-5 text-gray-500">
+        we sent a verification code to your email
+      </p>
     </div>
   )
 }

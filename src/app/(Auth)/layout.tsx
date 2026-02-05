@@ -7,7 +7,7 @@ export default function AuthLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className='bg-background flex min-h-svh flex-col w-full'>
+    <div className="bg-background flex min-h-svh w-full flex-col">
       <AuthNavBar />
       {children}
     </div>

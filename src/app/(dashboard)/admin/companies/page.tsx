@@ -14,21 +14,21 @@ export default function CompaniesPage() {
       id: 'select',
       header: ({ table }) => (
         <Checkbox
-          className='mr-3'
+          className="mr-3"
           checked={
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && 'indeterminate')
           }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label='Select all'
+          aria-label="Select all"
         />
       ),
       cell: ({ row }) => (
         <Checkbox
-          className='mr-3'
+          className="mr-3"
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label='Select row'
+          aria-label="Select row"
         />
       ),
     }),
@@ -55,12 +55,12 @@ export default function CompaniesPage() {
   ]
 
   return (
-    <div className='px-6 max-sm:p-4 py-1'>
+    <div className="px-6 py-1 max-sm:p-4">
       {/* <h1 className="text-2xl max-sm:text-xl font-bold mb-6 max-sm:mb-4">
         إدارة الشركات
       </h1> */}
       <CompaniesCard />
-      <div className='w-full h-full flex-col justify-center items-center mt-6 p-10 max-sm:p-0 border-2 max-sm:border-none'>
+      <div className="mt-6 h-full w-full flex-col items-center justify-center border-2 p-10 max-sm:border-none max-sm:p-0">
         <DataTable columns={columns as any} data={data} />
       </div>
     </div>

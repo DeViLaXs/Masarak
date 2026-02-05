@@ -1,6 +1,6 @@
-"use client";
-import { Suspense } from "react";
-import { NewPassword } from "../_components/new-password";
+'use client'
+import { Suspense } from 'react'
+import { NewPassword } from '../_components/new-password'
 
 export default function page() {
   return (
@@ -11,5 +11,5 @@ export default function page() {
         </div>
       </div>
     </Suspense>
-  );
+  )
 }

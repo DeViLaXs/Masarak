@@ -34,17 +34,17 @@ export function LoginForm({
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
-        <CardHeader className='text-center'>
-          <CardTitle className='text-xl'>مرحباً بك مجدداً</CardTitle>
+        <CardHeader className="text-center">
+          <CardTitle className="text-xl">مرحباً بك مجدداً</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor='email'>البريد الإلكتروني</FieldLabel>
+                <FieldLabel htmlFor="email">البريد الإلكتروني</FieldLabel>
                 <Input
-                  id='email'
-                  type='email'
+                  id="email"
+                  type="email"
                   value={loginForm.Email}
                   onChange={(e) =>
                     setLoginForm({ ...loginForm, Email: e.target.value })
@@ -53,12 +53,12 @@ export function LoginForm({
                 />
               </Field>
               <Field>
-                <div className='flex items-center'>
-                  <FieldLabel htmlFor='password'>كلمة المرور</FieldLabel>
+                <div className="flex items-center">
+                  <FieldLabel htmlFor="password">كلمة المرور</FieldLabel>
                 </div>
                 <Input
-                  id='password'
-                  type='password'
+                  id="password"
+                  type="password"
                   value={loginForm.Password}
                   onChange={(e) =>
                     setLoginForm({ ...loginForm, Password: e.target.value })
@@ -66,25 +66,26 @@ export function LoginForm({
                   required
                 />
                 <Link
-                  href='/forget-password'
-                  className='ml-auto text-sm underline-offset-4 hover:underline'>
+                  href="/forget-password"
+                  className="ml-auto text-sm underline-offset-4 hover:underline"
+                >
                   نسيت كلمة المرور
                 </Link>
               </Field>
 
               {loginError && (
-                <p className='text-sm text-destructive text-center'>
+                <p className="text-destructive text-center text-sm">
                   فشل تسجيل الدخول، يرجى التحقق من البيانات
                 </p>
               )}
 
               <Field>
-                <Button type='submit' disabled={isLoggingIn} className='w-full'>
+                <Button type="submit" disabled={isLoggingIn} className="w-full">
                   {isLoggingIn ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
                 </Button>
 
-                <FieldDescription className='text-center'>
-                  ليس لديك حساب؟<Link href='/register'>سجل الأن</Link>
+                <FieldDescription className="text-center">
+                  ليس لديك حساب؟<Link href="/register">سجل الأن</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>

@@ -54,8 +54,8 @@ export function NewPassword({
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
-        <CardHeader className='text-center'>
-          <CardTitle className='text-xl mb-7'>
+        <CardHeader className="text-center">
+          <CardTitle className="mb-7 text-xl">
             إعادة تعيين كلمة المرور
           </CardTitle>
         </CardHeader>
@@ -63,33 +63,33 @@ export function NewPassword({
           <form onSubmit={handleSubmit}>
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor='password'>
+                <FieldLabel htmlFor="password">
                   ادخل كلمة المرور الجديدة
                 </FieldLabel>
                 <Input
-                  id='password'
-                  type='password'
+                  id="password"
+                  type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </Field>
               <Field>
-                <div className='flex items-center'>
-                  <FieldLabel htmlFor='confirm-password'>
+                <div className="flex items-center">
+                  <FieldLabel htmlFor="confirm-password">
                     ادخل كلمة المرور الجديدة مرة أخرى
                   </FieldLabel>
                 </div>
                 <Input
-                  id='confirm-password'
-                  type='password'
+                  id="confirm-password"
+                  type="password"
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
               </Field>
               <Field>
-                <Button type='submit' disabled={isResettingPassword}>
+                <Button type="submit" disabled={isResettingPassword}>
                   {isResettingPassword ? 'جاري التأكيد...' : 'تأكيد'}
                 </Button>
               </Field>

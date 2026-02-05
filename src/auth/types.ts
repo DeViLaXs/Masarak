@@ -1,5 +1,5 @@
 /**
- * User roles 
+ * User roles
  */
 export type UserRole = 'Admin' | 'Company' | 'Candidate'
 

@@ -4,7 +4,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "../../../../components/ui/card";
+} from '../../../../components/ui/card'
 import {
   Building2,
   User,
@@ -25,7 +25,7 @@ import {
   UserRoundPlus,
   Clock3,
   CircleCheckBig,
-} from "lucide-react";
+} from 'lucide-react'
 
 export default function FeedbackCard() {
   return (
@@ -36,7 +36,7 @@ export default function FeedbackCard() {
         </CardHeader>
         <CardContent className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-blue-500">156</h1>
-          <div className="bg-blue-400/25 p-3 rounded-[12px] max-sm:hidden">
+          <div className="rounded-[12px] bg-blue-400/25 p-3 max-sm:hidden">
             <BriefcaseBusiness className="text-blue-500" />
           </div>
         </CardContent>
@@ -47,7 +47,7 @@ export default function FeedbackCard() {
         </CardHeader>
         <CardContent className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-green-500">98</h1>
-          <div className="bg-green-400/25 p-3 rounded-[12px] max-sm:hidden">
+          <div className="rounded-[12px] bg-green-400/25 p-3 max-sm:hidden">
             <UserRoundPlus className="text-green-700" />
           </div>
         </CardContent>
@@ -58,7 +58,7 @@ export default function FeedbackCard() {
         </CardHeader>
         <CardContent className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-orange-500">23</h1>
-          <div className="bg-orange-400/25 p-3 rounded-[12px] max-sm:hidden">
+          <div className="rounded-[12px] bg-orange-400/25 p-3 max-sm:hidden">
             <Clock3 className="text-orange-500" />
           </div>
         </CardContent>
@@ -69,11 +69,11 @@ export default function FeedbackCard() {
         </CardHeader>
         <CardContent className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-purple-500">35</h1>
-          <div className="bg-purple-400/25 p-3 rounded-[12px] max-sm:hidden">
+          <div className="rounded-[12px] bg-purple-400/25 p-3 max-sm:hidden">
             <CircleCheckBig className="text-purple-500" />
           </div>
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

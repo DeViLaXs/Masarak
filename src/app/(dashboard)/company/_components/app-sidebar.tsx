@@ -67,8 +67,8 @@ export function AppSidebar() {
   }
 
   return (
-    <Sidebar side='right'>
-      <SidebarHeader className='text-primary font-bold text-2xl me-2 mb-5 mt-2'>
+    <Sidebar side="right">
+      <SidebarHeader className="text-primary me-2 mt-2 mb-5 text-2xl font-bold">
         GoWork
       </SidebarHeader>
       <SidebarContent>
@@ -78,11 +78,12 @@ export function AppSidebar() {
               const isActive = pathname === link.path
 
               return (
-                <SidebarMenuItem key={link.title} className='mx-2'>
+                <SidebarMenuItem key={link.title} className="mx-2">
                   <SidebarMenuButton
                     isActive={isActive}
                     asChild
-                    className='transition-all '>
+                    className="transition-all"
+                  >
                     <Link href={link.path}>
                       <link.icon />
                       <span>{link.title}</span>
@@ -97,28 +98,30 @@ export function AppSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <DropdownMenu dir='rtl'>
+            <DropdownMenu dir="rtl">
               <DropdownMenuTrigger asChild>
-                <SidebarMenuButton className=' transition-all'>
-                  <Avatar className='ms-2'>
-                    <AvatarImage src='https://github.com/shadcn.png' />
+                <SidebarMenuButton className="transition-all">
+                  <Avatar className="ms-2">
+                    <AvatarImage src="https://github.com/shadcn.png" />
                   </Avatar>
                   {/* {user?.name} */}
-                  <EllipsisVertical className='ms-auto' />
+                  <EllipsisVertical className="ms-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                side='top'
+                side="top"
                 sideOffset={2}
-                className='text-right'>
+                className="text-right"
+              >
                 <DropdownMenuItem>
                   <span>الملف الشخصي</span>
                 </DropdownMenuItem>
-                <Link href='/'>
+                <Link href="/">
                   {/* <DropdownMenuItem variant="destructive" onClick={() => logout()} > */}
                   <DropdownMenuItem
-                    variant='destructive'
-                    onClick={handleLogout}>
+                    variant="destructive"
+                    onClick={handleLogout}
+                  >
                     الخروج
                   </DropdownMenuItem>
                 </Link>

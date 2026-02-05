@@ -1,11 +1,11 @@
 export const routeTitles = [
-  { path: "/admin", title: "لوحة التحكم" },
-  { path: "/admin/companies", title: "إدارة الشركات" },
-  { path: "/admin/feedbacks", title: "إدارة التعليقات" },
+  { path: '/admin', title: 'لوحة التحكم' },
+  { path: '/admin/companies', title: 'إدارة الشركات' },
+  { path: '/admin/feedbacks', title: 'إدارة التعليقات' },
 
-  { path: "/company", title: "لوحة التحكم" },
-  { path: "/company/manage-job", title: "إدارة الوظائف" },
-  { path: "/company/new-job", title: "إضافة وظيفة جديدة" },
-  { path: "/company/job-order", title: "طلبات الوظائف" },
-  { path: "/company/job-history", title: "سجل الوظائف" },
-];
+  { path: '/company', title: 'لوحة التحكم' },
+  { path: '/company/manage-job', title: 'إدارة الوظائف' },
+  { path: '/company/new-job', title: 'إضافة وظيفة جديدة' },
+  { path: '/company/job-order', title: 'طلبات الوظائف' },
+  { path: '/company/job-history', title: 'سجل الوظائف' },
+]

@@ -14,9 +14,9 @@ import { AnimatedThemeToggler } from '@/components/ui/animated-theme-toggler'
 export default function AuthNavBar() {
   const { setTheme } = useTheme()
   return (
-    <nav className='sticky top-0 z-50 flex items-center justify-between bg-background/90 border-b px-6 py-4 shadow-sm md:px-12 max-sm:px-4 max-sm:py-3'>
-      <div className='flex items-center justify-between w-full'>
-        <div className='text-2xl font-bold text-primary'>GoWork</div>
+    <nav className="bg-background/90 sticky top-0 z-50 flex items-center justify-between border-b px-6 py-4 shadow-sm max-sm:px-4 max-sm:py-3 md:px-12">
+      <div className="flex w-full items-center justify-between">
+        <div className="text-primary text-2xl font-bold">GoWork</div>
         <AnimatedThemeToggler />
       </div>
     </nav>

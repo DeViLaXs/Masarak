@@ -52,17 +52,17 @@ export function SignupForm({
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
-        <CardHeader className='text-center'>
-          <CardTitle className='text-xl'>إنشاء حساب جديد</CardTitle>
+        <CardHeader className="text-center">
+          <CardTitle className="text-xl">إنشاء حساب جديد</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor='name'>اسم الشركة</FieldLabel>
+                <FieldLabel htmlFor="name">اسم الشركة</FieldLabel>
                 <Input
-                  id='name'
-                  type='text'
+                  id="name"
+                  type="text"
                   required
                   onChange={(e) =>
                     setRegisterForm({
@@ -73,10 +73,10 @@ export function SignupForm({
                 />
               </Field>
               <Field>
-                <FieldLabel htmlFor='email'>البريد الإلكتروني</FieldLabel>
+                <FieldLabel htmlFor="email">البريد الإلكتروني</FieldLabel>
                 <Input
-                  id='email'
-                  type='email'
+                  id="email"
+                  type="email"
                   required
                   onChange={(e) =>
                     setRegisterForm({ ...registerForm, Email: e.target.value })
@@ -84,10 +84,10 @@ export function SignupForm({
                 />
               </Field>
               <Field>
-                <FieldLabel htmlFor='phone'>رقم الهاتف</FieldLabel>
+                <FieldLabel htmlFor="phone">رقم الهاتف</FieldLabel>
                 <Input
-                  id='phone'
-                  type='text'
+                  id="phone"
+                  type="text"
                   required
                   onChange={(e) =>
                     setRegisterForm({
@@ -98,12 +98,12 @@ export function SignupForm({
                 />
               </Field>
               <Field>
-                <Field className='grid grid-cols-2 gap-4'>
+                <Field className="grid grid-cols-2 gap-4">
                   <Field>
-                    <FieldLabel htmlFor='password'>كلمة المرور</FieldLabel>
+                    <FieldLabel htmlFor="password">كلمة المرور</FieldLabel>
                     <Input
-                      id='password'
-                      type='password'
+                      id="password"
+                      type="password"
                       required
                       onChange={(e) =>
                         setRegisterForm({
@@ -114,12 +114,12 @@ export function SignupForm({
                     />
                   </Field>
                   <Field>
-                    <FieldLabel htmlFor='confirm-password'>
+                    <FieldLabel htmlFor="confirm-password">
                       تأكيد كلمة المرور
                     </FieldLabel>
                     <Input
-                      id='confirm-password'
-                      type='password'
+                      id="confirm-password"
+                      type="password"
                       required
                       onChange={(e) =>
                         setRegisterForm({
@@ -131,10 +131,10 @@ export function SignupForm({
                   </Field>
                 </Field>
                 <Field>
-                  <FieldLabel htmlFor='industry'>الصناعة</FieldLabel>
+                  <FieldLabel htmlFor="industry">الصناعة</FieldLabel>
                   <Input
-                    id='industry'
-                    type='text'
+                    id="industry"
+                    type="text"
                     required
                     onChange={(e) =>
                       setRegisterForm({
@@ -145,10 +145,10 @@ export function SignupForm({
                   />
                 </Field>
                 <Field>
-                  <FieldLabel htmlFor='logo'>شعار الشركة</FieldLabel>
+                  <FieldLabel htmlFor="logo">شعار الشركة</FieldLabel>
                   <Input
-                    id='logo'
-                    type='file'
+                    id="logo"
+                    type="file"
                     required
                     onChange={(e) =>
                       setRegisterForm({
@@ -160,11 +160,11 @@ export function SignupForm({
                 </Field>
               </Field>
               <Field>
-                <Button type='submit' disabled={isRegistering}>
+                <Button type="submit" disabled={isRegistering}>
                   تسجيل
                 </Button>
-                <FieldDescription className='text-center'>
-                  لديك حساب بالفعل؟ <Link href='/login'>تسجيل الدخول</Link>
+                <FieldDescription className="text-center">
+                  لديك حساب بالفعل؟ <Link href="/login">تسجيل الدخول</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
