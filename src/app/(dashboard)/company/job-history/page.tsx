@@ -1,3 +1,3 @@
 export default function RequestedJobPage() {
-  return <div>Hello "/Company/RequestedJob"!</div>;
+  return <div>Hello &quot;/Company/RequestedJob&quot;!</div>
 }

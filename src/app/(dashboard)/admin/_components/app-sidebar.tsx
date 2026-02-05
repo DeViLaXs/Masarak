@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   LayoutDashboard,
@@ -6,7 +6,7 @@ import {
   Building2,
   MessagesSquare,
   EllipsisVertical,
-} from "lucide-react";
+} from 'lucide-react'
 import {
   Sidebar,
   SidebarContent,
@@ -16,104 +16,97 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+} from '@/components/ui/sidebar'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "../../../../components/ui/dropdown-menu";
-import { Avatar, AvatarImage } from "../../../../components/ui/avatar";
-import { useLogout } from "@/hooks/useAuth";
-import { useRouter} from "next/navigation";
+} from '../../../../components/ui/dropdown-menu'
+import { Avatar, AvatarImage } from '../../../../components/ui/avatar'
+import { useAuth } from '@/auth/use-auth'
 
 const links = [
   {
-    title: "لوحة التحكم ",
-    path: "/admin",
+    title: 'لوحة التحكم ',
+    path: '/admin',
     icon: LayoutDashboard,
   },
   {
-    title: "إدارة الشركات",
-    path: "/admin/companies",
+    title: 'إدارة الشركات',
+    path: '/admin/companies',
     icon: Building2,
   },
   {
-    title: "إدارة التعليقات",
-    path: "/admin/feedbacks",
+    title: 'إدارة التعليقات',
+    path: '/admin/feedbacks',
     icon: MessagesSquare,
   },
-];
+]
 
 export function AppSidebar() {
-  const pathname = usePathname();
-  console.log("الصفحة الحالية:", pathname);
+  const pathname = usePathname()
+  console.log('الصفحة الحالية:', pathname)
 
-  const logout = useLogout();
-  const router = useRouter();
+  const { logout, isLoggingOut } = useAuth()
 
   const handleLogout = () => {
-    logout.mutate(undefined,{
-      onSuccess: () => {
-        router.push("/login");
-      }
-    });
-  };
+    logout()
+  }
 
   return (
-    <Sidebar side="right">
-      <SidebarHeader className="text-primary font-bold text-2xl me-2 mb-5 mt-2">
+    <Sidebar side='right'>
+      <SidebarHeader className='text-primary font-bold text-2xl me-2 mb-5 mt-2'>
         GoWork
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroupContent>
           <SidebarMenu>
             {links.map((link) => {
-              const isActive = pathname === link.path;
+              const isActive = pathname === link.path
 
               return (
-                <SidebarMenuItem key={link.title} className="mx-2">
+                <SidebarMenuItem key={link.title} className='mx-2'>
                   <SidebarMenuButton
                     isActive={isActive}
                     asChild
-                    className="transition-all "
-                  >
+                    className='transition-all '>
                     <Link href={link.path}>
                       <link.icon />
                       <span>{link.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-              );
+              )
             })}
           </SidebarMenu>
         </SidebarGroupContent>
       </SidebarContent>
       <SidebarFooter>
-        <SidebarMenu className="mt-3">
+        <SidebarMenu className='mt-3'>
           <SidebarMenuItem>
-            <DropdownMenu dir="rtl">
+            <DropdownMenu dir='rtl'>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuButton className=" transition-all">
-                  <Avatar className="ms-2">
-                    <AvatarImage src="https://github.com/shadcn.png" />
+                <SidebarMenuButton className=' transition-all'>
+                  <Avatar className='ms-2'>
+                    <AvatarImage src='https://github.com/shadcn.png' />
                   </Avatar>
                   {/* {user?.name} */}
-                  <EllipsisVertical className="ms-auto" />
+                  <EllipsisVertical className='ms-auto' />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
-              <DropdownMenuContent side="top" sideOffset={2}>
+              <DropdownMenuContent side='top' sideOffset={2}>
                 <DropdownMenuItem>
                   <span>الملف الشخصي</span>
                 </DropdownMenuItem>
-                <Link href="/">
+                <Link href='/'>
                   {/* <DropdownMenuItem variant="destructive" onClick={() => logout()} > */}
                   <DropdownMenuItem>الإعدادات</DropdownMenuItem>
                 </Link>
                 {/* <DropdownMenuItem variant="destructive" onClick={() => logout()} > */}
-                <DropdownMenuItem variant="destructive" onClick={handleLogout}>
+                <DropdownMenuItem variant='destructive' onClick={handleLogout}>
                   الخروج
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -122,5 +115,5 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
-  );
+  )
 }

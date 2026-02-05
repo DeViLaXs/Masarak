@@ -1,53 +1,33 @@
-"use client";
+'use client'
 
-import { AppSidebar } from "@/app/(dashboard)/admin/_component/AppSidebar";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import NavBar from "@/components/NavBar";
-import { useRouter } from "next/navigation";
-import { useAdminGuard } from "@/hooks/useAuth";
-import { useEffect } from "react";
-import axios from "axios";
+import { AppSidebar } from './_components/app-sidebar'
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
+import NavBar from '@/components/navbar'
+import { useAuth } from '@/auth/use-auth'
 
 export default function AdminLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
-  const router = useRouter();
-  const { isLoading, isError, error, status } = useAdminGuard();
+  const { isLoading } = useAuth({ middleware: 'admin' })
 
-  useEffect(() => {
-    if (status === "error") {
-      const axiosError = error as any;
-      const code = axiosError?.response?.status;
-
-      if (code === 401) {
-        router.replace("/login");
-      } else if (code === 403) {
-        router.replace("/forbidden");
-      }
-    }
-  }, [status, error, router]);
-
-  // ⛔ Block rendering بالكامل
-  if (status === "pending") {
-    return null; // أو <FullScreenLoader />
+  // Show nothing while checking auth (proxy handles initial redirect)
+  if (isLoading) {
+    return (
+      <div className='flex min-h-screen items-center justify-center'>
+        <div className='h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent' />
+      </div>
+    )
   }
 
-  if (status === "error") {
-    return null; // redirect حصل أو بيحصل
-  }
-
-  // ✅ فقط لو Authorized
   return (
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
         <NavBar />
-        <div className="flex flex-1 flex-col gap-4 p-4">
-          {children}
-        </div>
+        <div className='flex flex-1 flex-col gap-4 p-4'>{children}</div>
       </SidebarInset>
     </SidebarProvider>
-  );
+  )
 }

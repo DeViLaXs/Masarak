@@ -1,3 +1,3 @@
 export default function SecondPage() {
-  return <div>Hello "/dashboard/second"!</div>;
+  return <div>Hello &quot;/dashboard/second&quot;!</div>
 }

@@ -1,30 +1,18 @@
-"use client"
-import HomeCard1 from "@/app/(dashboard)/admin/_component/HomeCard-1";
-import HomeCard2 from "@/app/(dashboard)/admin/_component/HomeCard-2";
-import { useMe } from "@/hooks/useAuth";
-import api from "@/lib/axios";
-import { useQuery } from "@tanstack/react-query";
+'use client'
+import HomeCard1 from '@/app/(dashboard)/admin/_components/home-card-1'
+import HomeCard2 from '@/app/(dashboard)/admin/_components/home-card-2'
+import { useAuth } from '@/auth/use-auth'
 
 export default function AdminPage() {
+  const { user, isLoading } = useAuth()
 
-//   const test =useQuery({
-//   queryKey: ['test'],
-//   queryFn: async () => {
-//     const res = await api.get("/Account/TEST")
-//     console.log(res.data)
-//     return res.data
-//   },
-// })
-
-const { data, isLoading, isError } = useMe();
-
-  console.log(data)
+  console.log(user)
 
   return (
-    <div className="px-6 max-sm:px-4 py-1">
+    <div className='px-6 max-sm:px-4 py-1'>
       <HomeCard1 />
       <HomeCard2 />
       {/* <h1>{test.data}</h1> */}
     </div>
-  );
+  )
 }

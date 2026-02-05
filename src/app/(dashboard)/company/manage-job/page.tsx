@@ -1,3 +1,3 @@
 export default function ManageJobPage() {
-  return <div>Hello "/Company/manageJob"!</div>;
+  return <div>Hello &quot;/Company/manageJob&quot;!</div>
 }

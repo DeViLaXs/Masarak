@@ -1,15 +1,15 @@
-import AuthNavBar from "@/app/(Auth)/_components/AuthNavBar";
-import React from "react";
+import AuthNavBar from './_components/auth-navbar'
+import React from 'react'
 
 export default function AuthLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
-    <div className="bg-background flex min-h-svh flex-col w-full">
+    <div className='bg-background flex min-h-svh flex-col w-full'>
       <AuthNavBar />
       {children}
     </div>
-  );
+  )
 }

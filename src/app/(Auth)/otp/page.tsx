@@ -1,15 +1,15 @@
-import AuthNavBar from "@/app/(Auth)/_components/AuthNavBar";
-import { OTPForm } from "@/app/(Auth)/_components/otp-form";
-import { Suspense } from "react";
+import AuthNavBar from '@/app/(auth)/_components/auth-navbar'
+import { OTPForm } from '@/app/(auth)/_components/otp-form'
+import { Suspense } from 'react'
 
 export default function OTPPage() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-    <div className="flex flex-col items-center gap-6 p-5 md:p-8 max-sm:p-3">
-      <div className="flex w-full max-w-sm flex-col gap-6">
-        <OTPForm />
+      <div className='flex flex-col items-center gap-6 p-5 md:p-8 max-sm:p-3'>
+        <div className='flex w-full max-w-sm flex-col gap-6'>
+          <OTPForm />
+        </div>
       </div>
-    </div>
     </Suspense>
-  );
+  )
 }

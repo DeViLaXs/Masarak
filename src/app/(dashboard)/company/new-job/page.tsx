@@ -1,3 +1,3 @@
 export default function NewJobPage() {
-  return <div>Hello "/Company/newJob"!</div>;
+  return <div>Hello &quot;/Company/newJob&quot;!</div>
 }
