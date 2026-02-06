@@ -21,25 +21,25 @@ export function ForgetPassword({
 }: React.ComponentProps<"div">) {
   const router = useRouter();
 
-
   const forgetPasswordMutation = useForgetPassword();
 
   const [email, setEmail] = useState("");
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    forgetPasswordMutation.mutate({ Email: email },{
-      onSuccess: () => {
-        router.push("/check-email");
+    forgetPasswordMutation.mutate(
+      { Email: email },
+      {
+        onSuccess: () => {
+          router.push("/check-email");
+        },
+        onError: (error) => {
+          alert(error.message);
+        },
       },
-      onError: (error) => {
-       alert(error.message);
-      },
-    });
+    );
   };
   return (
-   
-    
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="mt-20">
         <CardHeader className="text-center">
@@ -59,8 +59,13 @@ export function ForgetPassword({
                 />
               </Field>
               <Field>
-                <Button type="submit" disabled={forgetPasswordMutation.isPending} >
-                  {forgetPasswordMutation.isPending ? "جاري الارسال..." : "ارسال"}
+                <Button
+                  type="submit"
+                  disabled={forgetPasswordMutation.isPending}
+                >
+                  {forgetPasswordMutation.isPending
+                    ? "جاري الارسال..."
+                    : "ارسال"}
                 </Button>
               </Field>
             </FieldGroup>

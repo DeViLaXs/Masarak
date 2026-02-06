@@ -27,7 +27,7 @@ import {
 } from "../../../../components/ui/dropdown-menu";
 import { Avatar, AvatarImage } from "../../../../components/ui/avatar";
 import { useLogout } from "@/hooks/useAuth";
-import { useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const links = [
   {
@@ -47,6 +47,8 @@ const links = [
   },
 ];
 
+import Image from "next/image";
+
 export function AppSidebar() {
   const pathname = usePathname();
   console.log("الصفحة الحالية:", pathname);
@@ -55,17 +57,32 @@ export function AppSidebar() {
   const router = useRouter();
 
   const handleLogout = () => {
-    logout.mutate(undefined,{
+    logout.mutate(undefined, {
       onSuccess: () => {
         router.push("/login");
-      }
+      },
     });
   };
 
   return (
     <Sidebar side="right">
-      <SidebarHeader className="text-primary font-bold text-2xl me-2 mb-5 mt-2">
-        GoWork
+      <SidebarHeader className="text-primary font-bold text-2xl me-2 mb-2 mt-2">
+        <div className="flex items-center">
+          <Image
+            src="/light-back1.png"
+            alt="Logo"
+            width={120}
+            height={100}
+            className="dark:hidden"
+          />
+          <Image
+            src="/dark-back1.png"
+            alt="Logo"
+            width={120}
+            height={100}
+            className="hidden dark:block"
+          />
+        </div>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroupContent>

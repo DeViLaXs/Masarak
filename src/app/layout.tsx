@@ -3,6 +3,7 @@ import { Cairo } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import ReactQueryProvider from "@/lib/providers";
+import { ThemeProviderWrapper } from "@/components/themeProvider";
 
 const cairo = Cairo({
   variable: "--font-cairo",
@@ -25,9 +26,11 @@ export default function RootLayout({
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <body className={`${cairo.variable} antialiased font-['Cairo']`}>
         <ReactQueryProvider>
-          <ThemeProvider defaultTheme="dark" storageKey="gowork-ui-theme">
+          {/* <ThemeProvider defaultTheme="dark" storageKey="gowork-ui-theme"> */}
+          <ThemeProviderWrapper>
             {children}
-          </ThemeProvider>
+            {/* </ThemeProvider> */}
+          </ThemeProviderWrapper>
         </ReactQueryProvider>
       </body>
     </html>

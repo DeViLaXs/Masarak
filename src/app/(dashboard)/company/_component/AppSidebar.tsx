@@ -56,14 +56,14 @@ const links = [
   },
 ];
 
+import Image from "next/image";
+
 export function AppSidebar() {
   const pathname = usePathname();
   console.log("الصفحة الحالية:", pathname);
 
   const logout = useLogout();
   const router = useRouter();
-
-  
 
   const handleLogout = () => {
     logout.mutate(undefined, {
@@ -73,12 +73,25 @@ export function AppSidebar() {
     });
   };
 
-
-
   return (
     <Sidebar side="right">
-      <SidebarHeader className="text-primary font-bold text-2xl me-2 mb-5 mt-2">
-        GoWork
+      <SidebarHeader className="text-primary font-bold text-2xl me-2 mb-2 mt-2">
+        <div className="flex items-center">
+          <Image
+            src="/light-back1.png"
+            alt="Logo"
+            width={120}
+            height={100}
+            className="dark:hidden"
+          />
+          <Image
+            src="/dark-back1.png"
+            alt="Logo"
+            width={120}
+            height={100}
+            className="hidden dark:block"
+          />
+        </div>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroupContent>
@@ -127,7 +140,10 @@ export function AppSidebar() {
                 </DropdownMenuItem>
                 <Link href="/">
                   {/* <DropdownMenuItem variant="destructive" onClick={() => logout()} > */}
-                  <DropdownMenuItem variant="destructive" onClick={handleLogout}>
+                  <DropdownMenuItem
+                    variant="destructive"
+                    onClick={handleLogout}
+                  >
                     الخروج
                   </DropdownMenuItem>
                 </Link>

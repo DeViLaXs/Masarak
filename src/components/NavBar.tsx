@@ -19,7 +19,7 @@ export default function NavBar() {
 
   const pathname = usePathname();
 
-  const title=routeTitles.find((r)=>pathname===r.path)?.title??"";
+  const title = routeTitles.find((r) => pathname === r.path)?.title ?? "";
 
   return (
     <div className="flex items-center justify-between border-b-2 p-2 bg-sidebar">

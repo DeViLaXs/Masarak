@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
 import type { User as UserType } from "@/auth/types";
 import Image from "next/image";
+import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
 
 export default function HomePage() {
   const { setTheme } = useTheme();
@@ -58,9 +59,23 @@ export default function HomePage() {
       {/* Navbar */}
       <nav className="sticky top-0 z-50 flex items-center justify-between bg-card px-12 py-4 shadow-sm border-b gap-4 max-md:px-4 max-md:py-3">
         <div className="flex items-center">
-          <div className="text-2xl font-bold text-primary max-sm:text-xl">
+          {/* <div className="text-2xl font-bold text-primary max-sm:text-xl">
             GoWork
-          </div>
+          </div> */}
+          <Image
+            src="/light-back1.png"
+            alt="Logo"
+            width={140}
+            height={120}
+            className="dark:hidden"
+          />
+          <Image
+            src="/dark-back1.png"
+            alt="Logo"
+            width={140}
+            height={120}
+            className="hidden dark:block"
+          />
         </div>
 
         <div className="flex items-center gap-6 max-sm:gap-3">
@@ -78,29 +93,7 @@ export default function HomePage() {
             تسجيل شركة جديدة
           </Link>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-9 w-9 max-sm:h-8 max-sm:w-8"
-              >
-                <Sun className="h-[1.2rem] w-[1.2rem] max-sm:h-4 max-sm:w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                <Moon className="absolute h-[1.2rem] w-[1.2rem] max-sm:h-4 max-sm:w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setTheme("light")}>
-                Light
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("dark")}>
-                Dark
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("system")}>
-                System
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <AnimatedThemeToggler />
         </div>
       </nav>
 

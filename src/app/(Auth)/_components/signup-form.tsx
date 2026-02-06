@@ -33,6 +33,8 @@ export function SignupForm({
     LogoUrl: null,
   });
 
+  
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     register.mutate(registerForm, {

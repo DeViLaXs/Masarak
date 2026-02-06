@@ -1,4 +1,5 @@
-import AuthNavBar from "@/app/(Auth)/_components/AuthNavBar";
+"use client";
+import AuthNavBar from "@/app/(Auth)/_components/auth-navbar";
 import React from "react";
 
 export default function AuthLayout({
