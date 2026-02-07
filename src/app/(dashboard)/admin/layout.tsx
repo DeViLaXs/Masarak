@@ -2,8 +2,8 @@
 
 import { AppSidebar } from './_components/app-sidebar'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
-import NavBar from '@/components/navbar'
 import { useAuth } from '@/auth/use-auth'
+import NavBar from '@/components/navbar'
 
 export default function AdminLayout({
   children,

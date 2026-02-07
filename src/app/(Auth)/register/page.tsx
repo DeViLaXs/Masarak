@@ -1,5 +1,4 @@
-import AuthNavBar from '@/app/(auth)/_components/auth-navbar'
-import { SignupForm } from '@/app/(auth)/_components/signup-form'
+import { SignupForm } from '@/app/(Auth)/_components/signup-form'
 
 export default function RegisterPage() {
   return (
