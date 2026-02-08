@@ -203,3 +203,15 @@
   animation: none;
   mix-blend-mode: normal;
 }
+
+/* Hide password reveal button in Edge */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
+/* Hide password reveal button in Chrome, Safari */
+input::-webkit-password-decoration,
+input::-webkit-credentials-auto-fill-button {
+  display: none;
+}
