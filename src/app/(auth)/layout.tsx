@@ -8,7 +8,7 @@ export default function AuthLayout({
 }) {
   return (
     <div className="bg-background flex min-h-svh w-full flex-col">
-      <AuthNavBar />
+      <AuthNavBar/>
       {children}
     </div>
   )

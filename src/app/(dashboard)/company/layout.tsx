@@ -2,7 +2,7 @@
 
 import { AppSidebar } from '@/app/(dashboard)/company/_components/app-sidebar'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
-import NavBar from '@/components/navbar-temp'
+import NavBar from '@/components/navbar'
 import { useAuth } from '@/auth/use-auth'
 
 export default function CompanyLayout({
