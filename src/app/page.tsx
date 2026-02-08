@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useTheme } from 'next-themes'
 import { Button } from '@/components/ui/button'
-import Footer from '@/components/footerTemp'
+import Footer from '@/components/footer'
 import Image from 'next/image'
 
 export default function HomePage() {

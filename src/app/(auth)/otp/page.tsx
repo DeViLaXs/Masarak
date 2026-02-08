@@ -1,4 +1,4 @@
-import { OTPForm } from '@/app/(Auth)/_components/otp-form'
+import { OTPForm } from '../_components/otp-form'
 import { Suspense } from 'react'
 
 export default function OTPPage() {

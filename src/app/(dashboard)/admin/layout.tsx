@@ -3,7 +3,7 @@
 import { AppSidebar } from './_components/app-sidebar'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { useAuth } from '@/auth/use-auth'
-import NavBar from '@/components/navbar-temp'
+import NavBar from '@/components/navbar'
 
 export default function AdminLayout({
   children,
