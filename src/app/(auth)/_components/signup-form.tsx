@@ -8,9 +8,12 @@ import {
   FieldDescription,
   FieldGroup,
   FieldLabel,
+  FieldSeparator,
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
+import { PasswordInput } from '@/components/ui/password-input'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
 import { useState } from 'react'
@@ -50,14 +53,143 @@ export function SignupForm({
     })
   }
   return (
+    // <div className={cn('flex flex-col gap-6', className)} {...props}>
+    //   <Card className="overflow-hidden p-0">
+    //     <CardHeader className="text-center">
+    //       <CardTitle className="text-xl">إنشاء حساب جديد</CardTitle>
+    //     </CardHeader>
+    //     <CardContent>
+    //       <form onSubmit={handleSubmit}>
+    //         <FieldGroup>
+    //           <Field>
+    //             <FieldLabel htmlFor="name">اسم الشركة</FieldLabel>
+    //             <Input
+    //               id="name"
+    //               type="text"
+    //               required
+    //               onChange={(e) =>
+    //                 setRegisterForm({
+    //                   ...registerForm,
+    //                   CompanyName: e.target.value,
+    //                 })
+    //               }
+    //             />
+    //           </Field>
+    //           <Field>
+    //             <FieldLabel htmlFor="email">البريد الإلكتروني</FieldLabel>
+    //             <Input
+    //               id="email"
+    //               type="email"
+    //               required
+    //               onChange={(e) =>
+    //                 setRegisterForm({ ...registerForm, Email: e.target.value })
+    //               }
+    //             />
+    //           </Field>
+    //           <Field>
+    //             <FieldLabel htmlFor="phone">رقم الهاتف</FieldLabel>
+    //             <Input
+    //               id="phone"
+    //               type="text"
+    //               required
+    //               onChange={(e) =>
+    //                 setRegisterForm({
+    //                   ...registerForm,
+    //                   PhoneNumber: e.target.value,
+    //                 })
+    //               }
+    //             />
+    //           </Field>
+    //           <Field>
+    //             <Field className="grid grid-cols-2 gap-4">
+    //               <Field>
+    //                 <FieldLabel htmlFor="password">كلمة المرور</FieldLabel>
+    //                 <Input
+    //                   id="password"
+    //                   type="password"
+    //                   required
+    //                   onChange={(e) =>
+    //                     setRegisterForm({
+    //                       ...registerForm,
+    //                       Password: e.target.value,
+    //                     })
+    //                   }
+    //                 />
+    //               </Field>
+    //               <Field>
+    //                 <FieldLabel htmlFor="confirm-password">
+    //                   تأكيد كلمة المرور
+    //                 </FieldLabel>
+    //                 <Input
+    //                   id="confirm-password"
+    //                   type="password"
+    //                   required
+    //                   onChange={(e) =>
+    //                     setRegisterForm({
+    //                       ...registerForm,
+    //                       PasswordConfirmation: e.target.value,
+    //                     })
+    //                   }
+    //                 />
+    //               </Field>
+    //             </Field>
+    //             <Field>
+    //               <FieldLabel htmlFor="industry">الصناعة</FieldLabel>
+    //               <Input
+    //                 id="industry"
+    //                 type="text"
+    //                 required
+    //                 onChange={(e) =>
+    //                   setRegisterForm({
+    //                     ...registerForm,
+    //                     Industry: e.target.value,
+    //                   })
+    //                 }
+    //               />
+    //             </Field>
+    //             <Field>
+    //               <FieldLabel htmlFor="logo">شعار الشركة</FieldLabel>
+    //               <Input
+    //                 id="logo"
+    //                 type="file"
+    //                 required
+    //                 onChange={(e) =>
+    //                   setRegisterForm({
+    //                     ...registerForm,
+    //                     LogoUrl: e.target.files?.[0] || null,
+    //                   })
+    //                 }
+    //               />
+    //             </Field>
+    //           </Field>
+    //           <Field>
+    //             <Button type="submit" disabled={isRegistering}>
+    //               تسجيل
+    //             </Button>
+    //             <FieldDescription className="text-center">
+    //               لديك حساب بالفعل؟ <Link href="/login">تسجيل الدخول</Link>
+    //             </FieldDescription>
+    //           </Field>
+    //         </FieldGroup>
+    //       </form>
+    //       <div className="bg-muted relative hidden md:block">
+    //         <img
+    //           src="/background.svg"
+    //           alt="Image"
+    //           className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+    //         />
+    //       </div>
+    //     </CardContent>
+    //   </Card>
+    // </div>
     <div className={cn('flex flex-col gap-6', className)} {...props}>
-      <Card>
-        <CardHeader className="text-center">
-          <CardTitle className="text-xl">إنشاء حساب جديد</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit}>
+      <Card className="overflow-hidden p-0">
+        <CardContent className="grid p-0 md:grid-cols-2">
+          <form className="p-6 md:p-8">
             <FieldGroup>
+              <div className="flex flex-col items-center gap-2 text-center">
+                <h1 className="text-2xl font-bold">إنشاء حساب جديد</h1>
+              </div>
               <Field>
                 <FieldLabel htmlFor="name">اسم الشركة</FieldLabel>
                 <Input
@@ -73,26 +205,61 @@ export function SignupForm({
                 />
               </Field>
               <Field>
-                <FieldLabel htmlFor="email">البريد الإلكتروني</FieldLabel>
+                <FieldLabel htmlFor="email">البريد الالكتروني</FieldLabel>
                 <Input
                   id="email"
                   type="email"
                   required
                   onChange={(e) =>
-                    setRegisterForm({ ...registerForm, Email: e.target.value })
+                    setRegisterForm({
+                      ...registerForm,
+                      Email: e.target.value,
+                    })
                   }
                 />
               </Field>
               <Field>
-                <FieldLabel htmlFor="phone">رقم الهاتف</FieldLabel>
+                <Field className="grid grid-cols-2 gap-4">
+                  <Field>
+                    <FieldLabel htmlFor="phone">رقم الهاتف</FieldLabel>
+                    <Input
+                      id="phone"
+                      type="text"
+                      required
+                      onChange={(e) =>
+                        setRegisterForm({
+                          ...registerForm,
+                          PhoneNumber: e.target.value,
+                        })
+                      }
+                    />
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor="industry">الصناعة</FieldLabel>
+                    <Input
+                      id="industry"
+                      type="text"
+                      required
+                      onChange={(e) =>
+                        setRegisterForm({
+                          ...registerForm,
+                          Industry: e.target.value,
+                        })
+                      }
+                    />
+                  </Field>
+                </Field>
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="logo">شعار الشركة</FieldLabel>
                 <Input
-                  id="phone"
-                  type="text"
+                  id="logo"
+                  type="file"
                   required
                   onChange={(e) =>
                     setRegisterForm({
                       ...registerForm,
-                      PhoneNumber: e.target.value,
+                      LogoUrl: e.target.files?.[0] || null,
                     })
                   }
                 />
@@ -101,9 +268,8 @@ export function SignupForm({
                 <Field className="grid grid-cols-2 gap-4">
                   <Field>
                     <FieldLabel htmlFor="password">كلمة المرور</FieldLabel>
-                    <Input
+                    <PasswordInput
                       id="password"
-                      type="password"
                       required
                       onChange={(e) =>
                         setRegisterForm({
@@ -117,9 +283,8 @@ export function SignupForm({
                     <FieldLabel htmlFor="confirm-password">
                       تأكيد كلمة المرور
                     </FieldLabel>
-                    <Input
+                    <PasswordInput
                       id="confirm-password"
-                      type="password"
                       required
                       onChange={(e) =>
                         setRegisterForm({
@@ -130,45 +295,32 @@ export function SignupForm({
                     />
                   </Field>
                 </Field>
-                <Field>
-                  <FieldLabel htmlFor="industry">الصناعة</FieldLabel>
-                  <Input
-                    id="industry"
-                    type="text"
-                    required
-                    onChange={(e) =>
-                      setRegisterForm({
-                        ...registerForm,
-                        Industry: e.target.value,
-                      })
-                    }
-                  />
-                </Field>
-                <Field>
-                  <FieldLabel htmlFor="logo">شعار الشركة</FieldLabel>
-                  <Input
-                    id="logo"
-                    type="file"
-                    required
-                    onChange={(e) =>
-                      setRegisterForm({
-                        ...registerForm,
-                        LogoUrl: e.target.files?.[0] || null,
-                      })
-                    }
-                  />
-                </Field>
               </Field>
+
               <Field>
-                <Button type="submit" disabled={isRegistering}>
-                  تسجيل
-                </Button>
-                <FieldDescription className="text-center">
-                  لديك حساب بالفعل؟ <Link href="/login">تسجيل الدخول</Link>
-                </FieldDescription>
+                <Button type="submit">إنشاء حساب</Button>
               </Field>
+              <FieldDescription className="text-center">
+                لديك حساب بالفعل؟ <Link href="/login">تسجيل الدخول</Link>
+              </FieldDescription>
             </FieldGroup>
           </form>
+          <div className="relative hidden md:block">
+            <Image
+              src="/auth-background.jpg"
+              alt="Image"
+              fill
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-black/30 backdrop-blur-xs"></div>
+            <Image
+              src="/masarak-dark.png"
+              className="absolute bottom-0 left-25 hidden -translate-x-1/2 -translate-y-1/2 dark:block"
+              alt="Logo"
+              width={200}
+              height={200}
+            />
+          </div>
         </CardContent>
       </Card>
     </div>
