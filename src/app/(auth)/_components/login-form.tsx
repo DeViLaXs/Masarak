@@ -138,17 +138,29 @@ export function LoginForm({
             </FieldGroup>
           </motion.form>
           <div className="relative hidden md:block">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{
+                duration: 0.4,
+                scale: { type: "spring", visualDuration: 0.4, bounce: 0.5 },
+              }}
+            >
             <Image
               src="/auth-background.jpg"
-              alt="Image"
+              alt="Image"  
               fill
               className="absolute inset-0 h-full w-full object-cover"
             />
+            </motion.div>
             <div className="absolute inset-0 bg-black/30 backdrop-blur-xs"></div>
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
+              transition={{
+                duration: 0.4,
+                scale: { type: "spring", visualDuration: 0.4, bounce: 0.5 },
+              }}
               className="absolute right-20 bottom-0 hidden -translate-x-1/2 -translate-y-1/2 dark:block"
             >
               
