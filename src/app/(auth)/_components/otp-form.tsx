@@ -56,7 +56,7 @@ export function OTPForm({ className, ...props }: React.ComponentProps<'div'>) {
               className="flex flex-col items-center gap-2 font-medium"
             >
               <div className="text-primary mb-5 flex size-8 items-center justify-center rounded-md text-xl font-bold">
-                GoWork
+                Masarak
               </div>
             </Link>
             <h1 className="text-xl font-bold">رمز التحقق</h1>

@@ -1,6 +1,6 @@
-# GoWork API Documentation
+# Masarak API Documentation
 
-A comprehensive API reference for frontend developers integrating with the GoWork job platform.
+A comprehensive API reference for frontend developers integrating with the Masarak platform.
 
 ---
 
@@ -21,7 +21,7 @@ A comprehensive API reference for frontend developers integrating with the GoWor
 
 ## Introduction
 
-GoWork is a job platform API that supports:
+Masarak is a job platform API that supports:
 
 - **Job Seekers (Candidates):** Registration, profile management, resume upload
 - **Employers (Companies):** Company registration, job posting management
@@ -945,7 +945,7 @@ Detailed authentication test for admin users.
 {
   "message": "Authentication successful",
   "userId": "123",
-  "email": "admin@gowork.com",
+  "email": "admin@masarak.com",
   "roles": ["Admin"]
 }
 ```
