@@ -2,7 +2,7 @@
 
 ## 🚀 Project Overview
 
-**GoWork-Next.js** is a modern dashboard and management application built with **Next.js 16** (App Router). It handles company administration, user authentication, and organizational requests.
+**Masarak** is a modern dashboard and management application built with **Next.js 16** (App Router). It handles company administration, user authentication, and organizational requests.
 
 ## 🛠 Tech Stack
 

@@ -56,8 +56,7 @@ export default function Footer() {
           <div>
             <h4 className="mb-4 text-lg font-bold">تواصل معنا</h4>
             <div className="text-muted-foreground space-y-2 text-sm">
-              <p>📧 البريد الإلكتروني: info@jobsystem.com</p>
-              <p>📞 الهاتف: +966 50 123 4567</p>
+              <p>📧 البريد الإلكتروني: masarak.platform@gmail.com</p>
             </div>
           </div>
         </div>
@@ -65,9 +64,9 @@ export default function Footer() {
 
       {/* Bottom Bar */}
       <div className="border-border bg-background text-muted-foreground border-t py-5 text-center text-sm">
-        © 2024 نظام إدارة التوظيف. جميع الحقوق محفوظة.
+        © 2024 Masarak. جميع الحقوق محفوظة.
         <span className="mx-1">•</span>
-        Powered by <span className="text-primary font-semibold">GoWork</span>
+        Powered by <span className="text-primary font-semibold">Masarak</span>
       </div>
     </footer>
   )

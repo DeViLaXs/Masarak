@@ -59,7 +59,7 @@ export function AppSidebar() {
   return (
     <Sidebar side="right">
       <SidebarHeader className="text-primary me-2 mt-2 mb-5 text-2xl font-bold">
-        GoWork
+        Masarak
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroupContent>

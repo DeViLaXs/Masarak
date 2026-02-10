@@ -22,6 +22,7 @@ import { useTheme } from 'next-themes'
 import { Button } from '@/components/ui/button'
 import Footer from '@/components/footer'
 import Image from 'next/image'
+import { AnimatedThemeToggler } from '@/components/ui/animated-theme-toggler'
 
 export default function HomePage() {
   const { setTheme } = useTheme()
@@ -31,9 +32,14 @@ export default function HomePage() {
       {/* Navbar */}
       <nav className="bg-card sticky top-0 z-50 flex items-center justify-between gap-4 border-b px-12 py-4 shadow-sm max-md:px-4 max-md:py-3">
         <div className="flex items-center">
-          <div className="text-primary text-2xl font-bold max-sm:text-xl">
-            GoWork
-          </div>
+          <Link href="/">
+            <Image
+              src="/masarak-dark.png"
+              alt="Logo"
+              width={130}
+              height={130}
+            />
+          </Link>
         </div>
 
         <div className="flex items-center gap-6 max-sm:gap-3">
@@ -51,29 +57,7 @@ export default function HomePage() {
             تسجيل شركة جديدة
           </Link>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-9 w-9 max-sm:h-8 max-sm:w-8"
-              >
-                <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all max-sm:h-4 max-sm:w-4 dark:scale-0 dark:-rotate-90" />
-                <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all max-sm:h-4 max-sm:w-4 dark:scale-100 dark:rotate-0" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setTheme('light')}>
-                Light
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme('dark')}>
-                Dark
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme('system')}>
-                System
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <AnimatedThemeToggler/>
         </div>
       </nav>
 
@@ -90,7 +74,7 @@ export default function HomePage() {
 
         <div className="animate-in fade-in slide-in-from-bottom-8 relative z-10 max-w-4xl px-5 text-center duration-1000">
           <h1 className="mb-6 text-3xl leading-tight font-bold sm:text-4xl md:text-6xl md:leading-20">
-            منصة GoWork لإدارة توظيف الشركات
+            منصة مسارك لإدارة توظيف الشركات
           </h1>
 
           <p className="mx-auto mb-12 max-w-2xl text-lg opacity-90 md:text-xl">

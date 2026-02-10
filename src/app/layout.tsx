@@ -11,9 +11,12 @@ const cairo = Cairo({
 })
 
 export const metadata: Metadata = {
-  title: 'GoWork - منصة إدارة توظيف الشركات',
+  title: 'Masarak',
   description:
     'نظام شامل يمكن الشركات من نشر الوظائف وإدارة طلبات التوظيف ومتابعة عمليات التوظيف بكفاءة عالية',
+  icons: {
+    icon: '/Masarak-logo.png',
+  },
 }
 
 export default function RootLayout({
