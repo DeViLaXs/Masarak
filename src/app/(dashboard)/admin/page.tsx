@@ -11,6 +11,15 @@ export default function AdminPage() {
 
   console.log(user)
 
+  // Don't render page content until auth check is complete
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="h-16 w-16 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+      </div>
+    )
+  }
+
   return (
     <div className="px-6 py-1 max-sm:px-4">
       <HomeCard1 />
