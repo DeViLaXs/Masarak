@@ -87,7 +87,6 @@
 //     '/check-email',
 //   ],
 // }
-
 import { NextResponse, type NextRequest } from 'next/server'
 
 const protectedPaths = ['/admin', '/company']
@@ -104,10 +103,10 @@ const authPaths = [
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
+  // تحقق فقط من وجود access_token
   const token = request.cookies.get('access_token')?.value
-  const userRole = request.cookies.get('user_role')?.value
-
   const hasToken = Boolean(token)
+  console.log(hasToken)
 
   const isProtectedRoute = protectedPaths.some((path) =>
     pathname.startsWith(path)
@@ -124,24 +123,10 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  // 🔐 2) منع المستخدم من دخول داشبورد غير دوره
-  if (hasToken && userRole) {
-    if (pathname.startsWith('/admin') && userRole !== 'Admin') {
-      return NextResponse.redirect(new URL('/company', request.url))
-    }
-
-    if (pathname.startsWith('/company') && userRole !== 'Company') {
-      return NextResponse.redirect(new URL('/admin', request.url))
-    }
-  }
-
-  // 🚫 3) منع المستخدم المسجل من الرجوع لصفحات تسجيل الدخول
+  // 🚫 2) منع المستخدم المسجل من الرجوع لصفحات تسجيل الدخول
   if (isAuthPage && hasToken) {
-    if (userRole === 'Admin') {
-      return NextResponse.redirect(new URL('/admin', request.url))
-    }
-
-    return NextResponse.redirect(new URL('/company', request.url))
+    // لا يمكن تحديد role هنا → frontend سيتولى redirect بعد fetch من /auth/me
+    return NextResponse.next()
   }
 
   return NextResponse.next()
