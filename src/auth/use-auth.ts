@@ -97,28 +97,44 @@ export function useAuth(options: UseAuthOptions = {}) {
   // Login mutation
   const loginMutation = useMutation({
     mutationFn: (data: LoginDto) => authService.login(data),
-    onSuccess: (response: LoginResponse) => {
-      // Invalidate session query to refetch user data
-      queryClient.invalidateQueries({ queryKey: authKeys.me() })
+    onSuccess: async () => {
+      // 1️⃣ جلب بيانات المستخدم بعد تسجيل الدخول
+      await queryClient.invalidateQueries({ queryKey: ['auth', 'me'] })
+      const me = queryClient.getQueryData<SessionUser>(['auth', 'me'])
 
-      // Set role cookie for proxy redirects (expires in 30 days)
-      if (typeof document !== 'undefined') {
-        document.cookie = `user_role=${response.role}; path=/; max-age=${30 * 24 * 60 * 60}; samesite=lax`
-      }
-
-      // Redirect based on role
-      if (response.role === 'Admin') {
+      // 2️⃣ redirect حسب role
+      if (me?.role === 'Admin') {
         router.push('/admin')
-      } else if (response.role === 'Company') {
+      } else if (me?.role === 'Company') {
         router.push('/company')
       }
     },
-  })
+  }) 
+
+  // const loginMutation = useMutation({
+  //   mutationFn: (data: LoginDto) => authService.login(data),
+  //   onSuccess: (response: LoginResponse) => {
+  //     // Invalidate session query to refetch user data
+  //     queryClient.invalidateQueries({ queryKey: authKeys.me() })
+
+  //     // Set role cookie for proxy redirects (expires in 30 days)
+  //     if (typeof document !== 'undefined') {
+  //       document.cookie = `user_role=${response.role}; path=/; max-age=${30 * 24 * 60 * 60}; samesite=lax`
+  //     }
+
+  //     // Redirect based on role
+  //     if (response.role === 'Admin') {
+  //       router.push('/admin')
+  //     } else if (response.role === 'Company') {
+  //       router.push('/company')
+  //     }
+  //   },
+  // })
 
   // Logout mutation
   const logoutMutation = useMutation({
     mutationFn: authService.logout,
-              onSuccess: () => {
+    onSuccess: () => {
       // Clear all auth-related queries
       queryClient.removeQueries({ queryKey: authKeys.all })
 
