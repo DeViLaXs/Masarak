@@ -98,38 +98,20 @@ export function useAuth(options: UseAuthOptions = {}) {
   const loginMutation = useMutation({
     mutationFn: (data: LoginDto) => authService.login(data),
     onSuccess: async () => {
-      // 1️⃣ جلب بيانات المستخدم بعد تسجيل الدخول
-      await queryClient.invalidateQueries({ queryKey: ['auth', 'me'] })
-      const me = queryClient.getQueryData<SessionUser>(['auth', 'me'])
+      // Refetch user data and wait for it
+      const userData = await queryClient.fetchQuery<SessionUser>({
+        queryKey: authKeys.me(),
+        queryFn: authService.me,
+      })
 
-      // 2️⃣ redirect حسب role
-      if (me?.role === 'Admin') {
+      // Redirect based on role
+      if (userData?.role === 'Admin') {
         router.push('/admin')
-      } else if (me?.role === 'Company') {
+      } else if (userData?.role === 'Company') {
         router.push('/company')
       }
     },
-  }) 
-
-  // const loginMutation = useMutation({
-  //   mutationFn: (data: LoginDto) => authService.login(data),
-  //   onSuccess: (response: LoginResponse) => {
-  //     // Invalidate session query to refetch user data
-  //     queryClient.invalidateQueries({ queryKey: authKeys.me() })
-
-  //     // Set role cookie for proxy redirects (expires in 30 days)
-  //     if (typeof document !== 'undefined') {
-  //       document.cookie = `user_role=${response.role}; path=/; max-age=${30 * 24 * 60 * 60}; samesite=lax`
-  //     }
-
-  //     // Redirect based on role
-  //     if (response.role === 'Admin') {
-  //       router.push('/admin')
-  //     } else if (response.role === 'Company') {
-  //       router.push('/company')
-  //     }
-  //   },
-  // })
+  })
 
   // Logout mutation
   const logoutMutation = useMutation({

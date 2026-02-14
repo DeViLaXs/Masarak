@@ -4,7 +4,10 @@ import HomeCard2 from '@/app/(dashboard)/admin/_components/home-card-2'
 import { useAuth } from '@/auth/use-auth'
 
 export default function AdminPage() {
-  const { user, isLoading } = useAuth()
+  const { user, isLoading } = useAuth({
+    middleware: 'admin',
+    redirectTo: '/login',
+  })
 
   console.log(user)
 
