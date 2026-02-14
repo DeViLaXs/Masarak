@@ -36,7 +36,6 @@ export function LoginForm({
   }
 
   return (
-   
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
@@ -54,14 +53,14 @@ export function LoginForm({
                 transition={{ delay: 0.1, duration: 0.5 }}
                 className="flex flex-col items-center gap-2 text-center"
               >
-              <Image
-                src="/Masarak-logo.png"
-                className="hidden dark:block"
-                alt="Logo"
-                width={30}
-                height={30}
-              />
-              
+                <Image
+                  src="/Masarak-logo.png"
+                  className="hidden dark:block"
+                  alt="Logo"
+                  width={30}
+                  height={30}
+                />
+
                 <Image
                   src="/Masarak-logo-dark.png"
                   className="block dark:hidden"
@@ -69,7 +68,6 @@ export function LoginForm({
                   width={30}
                   height={30}
                 />
-              
 
                 <h1 className="text-2xl font-bold">تسجيل الدخول</h1>
               </motion.div>
@@ -116,6 +114,16 @@ export function LoginForm({
                   />
                 </Field>
               </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.5 }}
+              >
+                <Field>
+                  <Link href="/forget-password">نسيت كلمة المرور؟</Link>
+                </Field>
+              </motion.div>
+              
 
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -131,7 +139,7 @@ export function LoginForm({
                     {isLoggingIn ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
                   </Button>
                 </Field>
-                <FieldDescription className="text-center pt-4">
+                <FieldDescription className="pt-4 text-center">
                   ليس لديك حساب؟ <Link href="/register">سجل الأن</Link>
                 </FieldDescription>
               </motion.div>
@@ -143,15 +151,15 @@ export function LoginForm({
               animate={{ opacity: 1 }}
               transition={{
                 duration: 0.4,
-                scale: { type: "spring", visualDuration: 0.4, bounce: 0.5 },
+                scale: { type: 'spring', visualDuration: 0.4, bounce: 0.5 },
               }}
             >
-            <Image
-              src="/auth-background.jpg"
-              alt="Image"  
-              fill
-              className="absolute inset-0 h-full w-full object-cover"
-            />
+              <Image
+                src="/auth-background.jpg"
+                alt="Image"
+                fill
+                className="absolute inset-0 h-full w-full object-cover"
+              />
             </motion.div>
             <div className="absolute inset-0 bg-black/30 backdrop-blur-xs"></div>
             <motion.div
@@ -159,12 +167,10 @@ export function LoginForm({
               animate={{ opacity: 1, scale: 1 }}
               transition={{
                 duration: 0.4,
-                scale: { type: "spring", visualDuration: 0.4, bounce: 0.5 },
+                scale: { type: 'spring', visualDuration: 0.4, bounce: 0.5 },
               }}
               className="absolute right-20 bottom-0 hidden -translate-x-1/2 -translate-y-1/2 dark:block"
-            >
-              
-            </motion.div>
+            ></motion.div>
           </div>
         </CardContent>
       </Card>

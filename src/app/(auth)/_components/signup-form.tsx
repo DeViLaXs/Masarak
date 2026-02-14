@@ -245,15 +245,15 @@ export function SignupForm({
               animate={{ opacity: 1 }}
               transition={{
                 duration: 0.4,
-                scale: { type: "spring", visualDuration: 0.4, bounce: 0.5 },
+                scale: { type: 'spring', visualDuration: 0.4, bounce: 0.5 },
               }}
             >
-            <Image
-              src="/auth-background.jpg"
-              alt="Image"
-              fill
-              className="absolute inset-0 h-full w-full object-cover"
-            />
+              <Image
+                src="/auth-background.jpg"
+                alt="Image"
+                fill
+                className="absolute inset-0 h-full w-full object-cover"
+              />
             </motion.div>
             <div className="absolute inset-0 bg-black/30 backdrop-blur-xs"></div>
             <motion.div

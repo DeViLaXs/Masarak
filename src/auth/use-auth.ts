@@ -70,14 +70,14 @@ export function useAuth(options: UseAuthOptions = {}) {
           return
         }
 
-        // Check role-based access
+        // Check role-based access - redirect back to own dashboard
         if (middleware === 'admin' && role !== 'Admin') {
-          router.replace('/forbidden')
+          router.replace('/company')
           return
         }
 
         if (middleware === 'company' && role !== 'Company') {
-          router.replace('/forbidden')
+          router.replace('/admin')
           return
         }
       }
@@ -101,6 +101,11 @@ export function useAuth(options: UseAuthOptions = {}) {
       // Invalidate session query to refetch user data
       queryClient.invalidateQueries({ queryKey: authKeys.me() })
 
+      // Set role cookie for proxy redirects (expires in 30 days)
+      if (typeof document !== 'undefined') {
+        document.cookie = `user_role=${response.role}; path=/; max-age=${30 * 24 * 60 * 60}; samesite=lax`
+      }
+
       // Redirect based on role
       if (response.role === 'Admin') {
         router.push('/admin')
@@ -113,9 +118,16 @@ export function useAuth(options: UseAuthOptions = {}) {
   // Logout mutation
   const logoutMutation = useMutation({
     mutationFn: authService.logout,
-    onSuccess: () => {
+              onSuccess: () => {
       // Clear all auth-related queries
       queryClient.removeQueries({ queryKey: authKeys.all })
+
+      // Clear role cookie
+      if (typeof document !== 'undefined') {
+        document.cookie =
+          'user_role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
+      }
+
       router.replace('/login')
     },
   })
