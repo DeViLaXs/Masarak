@@ -24,17 +24,36 @@ import Footer from '@/components/footer'
 import Image from 'next/image'
 import { AnimatedThemeToggler } from '@/components/ui/animated-theme-toggler'
 
+import { useAuth } from '@/auth/use-auth'
+import { motion } from 'framer-motion'
+import { Skeleton } from '@/components/ui/skeleton'
+
 export default function HomePage() {
   const { setTheme } = useTheme()
+  const { isAuthenticated, role, isLoading } = useAuth()
+
+  const dashboardLink = role === 'Admin' ? '/admin' : '/company'
 
   return (
     <div className="bg-background text-foreground min-h-screen w-full text-right font-['Cairo']">
       {/* Navbar */}
-      <nav className="bg-card sticky top-0 z-50 flex items-center justify-between gap-4 border-b px-12 py-4 shadow-sm max-md:px-4 max-md:py-3">
+      <nav className="bg-card sticky top-0 z-50 flex h-19 items-center justify-between gap-4 border-b px-12 py-4 shadow-sm max-md:px-4 max-md:py-3">
         <div className="flex items-center">
           <Link href="/">
             <Image
               src="/masarak-dark.png"
+              priority
+              sizes="100vw"
+              className="block dark:hidden"
+              alt="Logo"
+              width={130}
+              height={130}
+            />
+            <Image
+              src="/masarak-light.png"
+              priority
+              sizes="100vw"
+              className="hidden dark:block"
               alt="Logo"
               width={130}
               height={130}
@@ -43,21 +62,37 @@ export default function HomePage() {
         </div>
 
         <div className="flex items-center gap-6 max-sm:gap-3">
-          <Link
-            href="/login"
-            className="text-muted-foreground hover:text-primary text-sm font-semibold transition-colors max-sm:text-xs"
-          >
-            تسجيل الدخول
-          </Link>
+          {isLoading ? (
+            <div className="flex items-center gap-4">
+              <Skeleton className="h-10 w-35 bg-gray-700"/>
+              <Skeleton className="h-10 w-35 bg-gray-700"/>
+            </div>
+          ) : isAuthenticated ? (
+            <Link
+              href={dashboardLink}
+              className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-5 py-2.5 text-sm font-semibold transition max-sm:px-3 max-sm:py-2 max-sm:text-xs"
+            >
+              لوحة التحكم
+            </Link>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="text-muted-foreground hover:text-primary text-sm font-semibold transition-colors max-sm:text-xs"
+              >
+                تسجيل الدخول
+              </Link>
 
-          <Link
-            href="/register"
-            className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-5 py-2.5 text-sm font-semibold transition max-sm:px-3 max-sm:py-2 max-sm:text-xs"
-          >
-            تسجيل شركة جديدة
-          </Link>
+              <Link
+                href="/register"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-5 py-2.5 text-sm font-semibold transition max-sm:px-3 max-sm:py-2 max-sm:text-xs"
+              >
+                تسجيل شركة جديدة
+              </Link>
+            </>
+          )}
 
-          <AnimatedThemeToggler/>
+          <AnimatedThemeToggler />
         </div>
       </nav>
 
@@ -68,36 +103,60 @@ export default function HomePage() {
           src="/background.jpg"
           alt="Background"
           fill
+          priority
+          sizes="100vw"
           className="object-cover"
         />
         <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
 
-        <div className="animate-in fade-in slide-in-from-bottom-8 relative z-10 max-w-4xl px-5 text-center duration-1000">
-          <h1 className="mb-6 text-3xl leading-tight font-bold sm:text-4xl md:text-6xl md:leading-20">
-            منصة مسارك لإدارة توظيف الشركات
-          </h1>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        >
+          <div className="animate-in fade-in slide-in-from-bottom-8 relative z-10 max-w-4xl px-5 text-center duration-1000">
+            <h1 className="mb-6 text-3xl leading-tight font-bold sm:text-4xl md:text-6xl md:leading-20">
+              منصة مسارك لإدارة توظيف الشركات
+            </h1>
 
-          <p className="mx-auto mb-12 max-w-2xl text-lg opacity-90 md:text-xl">
-            نظام شامل يمكن الشركات من نشر الوظائف وإدارة طلبات التوظيف ومتابعة
-            عمليات التوظيف بكفاءة عالية
-          </p>
+            <p className="mx-auto mb-12 max-w-2xl text-lg opacity-90 md:text-xl">
+              نظام شامل يمكن الشركات من نشر الوظائف وإدارة طلبات التوظيف ومتابعة
+              عمليات التوظيف بكفاءة عالية
+            </p>
 
-          <div className="flex flex-col justify-center gap-4 sm:flex-row">
-            <Link
-              href="/register"
-              className="bg-secondary text-secondary-foreground hover:bg-secondary/90 rounded-lg px-8 py-3 text-center text-base font-bold transition md:px-10 md:py-3.5 md:text-lg"
-            >
-              ابدأ الآن مجاناً
-            </Link>
+            <div className="flex flex-col justify-center gap-4 sm:flex-row">
+              {isLoading ? (
+                <div className="flex h-15 items-center gap-4">
+                  <Skeleton className="h-15 w-45" />
+                  <Skeleton className="h-15 w-45" />
+                </div>
+              ) : isAuthenticated ? (
+                <Link
+                  href={dashboardLink}
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-5 py-2.5 text-sm font-semibold transition max-sm:px-3 max-sm:py-2 max-sm:text-xs"
+                >
+                  لوحة التحكم
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    href="/register"
+                    className="bg-secondary text-secondary-foreground hover:bg-secondary/90 rounded-lg px-8 py-3 text-center text-base font-bold transition md:px-10 md:py-3.5 md:text-lg"
+                  >
+                    ابدأ الآن مجاناً
+                  </Link>
 
-            <Link
-              href="/login"
-              className="border-border bg-primary hover:bg-background/30 rounded-lg border px-8 py-3 text-center text-base font-semibold backdrop-blur transition md:px-10 md:py-3.5 md:text-lg"
-            >
-              تسجيل الدخول
-            </Link>
+                  <Link
+                    href="/login"
+                    className="border-border bg-primary hover:bg-background/30 rounded-lg border px-8 py-3 text-center text-base font-semibold backdrop-blur transition md:px-10 md:py-3.5 md:text-lg"
+                  >
+                    تسجيل الدخول
+                  </Link>
+                </>
+              )}
+            </div>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* Features */}
