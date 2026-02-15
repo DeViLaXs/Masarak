@@ -10,8 +10,19 @@ export default function AuthLayout({
 }) {
   const { isLoading, isAuthenticated } = useAuth({ middleware: 'guest' })
 
-  // Only block if user is confirmed authenticated (not during loading)
-  if (!isLoading && isAuthenticated) {
+  // Show loading only while checking auth, then redirect if authenticated
+  // For unauthenticated users: isLoading becomes false quickly after 401 response
+  // For authenticated users: stays in loading until redirect happens
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="border-primary h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" />
+      </div>
+    )
+  }
+
+  // If authenticated (and not loading), show loading while redirect is happening
+  if (isAuthenticated) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="border-primary h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" />
