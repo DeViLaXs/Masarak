@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/auth/use-auth'
+import { PasswordInput } from '@/components/ui/password-input'
 
 export function NewPassword({
   className,
@@ -66,9 +67,8 @@ export function NewPassword({
                 <FieldLabel htmlFor="password">
                   ادخل كلمة المرور الجديدة
                 </FieldLabel>
-                <Input
+                <PasswordInput
                   id="password"
-                  type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -80,9 +80,8 @@ export function NewPassword({
                     ادخل كلمة المرور الجديدة مرة أخرى
                   </FieldLabel>
                 </div>
-                <Input
+                <PasswordInput
                   id="confirm-password"
-                  type="password"
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
