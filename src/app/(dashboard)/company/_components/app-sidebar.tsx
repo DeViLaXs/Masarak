@@ -58,8 +58,6 @@ const links = [
 
 export function AppSidebar() {
   const pathname = usePathname()
-  console.log('الصفحة الحالية:', pathname)
-
   const { logout, isLoggingOut } = useAuth()
 
   const handleLogout = () => {
@@ -76,7 +74,6 @@ export function AppSidebar() {
           <SidebarMenu>
             {links.map((link) => {
               const isActive = pathname === link.path
-
               return (
                 <SidebarMenuItem key={link.title} className="mx-2">
                   <SidebarMenuButton
@@ -104,7 +101,6 @@ export function AppSidebar() {
                   <Avatar className="ms-2">
                     <AvatarImage src="https://github.com/shadcn.png" />
                   </Avatar>
-                  {/* {user?.name} */}
                   <EllipsisVertical className="ms-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
@@ -116,15 +112,9 @@ export function AppSidebar() {
                 <DropdownMenuItem>
                   <span>الملف الشخصي</span>
                 </DropdownMenuItem>
-                <Link href="/">
-                  {/* <DropdownMenuItem variant="destructive" onClick={() => logout()} > */}
-                  <DropdownMenuItem
-                    variant="destructive"
-                    onClick={handleLogout}
-                  >
-                    الخروج
-                  </DropdownMenuItem>
-                </Link>
+                <DropdownMenuItem variant="destructive" onClick={handleLogout}>
+                  الخروج
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>

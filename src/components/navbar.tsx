@@ -13,41 +13,84 @@ import { SidebarTrigger } from './ui/sidebar'
 import { usePathname } from 'next/navigation'
 import { routeTitles } from '@/lib/route-titles'
 import { AnimatedThemeToggler } from './ui/animated-theme-toggler'
+import Link from 'next/link'
+import Image from 'next/image'
+import { Skeleton } from './ui/skeleton'
+import { useAuth } from '@/auth/use-auth'
 
 export default function NavBar() {
-  const { setTheme } = useTheme()
+  const { isAuthenticated, role, isLoading } = useAuth()
 
-  const pathname = usePathname()
-
-  const title = routeTitles.find((r) => pathname === r.path)?.title ?? ''
+  const dashboardLink = role === 'Admin' ? '/admin' : '/company'
 
   return (
-    <div className="bg-sidebar flex items-center justify-between border-b-2 p-2">
-      <div className="flex items-center gap-15">
-        <SidebarTrigger className="-ms-1" />
-        <h1 className="text-xl font-bold">{title}</h1>
+    <nav className="bg-card sticky top-0 z-50 flex h-19 items-center justify-between gap-4 border-b px-12 py-4 shadow-sm max-md:px-4 max-md:py-3">
+       <div className="flex h-10 items-center justify-center">
+          <Link href="/" className="flex h-10 items-center justify-center">
+            <Image
+              src="/masarak-dark.png"
+              className="hidden dark:block"
+              alt="Logo"
+              width={110}
+              height={110}
+            />
+            <Image
+              src="/masarak-light.png"
+              className="block dark:hidden"
+              alt="Logo"
+              width={110}
+              height={110}
+            />
+            <Image
+              src="/Masarak-logo-dark.png"
+              className="block dark:hidden"
+              alt="Logo"
+              width={25}
+              height={25}
+            />
+            <Image
+              src="/Masarak-logo.png"
+              className="hidden dark:block"
+              alt="Logo"
+              width={25}
+              height={25}
+            />
+          </Link>
+        </div>
+
+      <div className="flex items-center gap-6 max-sm:gap-3">
+        {isLoading ? (
+          <div className="flex items-center gap-4">
+            <Skeleton className="h-10 w-35 bg-gray-700" />
+            <Skeleton className="h-10 w-35 bg-gray-700" />
+          </div>
+        ) : isAuthenticated ? (
+          <Link
+            href={dashboardLink}
+            className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-5 py-2.5 text-sm font-semibold transition max-sm:px-3 max-sm:py-2 max-sm:text-xs"
+          >
+            لوحة التحكم
+          </Link>
+        ) : (
+          <>
+            <Link
+              href="/login"
+              className="text-muted-foreground hover:text-primary text-sm font-semibold transition-colors max-sm:text-xs"
+            >
+              تسجيل الدخول
+            </Link>
+
+            <Link
+              href="/register"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-5 py-2.5 text-sm font-semibold transition max-sm:px-3 max-sm:py-2 max-sm:text-xs"
+            >
+              تسجيل شركة جديدة
+            </Link>
+          </>
+        )}
+
+        <AnimatedThemeToggler />
       </div>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="icon">
-            <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-            <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-            <span className="sr-only">Toggle theme</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem onClick={() => setTheme('light')}>
-            Light
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setTheme('dark')}>
-            Dark
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setTheme('system')}>
-            System
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-      <AnimatedThemeToggler />
-    </div>
+    </nav>
   )
 }

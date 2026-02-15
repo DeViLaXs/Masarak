@@ -27,6 +27,7 @@ import { AnimatedThemeToggler } from '@/components/ui/animated-theme-toggler'
 import { useAuth } from '@/auth/use-auth'
 import { motion } from 'framer-motion'
 import { Skeleton } from '@/components/ui/skeleton'
+import NavBar from '@/components/navbar'
 
 export default function HomePage() {
   const { setTheme } = useTheme()
@@ -37,64 +38,7 @@ export default function HomePage() {
   return (
     <div className="bg-background text-foreground min-h-screen w-full text-right font-['Cairo']">
       {/* Navbar */}
-      <nav className="bg-card sticky top-0 z-50 flex h-19 items-center justify-between gap-4 border-b px-12 py-4 shadow-sm max-md:px-4 max-md:py-3">
-        <div className="flex items-center">
-          <Link href="/">
-            <Image
-              src="/masarak-dark.png"
-              priority
-              sizes="100vw"
-              className="block dark:hidden"
-              alt="Logo"
-              width={130}
-              height={130}
-            />
-            <Image
-              src="/masarak-light.png"
-              priority
-              sizes="100vw"
-              className="hidden dark:block"
-              alt="Logo"
-              width={130}
-              height={130}
-            />
-          </Link>
-        </div>
-
-        <div className="flex items-center gap-6 max-sm:gap-3">
-          {isLoading ? (
-            <div className="flex items-center gap-4">
-              <Skeleton className="h-10 w-35 bg-gray-700"/>
-              <Skeleton className="h-10 w-35 bg-gray-700"/>
-            </div>
-          ) : isAuthenticated ? (
-            <Link
-              href={dashboardLink}
-              className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-5 py-2.5 text-sm font-semibold transition max-sm:px-3 max-sm:py-2 max-sm:text-xs"
-            >
-              لوحة التحكم
-            </Link>
-          ) : (
-            <>
-              <Link
-                href="/login"
-                className="text-muted-foreground hover:text-primary text-sm font-semibold transition-colors max-sm:text-xs"
-              >
-                تسجيل الدخول
-              </Link>
-
-              <Link
-                href="/register"
-                className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-5 py-2.5 text-sm font-semibold transition max-sm:px-3 max-sm:py-2 max-sm:text-xs"
-              >
-                تسجيل شركة جديدة
-              </Link>
-            </>
-          )}
-
-          <AnimatedThemeToggler />
-        </div>
-      </nav>
+      <NavBar />
 
       {/* Hero */}
       <section className="bg-primary text-primary-foreground relative flex h-[85vh] items-center justify-center overflow-hidden">
