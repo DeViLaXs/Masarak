@@ -30,7 +30,15 @@ export function useAuth(options: UseAuthOptions = {}) {
   const router = useRouter()
   const queryClient = useQueryClient()
 
-  // Fetch current user session
+  // Helper to check if access_token cookie exists
+  const hasAccessToken = () => {
+    if (typeof document === 'undefined') return false
+    return document.cookie
+      .split(';')
+      .some((cookie) => cookie.trim().startsWith('access_token='))
+  }
+
+  // Fetch current user session - only if access_token exists
   const {
     data: user,
     isLoading: isSessionLoading,
@@ -39,6 +47,7 @@ export function useAuth(options: UseAuthOptions = {}) {
   } = useQuery<SessionUser>({
     queryKey: authKeys.me(),
     queryFn: authService.me,
+    enabled: hasAccessToken(), // Only run query if token exists
     retry: false,
     refetchOnWindowFocus: false,
     staleTime: 5 * 60 * 1000, // 5 minutes
