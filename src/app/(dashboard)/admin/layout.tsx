@@ -3,7 +3,7 @@
 import { AppSidebar } from './_components/app-sidebar'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { useAuth } from '@/auth/use-auth'
-import NavBar from '@/components/navbar'
+import DashboardNavbar from '@/components/dashboard-navbar'
 
 export default function AdminLayout({
   children,
@@ -25,7 +25,7 @@ export default function AdminLayout({
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <NavBar />
+        <DashboardNavbar />
         <div className="flex flex-1 flex-col gap-4 p-4">{children}</div>
       </SidebarInset>
     </SidebarProvider>
