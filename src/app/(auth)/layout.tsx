@@ -9,11 +9,13 @@ export default function AuthLayout({
 }: {
   children: React.ReactNode
 }) {
-  const { isLoading, isAuthenticated } = useAuth({ middleware: 'guest' })
+  const { isLoading, isAuthenticated, isError } = useAuth({
+    middleware: 'guest',
+  })
 
-  // 🛡️ Prevent flash: If loading or already authenticated, show spinner
-  // This keeps the form hidden during auth check and redirection
-  if (isLoading || isAuthenticated) {
+  // 🛡️ Prevent flash: Show spinner while loading session OR if already authenticated
+  // But STOP showing it if an error occurs (which means the user is not authenticated)
+  if ((isLoading || isAuthenticated) && !isError) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="border-primary h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" />

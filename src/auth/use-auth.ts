@@ -41,6 +41,7 @@ export function useAuth(options: UseAuthOptions = {}) {
     queryFn: authService.me,
     retry: false,
     refetchOnWindowFocus: false,
+    refetchOnMount: false, // 🛡️ Prevent loops on remount
     staleTime: 5 * 60 * 1000, // 5 minutes
   })
 
