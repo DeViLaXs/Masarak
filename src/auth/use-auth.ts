@@ -39,7 +39,7 @@ export function useAuth(options: UseAuthOptions = {}) {
   } = useQuery<SessionUser>({
     queryKey: authKeys.me(),
     queryFn: authService.me,
-    retry: false,
+    retry: 0, // 🛡️ Absolute no retry for session check
     refetchOnWindowFocus: false,
     refetchOnMount: false, // 🛡️ Prevent loops on remount
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -55,6 +55,12 @@ export function useAuth(options: UseAuthOptions = {}) {
     const handleRedirect = () => {
       // If session error (401/403), user is not authenticated
       if (isSessionError) {
+        // Clear is_logged_in cookie if it exists
+        if (typeof document !== 'undefined') {
+          document.cookie =
+            'is_logged_in=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
+        }
+
         // Protected routes should redirect to login
         if (middleware === 'admin' || middleware === 'company') {
           router.replace(redirectTo ?? '/login')
@@ -99,6 +105,11 @@ export function useAuth(options: UseAuthOptions = {}) {
   const loginMutation = useMutation({
     mutationFn: (data: LoginDto) => authService.login(data),
     onSuccess: async () => {
+      // Set a non-HttpOnly cookie for optimistic frontend checks
+      if (typeof document !== 'undefined') {
+        document.cookie = `is_logged_in=true; path=/; max-age=${30 * 24 * 60 * 60}; samesite=lax`
+      }
+
       // Refetch user data and wait for it
       const userData = await queryClient.fetchQuery<SessionUser>({
         queryKey: authKeys.me(),
@@ -121,10 +132,12 @@ export function useAuth(options: UseAuthOptions = {}) {
       // Clear all auth-related queries
       queryClient.removeQueries({ queryKey: authKeys.all })
 
-      // Clear role cookie
+      // Clear all auth cookies
       if (typeof document !== 'undefined') {
         document.cookie =
           'user_role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
+        document.cookie =
+          'is_logged_in=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
       }
 
       router.replace('/')

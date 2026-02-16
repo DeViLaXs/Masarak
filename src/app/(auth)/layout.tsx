@@ -2,7 +2,7 @@
 
 import { useAuth } from '@/auth/use-auth'
 import AuthNavBar from './_components/auth-navbar'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 export default function AuthLayout({
   children,
@@ -12,10 +12,24 @@ export default function AuthLayout({
   const { isLoading, isAuthenticated, isError } = useAuth({
     middleware: 'guest',
   })
+  const [isLoggedOutOptimistic, setIsLoggedOutOptimistic] = useState(false)
 
-  // 🛡️ Prevent flash: Show spinner while loading session OR if already authenticated
-  // But STOP showing it if an error occurs (which means the user is not authenticated)
-  if ((isLoading || isAuthenticated) && !isError) {
+  useEffect(() => {
+    // Check if we are optimistically logged out
+    if (typeof document !== 'undefined') {
+      const isLoggedInCookie = document.cookie
+        .split(';')
+        .some((item) => item.trim().startsWith('is_logged_in='))
+      if (!isLoggedInCookie) {
+        setIsLoggedOutOptimistic(true)
+      }
+    }
+  }, [])
+
+  // 🛡️ Prevent flash and loops:
+  // 1. If we are optimistically logged out (no is_logged_in cookie), show form immediately
+  // 2. Otherwise, if loading or authenticated (and no error yet), show spinner
+  if (!isLoggedOutOptimistic && (isLoading || isAuthenticated) && !isError) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="border-primary h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" />
