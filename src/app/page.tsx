@@ -39,10 +39,8 @@ export default function HomePage() {
     <div className="bg-background text-foreground min-h-screen w-full text-right font-['Cairo']">
       {/* Navbar */}
       <NavBar />
-
       {/* Hero */}
       <section className="bg-primary text-primary-foreground relative flex h-[85vh] items-center justify-center overflow-hidden">
-        {/* <div className="absolute inset-0 bg-[url('/background.jpg')] bg-cover bg-center" /> */}
         <Image
           src="/background.jpg"
           alt="Background"

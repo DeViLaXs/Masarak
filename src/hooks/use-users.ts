@@ -1,56 +1,35 @@
-import axiosInstance from '@/lib/axios'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
+import { userService } from '@/services/user-service'
 
-export const queryKey = {
-  users: ['users'],
-  userById: (id: string) => ['user', id],
+export const userKeys = {
+  all: ['users'] as const,
+  profile: () => [...userKeys.all, 'profile'] as const,
 }
 
-export const useUsers = () => {
+/**
+ * Hook to fetch the current user's profile
+ */
+export const useUserProfile = () => {
   return useQuery({
-    queryKey: queryKey.users,
-    queryFn: async () => {
-      const response = await axiosInstance.get('/users')
-      return response.data
-    },
+    queryKey: userKeys.profile(),
+    queryFn: userService.getProfile,
   })
 }
 
-export const useUserById = (id: string) => {
-  return useQuery({
-    queryKey: queryKey.userById(id),
-    queryFn: async () => {
-      const response = await axiosInstance.get(`/users/${id}`)
-      return response.data
-    },
-  })
-}
-
-export const useCreateUsers = () => {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    mutationFn: async (user: any) => {
-      const response = await axiosInstance.post('/users', user)
-      return response.data
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] })
-    },
-  })
-}
-export const useCompanyRegister = () => {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    mutationFn: async (user: any) => {
-      const response = await axiosInstance.post('/ ', user)
-      return response.data
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] })
-    },
-  })
-}
+/* 
+  How to add new hooks:
+  1. Add a new key to the userKeys object.
+  2. Create a new hook function.
+  3. Use useQuery for GET requests and useMutation for POST/PUT/DELETE requests.
+  
+  Example:
+  export const useUpdateProfile = () => {
+    const queryClient = useQueryClient()
+    return useMutation({
+      mutationFn: (data: UpdateProfileDto) => userService.updateProfile(data),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: userKeys.profile() })
+      },
+    })
+  }
+*/
