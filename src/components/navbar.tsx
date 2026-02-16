@@ -17,6 +17,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Skeleton } from './ui/skeleton'
 import { useAuth } from '@/auth/use-auth'
+import Logo from './logo'
 
 export default function NavBar() {
   const { isAuthenticated, role, isLoading } = useAuth()
@@ -25,38 +26,7 @@ export default function NavBar() {
 
   return (
     <nav className="bg-card sticky top-0 z-50 flex h-19 items-center justify-between gap-4 border-b px-12 py-4 shadow-sm max-md:px-4 max-md:py-3">
-       <div className="flex h-10 items-center justify-center">
-          <Link href="/" className="flex h-10 items-center justify-center">
-            <Image
-              src="/masarak-dark.png"
-              className="hidden dark:block"
-              alt="Logo"
-              width={110}
-              height={110}
-            />
-            <Image
-              src="/masarak-light.png"
-              className="block dark:hidden"
-              alt="Logo"
-              width={110}
-              height={110}
-            />
-            <Image
-              src="/Masarak-logo-dark.png"
-              className="block dark:hidden"
-              alt="Logo"
-              width={25}
-              height={25}
-            />
-            <Image
-              src="/Masarak-logo.png"
-              className="hidden dark:block"
-              alt="Logo"
-              width={25}
-              height={25}
-            />
-          </Link>
-        </div>
+      <Logo />
 
       <div className="flex items-center gap-6 max-sm:gap-3">
         {isLoading ? (

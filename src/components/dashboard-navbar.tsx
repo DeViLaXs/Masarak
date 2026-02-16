@@ -15,19 +15,17 @@ import { routeTitles } from '@/lib/route-titles'
 import { AnimatedThemeToggler } from './ui/animated-theme-toggler'
 
 export default function DashboardNavBar() {
-  const { setTheme } = useTheme()
-
   const pathname = usePathname()
 
   const title = routeTitles.find((r) => pathname === r.path)?.title ?? ''
 
   return (
-    <div className="bg-sidebar flex items-center justify-between border-b-2 p-2">
+    <div className="bg-sidebar flex items-center justify-between border-b-2 p-5">
       <div className="flex items-center gap-15">
         <SidebarTrigger className="-ms-1" />
         <h1 className="text-xl font-bold">{title}</h1>
       </div>
-      <AnimatedThemeToggler />
+      <AnimatedThemeToggler className="pl-5" />
     </div>
   )
 }
