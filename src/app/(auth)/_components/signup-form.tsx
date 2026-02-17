@@ -49,7 +49,7 @@ export function SignupForm({
       },
       onError: (error) => {
         console.error('Registration failed:', error)
-        alert('Registration failed')
+        alert(error)
       },
     })
   }
@@ -176,7 +176,7 @@ export function SignupForm({
                   <Input
                     id="logo"
                     type="file"
-                    required
+                    
                     onChange={(e) =>
                       setRegisterForm({
                         ...registerForm,
@@ -231,7 +231,7 @@ export function SignupForm({
                 transition={{ delay: 0.7, duration: 0.5 }}
               >
                 <Field>
-                  <Button type="submit">إنشاء حساب</Button>
+                  <Button type="submit" disabled={isRegistering} className='w-full'>{isRegistering ? 'جاري الإنشاء...' : 'إنشاء حساب'}</Button>
                 </Field>
                 <FieldDescription className="pt-4 text-center">
                   لديك حساب بالفعل؟ <Link href="/login">تسجيل الدخول</Link>

@@ -34,7 +34,8 @@ export default function HomePage() {
   const { isAuthenticated, role, isLoading } = useAuth()
 
   const dashboardLink = role === 'Admin' ? '/admin' : '/company'
-
+  
+  
   return (
     <div className="bg-background text-foreground min-h-screen w-full text-right font-['Cairo']">
       {/* Navbar */}
@@ -158,5 +159,6 @@ export default function HomePage() {
       </section>
       <Footer />
     </div>
+    
   )
 }
