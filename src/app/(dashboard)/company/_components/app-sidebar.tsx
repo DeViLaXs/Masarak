@@ -27,6 +27,7 @@ import {
 } from '../../../../components/ui/dropdown-menu'
 import { Avatar, AvatarImage } from '../../../../components/ui/avatar'
 import { useAuth } from '@/auth/use-auth'
+import Logo from '@/components/logo'
 
 const links = [
   {
@@ -67,7 +68,7 @@ export function AppSidebar() {
   return (
     <Sidebar side="right">
       <SidebarHeader className="text-primary me-2 mt-2 mb-5 text-2xl font-bold">
-        Masarak
+        <Logo />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroupContent>
