@@ -53,17 +53,6 @@ export default function HomeCard1() {
           </div>
         </CardContent>
       </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle className="max-sm:text-xs"> الشهر</CardTitle>
-        </CardHeader>
-        <CardContent className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-purple-500">285K</h1>
-          <div className="rounded-[12px] bg-purple-400/25 p-3 max-sm:hidden">
-            <CircleDollarSign className="text-purple-500" />
-          </div>
-        </CardContent>
-      </Card>
     </div>
   )
 }
