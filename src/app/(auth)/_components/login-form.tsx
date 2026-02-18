@@ -18,6 +18,8 @@ import type { LoginDto } from '@/services/auth-service'
 import Image from 'next/image'
 import { PasswordInput } from '@/components/ui/password-input'
 import { motion } from 'framer-motion'
+import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 
 export function LoginForm({
   className,
@@ -30,9 +32,18 @@ export function LoginForm({
 
   const { login, isLoggingIn, loginError } = useAuth({ middleware: 'guest' })
 
+  const router = useRouter()
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    login(loginForm)
+    login(loginForm, {
+      onError: (err: any) => {
+        console.log(err)
+        if (err.status === 401) {
+          router.push(`/otp?email=${encodeURIComponent(loginForm.Email)}`)
+        }
+      },
+    })
   }
 
   return (
@@ -91,6 +102,9 @@ export function LoginForm({
                       })
                     }
                   />
+                  <FieldDescription className="text-xs text-red-500">
+                    {loginError?.message}
+                  </FieldDescription>
                 </Field>
               </motion.div>
 
@@ -123,7 +137,6 @@ export function LoginForm({
                   <Link href="/forget-password">نسيت كلمة المرور؟</Link>
                 </Field>
               </motion.div>
-              
 
               <motion.div
                 initial={{ opacity: 0, y: 20 }}

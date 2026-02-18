@@ -33,7 +33,7 @@ const signupSchema = z
       .string()
       .min(9, 'رقم الهاتف يجب أن يكون 9 أرقام')
       .regex(/^[0-9]+$/, 'يجب أن يحتوي رقم الهاتف على أرقام فقط'),
-    Industry: z.string().min(1, 'يرجى إدخال اسم الصناعة'),
+    Industry: z.string().min(2, 'يرجى إدخال اسم الصناعة'),
     Password: z.string().min(8, 'كلمة المرور يجب أن تكون 8 أحرف على الأقل'),
     PasswordConfirmation: z.string().min(1, 'يرجى تأكيد كلمة المرور'),
   })

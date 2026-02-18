@@ -21,7 +21,10 @@ api.interceptors.response.use(
         ? data.errors.join('\n')
         : data.errors
 
-      return Promise.reject({ message: messages })
+      return Promise.reject({
+        message: messages,
+        status: error.response?.status,
+      })
     }
 
     return Promise.reject(error)
