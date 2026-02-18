@@ -3,6 +3,7 @@ import { Cairo } from 'next/font/google'
 import './globals.css'
 import { ThemeProvider } from '@/components/theme-provider'
 import ReactQueryProvider from '@/lib/providers'
+import { Toaster } from 'sonner'
 
 const cairo = Cairo({
   variable: '--font-cairo',
@@ -35,6 +36,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             {children}
+            <Toaster/>
           </ThemeProvider>
         </ReactQueryProvider>
       </body>

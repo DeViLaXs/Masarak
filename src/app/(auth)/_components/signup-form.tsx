@@ -20,6 +20,27 @@ import { useState } from 'react'
 import { RegisterDto } from '@/services/auth-service'
 import { useAuth } from '@/auth/use-auth'
 import { motion } from 'framer-motion'
+import { Toaster } from '@/components/ui/sonner'
+import { toast } from 'sonner'
+import { z } from 'zod'
+
+// 1. Simple Validation Schema
+const signupSchema = z
+  .object({
+    CompanyName: z.string().min(2, 'اسم الشركة مطلوب'),
+    Email: z.string().email('بريد إلكتروني غير صالح'),
+    PhoneNumber: z
+      .string()
+      .min(9, 'رقم الهاتف يجب أن يكون 9 أرقام')
+      .regex(/^[0-9]+$/, 'يجب أن يحتوي رقم الهاتف على أرقام فقط'),
+    Industry: z.string().min(1, 'يرجى إدخال اسم الصناعة'),
+    Password: z.string().min(8, 'كلمة المرور يجب أن تكون 8 أحرف على الأقل'),
+    PasswordConfirmation: z.string().min(1, 'يرجى تأكيد كلمة المرور'),
+  })
+  .refine((data) => data.Password === data.PasswordConfirmation, {
+    message: 'كلمة المرور غير متطابقة',
+    path: ['PasswordConfirmation'],
+  })
 
 export function SignupForm({
   className,
@@ -30,6 +51,7 @@ export function SignupForm({
     middleware: 'guest',
   })
 
+  // 2. Form & Error State
   const [registerForm, setRegisterForm] = useState<RegisterDto>({
     CompanyName: '',
     Email: '',
@@ -40,16 +62,43 @@ export function SignupForm({
     LogoUrl: null,
   })
 
+  const [errors, setErrors] = useState<Record<string, string>>({})
+
+  // 3. Helper to update field and clear its error
+  const handleFieldChange = (field: keyof RegisterDto, value: any) => {
+    setRegisterForm((prev) => ({ ...prev, [field]: value }))
+    if (errors[field]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev }
+        delete newErrors[field]
+        return newErrors
+      })
+    }
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+
+    // 4. Validate using Zod
+    const result = signupSchema.safeParse(registerForm)
+
+    if (!result.success) {
+      const fieldErrors: Record<string, string> = {}
+      result.error.issues.forEach((err) => {
+        const path = err.path[0]
+        if (path) {
+          fieldErrors[path.toString()] = err.message
+        }
+      })
+      setErrors(fieldErrors)
+      return
+    }
+
+    // 5. Submit if valid
     register(registerForm, {
       onSuccess: () => {
         router.push(`/otp?email=${encodeURIComponent(registerForm.Email)}`)
         console.log('Registration successful')
-      },
-      onError: (error) => {
-        console.error('Registration failed:', error)
-        alert(error)
       },
     })
   }
@@ -98,14 +147,15 @@ export function SignupForm({
                   <Input
                     id="name"
                     type="text"
-                    required
                     onChange={(e) =>
-                      setRegisterForm({
-                        ...registerForm,
-                        CompanyName: e.target.value,
-                      })
+                      handleFieldChange('CompanyName', e.target.value)
                     }
                   />
+                  {errors.CompanyName && (
+                    <span className="pr-1 text-xs text-red-500">
+                      {errors.CompanyName}
+                    </span>
+                  )}
                 </Field>
               </motion.div>
               <motion.div
@@ -118,14 +168,13 @@ export function SignupForm({
                   <Input
                     id="email"
                     type="email"
-                    required
-                    onChange={(e) =>
-                      setRegisterForm({
-                        ...registerForm,
-                        Email: e.target.value,
-                      })
-                    }
+                    onChange={(e) => handleFieldChange('Email', e.target.value)}
                   />
+                  {(errors.Email || registerError) && (
+                    <span className="pr-1 text-xs text-red-500">
+                      {errors.Email || registerError?.message}
+                    </span>
+                  )}
                 </Field>
               </motion.div>
               <motion.div
@@ -140,28 +189,30 @@ export function SignupForm({
                       <Input
                         id="phone"
                         type="text"
-                        required
                         onChange={(e) =>
-                          setRegisterForm({
-                            ...registerForm,
-                            PhoneNumber: e.target.value,
-                          })
+                          handleFieldChange('PhoneNumber', e.target.value)
                         }
                       />
+                      {errors.PhoneNumber && (
+                        <span className="pr-1 text-xs text-red-500">
+                          {errors.PhoneNumber}
+                        </span>
+                      )}
                     </Field>
                     <Field>
                       <FieldLabel htmlFor="industry">الصناعة</FieldLabel>
                       <Input
                         id="industry"
                         type="text"
-                        required
                         onChange={(e) =>
-                          setRegisterForm({
-                            ...registerForm,
-                            Industry: e.target.value,
-                          })
+                          handleFieldChange('Industry', e.target.value)
                         }
                       />
+                      {errors.Industry && (
+                        <span className="pr-1 text-xs text-red-500">
+                          {errors.Industry}
+                        </span>
+                      )}
                     </Field>
                   </Field>
                 </Field>
@@ -176,12 +227,9 @@ export function SignupForm({
                   <Input
                     id="logo"
                     type="file"
-                    
+                    required
                     onChange={(e) =>
-                      setRegisterForm({
-                        ...registerForm,
-                        LogoUrl: e.target.files?.[0] || null,
-                      })
+                      handleFieldChange('LogoUrl', e.target.files?.[0] || null)
                     }
                   />
                 </Field>
@@ -197,14 +245,11 @@ export function SignupForm({
                       <FieldLabel htmlFor="password">كلمة المرور</FieldLabel>
                       <PasswordInput
                         id="password"
-                        required
                         onChange={(e) =>
-                          setRegisterForm({
-                            ...registerForm,
-                            Password: e.target.value,
-                          })
+                          handleFieldChange('Password', e.target.value)
                         }
                       />
+                      
                     </Field>
                     <Field>
                       <FieldLabel htmlFor="confirm-password">
@@ -212,17 +257,26 @@ export function SignupForm({
                       </FieldLabel>
                       <PasswordInput
                         id="confirm-password"
-                        required
                         onChange={(e) =>
-                          setRegisterForm({
-                            ...registerForm,
-                            PasswordConfirmation: e.target.value,
-                          })
+                          handleFieldChange(
+                            'PasswordConfirmation',
+                            e.target.value,
+                          )
                         }
                       />
                     </Field>
                   </Field>
-                </Field>
+                      {errors.Password && (
+                        <span className="pr-1 text-xs text-red-500">
+                          {errors.Password}
+                        </span>
+                      )}
+                      {errors.PasswordConfirmation && (
+                        <span className="pr-1 text-xs text-red-500">
+                          {errors.PasswordConfirmation}
+                        </span>
+                      )}
+                    </Field>
               </motion.div>
 
               <motion.div
@@ -231,7 +285,13 @@ export function SignupForm({
                 transition={{ delay: 0.7, duration: 0.5 }}
               >
                 <Field>
-                  <Button type="submit" disabled={isRegistering} className='w-full'>{isRegistering ? 'جاري الإنشاء...' : 'إنشاء حساب'}</Button>
+                  <Button
+                    type="submit"
+                    disabled={isRegistering}
+                    className="w-full"
+                  >
+                    {isRegistering ? 'جاري الإنشاء...' : 'إنشاء حساب'}
+                  </Button>
                 </Field>
                 <FieldDescription className="pt-4 text-center">
                   لديك حساب بالفعل؟ <Link href="/login">تسجيل الدخول</Link>
