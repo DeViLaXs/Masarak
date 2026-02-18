@@ -98,7 +98,7 @@ export function SignupForm({
     register(registerForm, {
       onSuccess: () => {
         router.push(`/otp?email=${encodeURIComponent(registerForm.Email)}`)
-        console.log('Registration successful')
+        toast.success('تم إنشاء الحساب بنجاح')
       },
     })
   }
