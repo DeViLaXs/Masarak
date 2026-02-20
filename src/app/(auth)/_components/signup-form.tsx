@@ -34,6 +34,22 @@ const signupSchema = z
       .min(9, 'رقم الهاتف يجب أن يكون 9 أرقام')
       .regex(/^[0-9]+$/, 'يجب أن يحتوي رقم الهاتف على أرقام فقط'),
     Industry: z.string().min(2, 'يرجى إدخال اسم الصناعة'),
+    LogoUrl: z
+      .any()
+      .refine((file) => file instanceof File, 'يرجى اختيار شعار الشركة')
+      .refine(
+        (file) => !file || file.size <= 1024 * 1024,
+        'حجم الصورة يجب أن يكون أقل من 1 ميجابايت',
+      )
+      .refine((file) => {
+        if (!file) return true
+        const fileName = file.name.toLowerCase()
+        return (
+          fileName.endsWith('.jpeg') ||
+          fileName.endsWith('.png') ||
+          fileName.endsWith('.webp')
+        )
+      }, 'الصورة يجب أن تكون من نوع jpeg أو png أو webp'),
     Password: z.string().min(8, 'كلمة المرور يجب أن تكون 8 أحرف على الأقل'),
     PasswordConfirmation: z.string().min(1, 'يرجى تأكيد كلمة المرور'),
   })
@@ -227,11 +243,19 @@ export function SignupForm({
                   <Input
                     id="logo"
                     type="file"
-                    required
+                    accept=".jpeg,.png,.webp"
                     onChange={(e) =>
                       handleFieldChange('LogoUrl', e.target.files?.[0] || null)
                     }
                   />
+                  {errors.LogoUrl && (
+                    <span className="pr-1 text-xs text-red-500">
+                      {errors.LogoUrl}
+                    </span>
+                  )}
+                  <FieldDescription className='text-xs text-black/60'>
+               يجب ان تكون الصورة اقل من 1 ميجابايت ومن نوع  jpeg, png, webp 
+                  </FieldDescription>
                 </Field>
               </motion.div>
               <motion.div
@@ -249,7 +273,6 @@ export function SignupForm({
                           handleFieldChange('Password', e.target.value)
                         }
                       />
-                      
                     </Field>
                     <Field>
                       <FieldLabel htmlFor="confirm-password">
@@ -266,17 +289,17 @@ export function SignupForm({
                       />
                     </Field>
                   </Field>
-                      {errors.Password && (
-                        <span className="pr-1 text-xs text-red-500">
-                          {errors.Password}
-                        </span>
-                      )}
-                      {errors.PasswordConfirmation && (
-                        <span className="pr-1 text-xs text-red-500">
-                          {errors.PasswordConfirmation}
-                        </span>
-                      )}
-                    </Field>
+                  {errors.Password && (
+                    <span className="pr-1 text-xs text-red-500">
+                      {errors.Password}
+                    </span>
+                  )}
+                  {errors.PasswordConfirmation && (
+                    <span className="pr-1 text-xs text-red-500">
+                      {errors.PasswordConfirmation}
+                    </span>
+                  )}
+                </Field>
               </motion.div>
 
               <motion.div
