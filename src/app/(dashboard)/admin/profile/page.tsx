@@ -34,14 +34,11 @@ export default function ProfilePage() {
   return (
     <div className="mx-auto max-w-4xl space-y-8 pb-10">
       {/* Header Section */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-0">
+      <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-0">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
-            إعدادات ملف الشركة
+            إعدادات الملف الشخصي
           </h1>
-          <p className="text-muted-foreground mt-1 text-sm">
-            إدارة معلومات شركتك وتفضيلات الأمان والوصول.
-          </p>
         </div>
         <div className="flex items-center gap-3">
           <Button variant="outline" size="sm">
@@ -63,9 +60,7 @@ export default function ProfilePage() {
             <CardTitle>
               <span className="text-lg font-bold">المعلومات العامة</span>
             </CardTitle>
-            <CardDescription>
-              التفاصيل الأساسية لملف شركتك التجاري.
-            </CardDescription>
+            <CardDescription>التفاصيل الأساسية لملفك الشخصي.</CardDescription>
             <Separator className="mt-5" />
           </CardHeader>
           <CardContent className="space-y-8 p-6">
@@ -73,9 +68,9 @@ export default function ProfilePage() {
             <div className="flex items-center gap-6">
               <div className="group relative">
                 <Avatar className="ring-background h-24 w-24 shadow-md ring-4 transition-transform group-hover:scale-105">
-                  <AvatarImage src={data?.sasUrl} />
+                  <AvatarImage src={data?.sasUrl??""} />
                   <AvatarFallback className="bg-primary/5 text-primary text-xl font-bold">
-                    {data?.companyName?.slice(0, 2).toUpperCase()}
+                    Masarak
                   </AvatarFallback>
                 </Avatar>
                 <div className="bg-primary text-primary-foreground ring-background hover:bg-primary/90 absolute -bottom-1 -left-1 cursor-pointer rounded-full p-2 shadow-lg ring-2 transition-colors">
@@ -83,7 +78,7 @@ export default function ProfilePage() {
                 </div>
               </div>
               <div className="space-y-2">
-                <h4 className="text-sm font-semibold">شعار الشركة</h4>
+                <h4 className="text-sm font-semibold">الصورة الشخصية</h4>
                 <p className="text-muted-foreground text-xs">
                   تنسيق WEBP أو PNG أو JPEG، بحد أقصى 1 ميجابايت.
                 </p>
@@ -108,7 +103,7 @@ export default function ProfilePage() {
             <div className="grid gap-6 md:grid-cols-2">
               <Field>
                 <FieldLabel className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
-                  اسم الشركة
+                  اسم المسؤول
                 </FieldLabel>
                 <Input
                   value={data?.companyName ?? ''}
@@ -122,25 +117,6 @@ export default function ProfilePage() {
                 <Input
                   value={data?.email ?? ''}
                   type="email"
-                  className="bg-muted/20 focus:bg-background transition-colors"
-                />
-              </Field>
-              <Field>
-                <FieldLabel className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
-                  رقم الهاتف
-                </FieldLabel>
-                <Input
-                  value={data?.phoneNumber ?? ''}
-                  className="bg-muted/20 focus:bg-background transition-colors"
-                  
-                />
-              </Field>
-              <Field>
-                <FieldLabel className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
-                  مجال العمل
-                </FieldLabel>
-                <Input
-                  value={data?.industry ?? ''}
                   className="bg-muted/20 focus:bg-background transition-colors"
                 />
               </Field>

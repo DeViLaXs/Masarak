@@ -230,7 +230,7 @@ export function SignupForm({
                       />
                     </Field>
                     <Field>
-                      <FieldLabel htmlFor="industry">الصناعة</FieldLabel>
+                      <FieldLabel htmlFor="industry">مجال العمل</FieldLabel>
                       <Input
                         id="industry"
                         type="text"

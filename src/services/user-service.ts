@@ -8,9 +8,11 @@ import { UserRole } from '@/auth/types'
  */
 export interface UserProfile {
   id: string
-  name: string
+  companyName: string
   email: string
-  phoneNumber?: string
+  sasUrl: string
+  phoneNumber: string
+  industry: string
   role: UserRole
 }
 

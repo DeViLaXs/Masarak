@@ -13,6 +13,7 @@ export const useUserProfile = () => {
   return useQuery({
     queryKey: userKeys.profile(),
     queryFn: userService.getProfile,
+    staleTime: 10 * 60 * 1000, // 10 minutes
   })
 }
 

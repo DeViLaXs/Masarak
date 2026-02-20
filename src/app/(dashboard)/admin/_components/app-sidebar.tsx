@@ -25,9 +25,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '../../../../components/ui/dropdown-menu'
-import { Avatar, AvatarImage } from '../../../../components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '../../../../components/ui/avatar'
 import { useAuth } from '@/auth/use-auth'
 import Logo from '@/components/logo'
+import { useUserProfile } from '@/hooks/use-users'
 
 const links = [
   {
@@ -52,6 +53,7 @@ export function AppSidebar() {
   console.log('الصفحة الحالية:', pathname)
 
   const { logout, isLoggingOut } = useAuth()
+  const { data } = useUserProfile()
 
   const handleLogout = () => {
     logout()
@@ -92,21 +94,22 @@ export function AppSidebar() {
             <DropdownMenu dir="rtl">
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton className="transition-all">
-                  <Avatar className="ms-2">
-                    <AvatarImage src="https://github.com/shadcn.png" />
-                  </Avatar>
-                  {/* {user?.name} */}
+                  <Avatar className="ring-background h-10 w-10 shadow-md ring-4 transition-transform group-hover:scale-105">
+                  <AvatarImage src={data?.sasUrl??""} />
+                  <AvatarFallback className="bg-primary/5 text-primary text-xl font-bold">
+                    {data?.companyName.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+                  {data?.companyName}
                   <EllipsisVertical className="ms-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent side="top" sideOffset={2}>
-                <DropdownMenuItem>
-                  <span>الملف الشخصي</span>
+                <DropdownMenuItem asChild>
+                  <Link href="/admin/profile">
+                    <span>الملف الشخصي</span>
+                  </Link>
                 </DropdownMenuItem>
-                <Link href="/">
-                  {/* <DropdownMenuItem variant="destructive" onClick={() => logout()} > */}
-                  <DropdownMenuItem>الإعدادات</DropdownMenuItem>
-                </Link>
                 {/* <DropdownMenuItem variant="destructive" onClick={() => logout()} > */}
                 <DropdownMenuItem variant="destructive" onClick={handleLogout}>
                   الخروج

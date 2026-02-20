@@ -20,7 +20,7 @@ export default function DashboardNavBar() {
   const title = routeTitles.find((r) => pathname === r.path)?.title ?? ''
 
   return (
-    <div className="bg-sidebar flex items-center justify-between border-b-2 p-5">
+    <div className="sticky top-0 z-50 bg-sidebar flex items-center justify-between border-b-2 p-5">
       <div className="flex items-center gap-15">
         <SidebarTrigger className="-ms-1" />
         <h1 className="text-xl font-bold">{title}</h1>

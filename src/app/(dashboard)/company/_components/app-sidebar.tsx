@@ -25,9 +25,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '../../../../components/ui/dropdown-menu'
-import { Avatar, AvatarImage } from '../../../../components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '../../../../components/ui/avatar'
 import { useAuth } from '@/auth/use-auth'
 import Logo from '@/components/logo'
+import { useUserProfile } from '@/hooks/use-users'
 
 const links = [
   {
@@ -60,6 +61,7 @@ const links = [
 export function AppSidebar() {
   const pathname = usePathname()
   const { logout, isLoggingOut } = useAuth()
+  const { data } = useUserProfile()
 
   const handleLogout = () => {
     logout()
@@ -99,19 +101,23 @@ export function AppSidebar() {
             <DropdownMenu dir="rtl">
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton className="transition-all">
-                  <Avatar className="ms-2">
-                    <AvatarImage src="https://github.com/shadcn.png" />
+                  <Avatar>
+                    <AvatarImage src={data?.sasUrl ?? ''} />
+                    <AvatarFallback className="bg-primary/5 text-primary text-xl font-bold">
+                      {data?.companyName.charAt(0)}
+                    </AvatarFallback>
                   </Avatar>
+                  {data?.companyName}
                   <EllipsisVertical className="ms-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 side="top"
                 sideOffset={2}
-                className="text-right"
+                className="text-right p-2"
               >
-                <DropdownMenuItem>
-                  <span>الملف الشخصي</span>
+                <DropdownMenuItem asChild>
+                  <Link href="/company/profile">الملف الشخصي</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem variant="destructive" onClick={handleLogout}>
                   الخروج
