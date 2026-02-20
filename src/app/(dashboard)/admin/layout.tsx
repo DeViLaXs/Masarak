@@ -1,9 +1,11 @@
 'use client'
 
+import React from 'react'
 import { AppSidebar } from './_components/app-sidebar'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { useAuth } from '@/auth/use-auth'
 import DashboardNavbar from '@/components/dashboard-navbar'
+import { MobileRestriction } from '@/components/mobile-restriction'
 
 export default function AdminLayout({
   children,
@@ -22,12 +24,17 @@ export default function AdminLayout({
   }
 
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <DashboardNavbar />
-        <div className="flex flex-1 flex-col gap-4 p-4">{children}</div>
-      </SidebarInset>
-    </SidebarProvider>
+    <>
+      <MobileRestriction />
+      <div className="hidden md:block">
+        <SidebarProvider>
+          <AppSidebar />
+          <SidebarInset>
+            <DashboardNavbar />
+            <div className="flex flex-1 flex-col gap-4 p-4">{children}</div>
+          </SidebarInset>
+        </SidebarProvider>
+      </div>
+    </>
   )
 }
