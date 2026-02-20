@@ -23,6 +23,7 @@ import { motion } from 'framer-motion'
 import { Toaster } from '@/components/ui/sonner'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import { CheckCircle2, Circle } from 'lucide-react'
 
 // 1. Simple Validation Schema
 const signupSchema = z
@@ -50,7 +51,15 @@ const signupSchema = z
           fileName.endsWith('.webp')
         )
       }, 'الصورة يجب أن تكون من نوع jpeg أو png أو webp'),
-    Password: z.string().min(8, 'كلمة المرور يجب أن تكون 8 أحرف على الأقل'),
+    Password: z
+      .string()
+      .min(8, 'كلمة المرور يجب أن تكون 8 أحرف على الأقل')
+      .regex(/[A-Z]/, 'يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل')
+      .regex(/[0-9]/, 'يجب أن تحتوي كلمة المرور على رقم واحد على الأقل')
+      .regex(
+        /[!@#$%^&*(),.?":{}|<>]/,
+        'يجب أن تحتوي كلمة المرور على رمز خاص واحد على الأقل',
+      ),
     PasswordConfirmation: z.string().min(1, 'يرجى تأكيد كلمة المرور'),
   })
   .refine((data) => data.Password === data.PasswordConfirmation, {
@@ -79,6 +88,16 @@ export function SignupForm({
   })
 
   const [errors, setErrors] = useState<Record<string, string>>({})
+
+  const passwordRequirements = [
+    { label: '8 أحرف على الأقل', check: (p: string) => p.length >= 8 },
+    { label: 'حرف كبير واحد على الأقل', check: (p: string) => /[A-Z]/.test(p) },
+    { label: 'رقم واحد على الأقل', check: (p: string) => /[0-9]/.test(p) },
+    {
+      label: 'رمز خاص واحد على الأقل',
+      check: (p: string) => /[!@#$%^&*(),.?":{}|<>]/.test(p),
+    },
+  ]
 
   // 3. Helper to update field and clear its error
   const handleFieldChange = (field: keyof RegisterDto, value: any) => {
@@ -209,11 +228,6 @@ export function SignupForm({
                           handleFieldChange('PhoneNumber', e.target.value)
                         }
                       />
-                      {errors.PhoneNumber && (
-                        <span className="pr-1 text-xs text-red-500">
-                          {errors.PhoneNumber}
-                        </span>
-                      )}
                     </Field>
                     <Field>
                       <FieldLabel htmlFor="industry">الصناعة</FieldLabel>
@@ -224,13 +238,18 @@ export function SignupForm({
                           handleFieldChange('Industry', e.target.value)
                         }
                       />
-                      {errors.Industry && (
-                        <span className="pr-1 text-xs text-red-500">
-                          {errors.Industry}
-                        </span>
-                      )}
                     </Field>
                   </Field>
+                  {errors.Industry && (
+                    <span className="pr-1 text-xs text-red-500">
+                      {errors.Industry}
+                    </span>
+                  )}
+                  {errors.PhoneNumber && (
+                    <span className="pr-1 text-xs text-red-500">
+                      {errors.PhoneNumber}
+                    </span>
+                  )}
                 </Field>
               </motion.div>
               <motion.div
@@ -253,8 +272,8 @@ export function SignupForm({
                       {errors.LogoUrl}
                     </span>
                   )}
-                  <FieldDescription className='text-xs text-black/60'>
-               يجب ان تكون الصورة اقل من 1 ميجابايت ومن نوع  jpeg, png, webp 
+                  <FieldDescription className="text-xs text-black/60 dark:text-white/60">
+                    يجب ان تكون الصورة اقل من 1 ميجابايت ومن نوع jpeg, png, webp
                   </FieldDescription>
                 </Field>
               </motion.div>
@@ -289,6 +308,9 @@ export function SignupForm({
                       />
                     </Field>
                   </Field>
+                  {/* <FieldDescription  className="text-xs text-black/60 dark:text-white/60">
+                    يجب ان تحتوي كلمة المرور على حرف كبير و رقم ورمز خاص
+                  </FieldDescription> */}
                   {errors.Password && (
                     <span className="pr-1 text-xs text-red-500">
                       {errors.Password}
@@ -299,6 +321,31 @@ export function SignupForm({
                       {errors.PasswordConfirmation}
                     </span>
                   )}
+                  <div className="mt-3 space-y-2 px-1">
+                    {passwordRequirements.map((req, index) => {
+                      const isMet = req.check(registerForm.Password || '')
+                      return (
+                        <div
+                          key={index}
+                          className={cn(
+                            'flex items-center gap-2 text-[11px] transition-colors',
+                            isMet
+                              ? 'text-green-600 dark:text-green-400'
+                              : 'text-muted-foreground',
+                          )}
+                        >
+                          {isMet ? (
+                            <CheckCircle2 className="h-3.5 w-3.5" />
+                          ) : (
+                            <Circle className="h-3.5 w-3.5" />
+                          )}
+                          <span>{req.label}</span>
+                        </div>
+                      )
+                    })}
+                  </div>
+
+                  
                 </Field>
               </motion.div>
 
