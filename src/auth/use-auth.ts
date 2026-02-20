@@ -129,8 +129,8 @@ export function useAuth(options: UseAuthOptions = {}) {
   const logoutMutation = useMutation({
     mutationFn: authService.logout,
     onSuccess: () => {
-      // Clear all auth-related queries
-      queryClient.removeQueries({ queryKey: authKeys.all })
+      // Clear all cached data across the entire application for security
+      queryClient.clear()
 
       // Clear all auth cookies
       if (typeof document !== 'undefined') {

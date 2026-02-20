@@ -94,8 +94,8 @@ export function AppSidebar() {
             <DropdownMenu dir="rtl">
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton className="transition-all">
-                  <Avatar className="ring-background h-10 w-10 shadow-md ring-4 transition-transform group-hover:scale-105">
-                  <AvatarImage src={data?.sasUrl??""} />
+                  <Avatar>
+                  <AvatarImage src={data?.sasUrl} />
                   <AvatarFallback className="bg-primary/5 text-primary text-xl font-bold">
                     {data?.companyName.charAt(0)}
                   </AvatarFallback>

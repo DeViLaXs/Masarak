@@ -102,7 +102,7 @@ export function AppSidebar() {
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton className="transition-all">
                   <Avatar>
-                    <AvatarImage src={data?.sasUrl ?? ''} />
+                    <AvatarImage src={data?.sasUrl} />
                     <AvatarFallback className="bg-primary/5 text-primary text-xl font-bold">
                       {data?.companyName.charAt(0)}
                     </AvatarFallback>
