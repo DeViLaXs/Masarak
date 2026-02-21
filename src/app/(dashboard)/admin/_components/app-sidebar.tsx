@@ -25,10 +25,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '../../../../components/ui/dropdown-menu'
-import { Avatar, AvatarFallback, AvatarImage } from '../../../../components/ui/avatar'
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '../../../../components/ui/avatar'
 import { useAuth } from '@/auth/use-auth'
 import Logo from '@/components/logo'
-import { useUserProfile } from '@/hooks/use-users'
+import { useUser } from '@/hooks/use-users'
 
 const links = [
   {
@@ -53,7 +57,7 @@ export function AppSidebar() {
   console.log('الصفحة الحالية:', pathname)
 
   const { logout, isLoggingOut } = useAuth()
-  const { data } = useUserProfile()
+  const { user } = useUser()
 
   const handleLogout = () => {
     logout()
@@ -95,12 +99,12 @@ export function AppSidebar() {
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton className="transition-all">
                   <Avatar>
-                  <AvatarImage src={data?.sasUrl} />
-                  <AvatarFallback className="bg-primary/5 text-primary text-xl font-bold">
-                    {data?.companyName.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-                  {data?.companyName}
+                    <AvatarImage src={user?.sasUrl} />
+                    <AvatarFallback className="bg-primary/5 text-primary text-xl font-bold">
+                      {user?.companyName.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  {user?.companyName}
                   <EllipsisVertical className="ms-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>

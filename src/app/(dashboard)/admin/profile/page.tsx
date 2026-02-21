@@ -21,15 +21,31 @@ import {
   Monitor,
   ChevronLeft,
   Trash2,
+  Loader2,
 } from 'lucide-react'
 import { Field, FieldLabel, FieldGroup } from '@/components/ui/field'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
-import { useUserProfile } from '@/hooks/use-users'
+import { useUser } from '@/hooks/use-users'
+import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
+import { DeleteAlert } from '@/components/delete-alert'
 
 export default function ProfilePage() {
-  const { data } = useUserProfile()
-  console.log(data)
+  const router = useRouter()
+  const { user, isLoading, deleteAccount, isDeletingAccount } = useUser()
+
+  const handleDeleteAccount = () => {
+    deleteAccount(undefined, {
+      onSuccess: () => {
+        toast.success('تم حذف الحساب بنجاح')
+        router.push('/')
+      },
+      onError: () => {
+        toast.error('حدث خطأ أثناء حذف الحساب')
+      },
+    })
+  }
 
   return (
     <div className="mx-auto max-w-4xl space-y-8 pb-10">
@@ -68,7 +84,7 @@ export default function ProfilePage() {
             <div className="flex items-center gap-6">
               <div className="group relative">
                 <Avatar className="ring-background h-24 w-24 shadow-md ring-4 transition-transform group-hover:scale-105">
-                  <AvatarImage src={data?.sasUrl??""} />
+                  <AvatarImage src={user?.sasUrl ?? ''} />
                   <AvatarFallback className="bg-primary/5 text-primary text-xl font-bold">
                     Masarak
                   </AvatarFallback>
@@ -106,7 +122,7 @@ export default function ProfilePage() {
                   اسم المسؤول
                 </FieldLabel>
                 <Input
-                  value={data?.companyName ?? ''}
+                  value={user?.companyName ?? ''}
                   className="bg-muted/20 focus:bg-background transition-colors"
                 />
               </Field>
@@ -115,9 +131,10 @@ export default function ProfilePage() {
                   البريد الإلكتروني
                 </FieldLabel>
                 <Input
-                  value={data?.email ?? ''}
+                  value={user?.email ?? ''}
                   type="email"
-                  className="bg-muted/20 focus:bg-background transition-colors"
+                  readOnly
+                  className="bg-muted/10 cursor-not-allowed opacity-70"
                 />
               </Field>
             </div>
@@ -169,13 +186,13 @@ export default function ProfilePage() {
                 بها بشكل نهائي. هذا الإجراء غير قابل للتراجع.
               </p>
             </div>
-            <Button
-              variant="destructive"
-              className="shrink-0 gap-2 font-bold shadow-sm"
-            >
-              <Trash2 size={16} />
-              إلغاء تنشيط الشركة
-            </Button>
+            <DeleteAlert
+              title="حذف الحساب"
+              description="سيؤدي هذا الإجراء إلى حذف بيانات شركتك وجميع الحسابات المرتبطة بها بشكل نهائي. هذا الإجراء غير قابل للتراجع."
+              onConfirm={handleDeleteAccount}
+              isLoading={isDeletingAccount}
+              triggerText="إلغاء تنشيط الشركة"
+            />
           </CardContent>
         </Card>
       </motion.div>

@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   Card,
   CardContent,
@@ -25,11 +25,86 @@ import {
 import { Field, FieldLabel, FieldGroup } from '@/components/ui/field'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
-import { useUserProfile } from '@/hooks/use-users'
+import { useUser } from '@/hooks/use-users'
+import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
+import { Loader2 } from 'lucide-react'
+import { DeleteAlert } from '@/components/delete-alert'
 
 export default function ProfilePage() {
-  const { data } = useUserProfile()
-  console.log(data)
+  const router = useRouter()
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const {
+    user,
+    isLoading,
+    updateProfile,
+    isUpdatingProfile,
+    deleteAccount,
+    isDeletingAccount,
+  } = useUser()
+
+  const [formData, setFormData] = useState({
+    companyName: '',
+    phoneNumber: '',
+    industry: '',
+    logoFile: null as File | null,
+  })
+
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+
+  // Sync local state when user data is loaded
+  useEffect(() => {
+    if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        companyName: user.companyName || '',
+        phoneNumber: user.phoneNumber || '',
+        industry: user.industry || '',
+      }))
+    }
+  }, [user])
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setFormData((prev) => ({ ...prev, logoFile: file }))
+      const url = URL.createObjectURL(file)
+      setPreviewUrl(url)
+    }
+  }
+
+  const handleUpdateProfile = () => {
+    updateProfile(
+      {
+        companyName: formData.companyName,
+        phoneNumber: formData.phoneNumber,
+        industry: formData.industry,
+        logoFile: formData.logoFile,
+      },
+      {
+        onSuccess: () => {
+          toast.success('تم تحديث الملف الشخصي بنجاح')
+          setFormData((prev) => ({ ...prev, logoFile: null }))
+          setPreviewUrl(null)
+        },
+        onError: () => {
+          toast.error('حدث خطأ أثناء تحديث الملف الشخصي')
+        },
+      },
+    )
+  }
+
+  const handleDeleteAccount = () => {
+    deleteAccount(undefined, {
+      onSuccess: () => {
+        toast.success('تم حذف الحساب بنجاح')
+        router.push('/')
+      },
+      onError: () => {
+        toast.error('حدث خطأ أثناء حذف الحساب')
+      },
+    })
+  }
 
   return (
     <div className="mx-auto max-w-4xl space-y-8 pb-10">
@@ -47,7 +122,16 @@ export default function ProfilePage() {
           <Button variant="outline" size="sm">
             إلغاء
           </Button>
-          <Button size="sm">حفظ التغييرات</Button>
+          <Button
+            size="sm"
+            onClick={handleUpdateProfile}
+            disabled={isUpdatingProfile || isLoading}
+          >
+            {isUpdatingProfile && (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            )}
+            حفظ التغييرات
+          </Button>
         </div>
       </div>
 
@@ -73,12 +157,15 @@ export default function ProfilePage() {
             <div className="flex items-center gap-6">
               <div className="group relative">
                 <Avatar className="ring-background h-24 w-24 shadow-md ring-4 transition-transform group-hover:scale-105">
-                  <AvatarImage src={data?.sasUrl} />
+                  <AvatarImage src={previewUrl || user?.sasUrl} />
                   <AvatarFallback className="bg-primary/5 text-primary text-xl font-bold">
-                    {data?.companyName?.slice(0, 2).toUpperCase()}
+                    {user?.companyName?.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                <div className="bg-primary text-primary-foreground ring-background hover:bg-primary/90 absolute -bottom-1 -left-1 cursor-pointer rounded-full p-2 shadow-lg ring-2 transition-colors">
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  className="bg-primary text-primary-foreground ring-background hover:bg-primary/90 absolute -bottom-1 -left-1 cursor-pointer rounded-full p-2 shadow-lg ring-2 transition-colors"
+                >
                   <Camera size={16} />
                 </div>
               </div>
@@ -88,16 +175,34 @@ export default function ProfilePage() {
                   تنسيق WEBP أو PNG أو JPEG، بحد أقصى 1 ميجابايت.
                 </p>
                 <div className="flex gap-3 pt-1">
-                  <Button variant="outline" size="xs" className="h-8">
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                  />
+                  <Button
+                    variant="outline"
+                    size="xs"
+                    className="h-8"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
                     تحميل جديد
                   </Button>
-                  <Button
-                    variant="ghost"
-                    size="xs"
-                    className="text-destructive hover:text-destructive hover:bg-destructive/5 h-8"
-                  >
-                    إزالة
-                  </Button>
+                  {(previewUrl || user?.sasUrl) && (
+                    <Button
+                      variant="ghost"
+                      size="xs"
+                      className="text-destructive hover:text-destructive hover:bg-destructive/5 h-8"
+                      onClick={() => {
+                        setPreviewUrl('/User-icon.webp')
+                        setFormData((prev) => ({ ...prev, logoFile: null }))
+                      }}
+                    >
+                      إزالة
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
@@ -111,7 +216,10 @@ export default function ProfilePage() {
                   اسم الشركة
                 </FieldLabel>
                 <Input
-                  value={data?.companyName ?? ''}
+                  value={formData.companyName}
+                  onChange={(e) =>
+                    setFormData({ ...formData, companyName: e.target.value })
+                  }
                   className="bg-muted/20 focus:bg-background transition-colors"
                 />
               </Field>
@@ -120,9 +228,10 @@ export default function ProfilePage() {
                   البريد الإلكتروني
                 </FieldLabel>
                 <Input
-                  value={data?.email ?? ''}
+                  value={user?.email ?? ''}
                   type="email"
-                  className="bg-muted/20 focus:bg-background transition-colors"
+                  readOnly
+                  className="bg-muted/10 cursor-not-allowed opacity-70"
                 />
               </Field>
               <Field>
@@ -130,9 +239,11 @@ export default function ProfilePage() {
                   رقم الهاتف
                 </FieldLabel>
                 <Input
-                  value={data?.phoneNumber ?? ''}
+                  value={formData.phoneNumber}
+                  onChange={(e) =>
+                    setFormData({ ...formData, phoneNumber: e.target.value })
+                  }
                   className="bg-muted/20 focus:bg-background transition-colors"
-                  
                 />
               </Field>
               <Field>
@@ -140,7 +251,10 @@ export default function ProfilePage() {
                   مجال العمل
                 </FieldLabel>
                 <Input
-                  value={data?.industry ?? ''}
+                  value={formData.industry}
+                  onChange={(e) =>
+                    setFormData({ ...formData, industry: e.target.value })
+                  }
                   className="bg-muted/20 focus:bg-background transition-colors"
                 />
               </Field>
@@ -193,13 +307,13 @@ export default function ProfilePage() {
                 بها بشكل نهائي. هذا الإجراء غير قابل للتراجع.
               </p>
             </div>
-            <Button
-              variant="destructive"
-              className="shrink-0 gap-2 font-bold shadow-sm"
-            >
-              <Trash2 size={16} />
-              إلغاء تنشيط الشركة
-            </Button>
+            <DeleteAlert
+              title="حذف الحساب"
+              description="سيؤدي هذا الإجراء إلى حذف بيانات شركتك. هذا الإجراء غير قابل للتراجع."
+              onConfirm={handleDeleteAccount}
+              isLoading={isDeletingAccount}
+              triggerText="حذف الحساب"
+            />
           </CardContent>
         </Card>
       </motion.div>
