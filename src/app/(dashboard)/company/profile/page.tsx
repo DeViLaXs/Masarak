@@ -21,6 +21,8 @@ import {
   Monitor,
   ChevronLeft,
   Trash2,
+  Circle,
+  CheckCircle2,
 } from 'lucide-react'
 import { Field, FieldLabel, FieldGroup } from '@/components/ui/field'
 import { motion } from 'framer-motion'
@@ -28,12 +30,15 @@ import { cn } from '@/lib/utils'
 import { useUser } from '@/hooks/use-users'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Check, X } from 'lucide-react'
 import { DeleteAlert } from '@/components/delete-alert'
+import { PasswordInput } from '@/components/ui/password-input'
 
 export default function ProfilePage() {
   const router = useRouter()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+
   const {
     user,
     isLoading,
@@ -41,6 +46,8 @@ export default function ProfilePage() {
     isUpdatingProfile,
     deleteAccount,
     isDeletingAccount,
+    changePassword,
+    isChangingPassword,
   } = useUser()
 
   const [formData, setFormData] = useState({
@@ -50,7 +57,12 @@ export default function ProfilePage() {
     logoFile: null as File | null,
   })
 
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [isChangingPasswordMode, setIsChangingPasswordMode] = useState(false)
+  const [passwordData, setPasswordData] = useState({
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  })
 
   // Sync local state when user data is loaded
   useEffect(() => {
@@ -67,6 +79,29 @@ export default function ProfilePage() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
+      // Validation: Type (strict webp, jpeg, png) - exclude jpg
+      const allowedTypes = ['image/webp', 'image/jpeg', 'image/png']
+      const extension = file.name.split('.').pop()?.toLowerCase()
+      const isAllowedExtension = ['webp', 'jpeg', 'png'].includes(
+        extension || '',
+      )
+
+      if (!allowedTypes.includes(file.type) || !isAllowedExtension) {
+        toast.error(
+          'عذراً، يرجى اختيار ملف من نوع WEBP أو JPEG أو PNG فقط (.jpg غير مدعوم)',
+        )
+        if (fileInputRef.current) fileInputRef.current.value = ''
+        return
+      }
+
+      // Validation: Size (1MB)
+      const maxSize = 1 * 1024 * 1024 // 1MB
+      if (file.size > maxSize) {
+        toast.error('عذراً، يجب أن يكون حجم الملف أقل من 1 ميجابايت')
+        if (fileInputRef.current) fileInputRef.current.value = ''
+        return
+      }
+
       setFormData((prev) => ({ ...prev, logoFile: file }))
       const url = URL.createObjectURL(file)
       setPreviewUrl(url)
@@ -104,6 +139,56 @@ export default function ProfilePage() {
         toast.error('حدث خطأ أثناء حذف الحساب')
       },
     })
+  }
+
+  const passwordRequirements = [
+    { label: '8 أحرف على الأقل', check: (p: string) => p.length >= 8 },
+    { label: 'حرف كبير واحد على الأقل', check: (p: string) => /[A-Z]/.test(p) },
+    { label: 'رقم واحد على الأقل', check: (p: string) => /[0-9]/.test(p) },
+    {
+      label: 'رمز خاص واحد على الأقل',
+      check: (p: string) => /[!@#$%^&*(),.?":{}|<>]/.test(p),
+    },
+  ]
+
+  const isPasswordValid = passwordRequirements.every((req) =>
+    req.check(passwordData.newPassword),
+  )
+
+  const handleChangePassword = () => {
+    if (!passwordData.oldPassword) {
+      toast.error('يرجى إدخال كلمة المرور الحالية')
+      return
+    }
+    if (!isPasswordValid) {
+      toast.error('كلمة المرور الجديدة غير مطابقة للشروط')
+      return
+    }
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      toast.error('كلمة المرور غير متطابقة')
+      return
+    }
+
+    changePassword(
+      {
+        OldPassword: passwordData.oldPassword,
+        NewPassword: passwordData.newPassword,
+      },
+      {
+        onSuccess: () => {
+          toast.success('تم تغيير كلمة المرور بنجاح')
+          setPasswordData({
+            oldPassword: '',
+            newPassword: '',
+            confirmPassword: '',
+          })
+          setIsChangingPasswordMode(false)
+        },
+        onError: (err: any) => {
+          toast.error(err?.response?.data?.message || 'فشل تغيير كلمة المرور')
+        },
+      },
+    )
   }
 
   return (
@@ -162,12 +247,12 @@ export default function ProfilePage() {
                     {user?.companyName?.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                <div
+                {/* <div
                   onClick={() => fileInputRef.current?.click()}
                   className="bg-primary text-primary-foreground ring-background hover:bg-primary/90 absolute -bottom-1 -left-1 cursor-pointer rounded-full p-2 shadow-lg ring-2 transition-colors"
                 >
                   <Camera size={16} />
-                </div>
+                </div> */}
               </div>
               <div className="space-y-2">
                 <h4 className="text-sm font-semibold">شعار الشركة</h4>
@@ -179,7 +264,7 @@ export default function ProfilePage() {
                     type="file"
                     ref={fileInputRef}
                     className="hidden"
-                    accept="image/*"
+                    accept=".webp,.jpeg,.png"
                     onChange={handleFileChange}
                   />
                   <Button
@@ -195,9 +280,19 @@ export default function ProfilePage() {
                       variant="ghost"
                       size="xs"
                       className="text-destructive hover:text-destructive hover:bg-destructive/5 h-8"
-                      onClick={() => {
-                        setPreviewUrl('/User-icon.webp')
-                        setFormData((prev) => ({ ...prev, logoFile: null }))
+                      onClick={async () => {
+                        try {
+                          const response = await fetch('/User-icon.webp')
+                          const blob = await response.blob()
+                          const file = new File([blob], 'User-icon.webp', {
+                            type: 'image/webp',
+                          })
+                          setFormData((prev) => ({ ...prev, logoFile: file }))
+                          setPreviewUrl('/User-icon.webp')
+                        } catch (error) {
+                          console.error('Failed to load default logo:', error)
+                          toast.error('حدث خطأ أثناء إزالة الشعار')
+                        }
                       }}
                     >
                       إزالة
@@ -265,31 +360,162 @@ export default function ProfilePage() {
         {/* Security & Access Section */}
         <Card className="ring-border overflow-hidden rounded-2xl border-none shadow-sm ring-1">
           <CardHeader className="px-6 py-4">
-            <CardTitle className="text-lg">الأمان والوصول</CardTitle>
+            <CardTitle className="text-lg">الأمان</CardTitle>
             <CardDescription>
-              حافظ على أمان حسابك وإدارة المصادقة.
+              حافظ على أمان حسابك.
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
             <div className="divide-border divide-y">
-              {/* Reset Password */}
-              <div className="hover:bg-muted/10 flex items-center justify-between p-6 transition-colors">
-                <div className="flex items-center gap-4">
-                  <div className="rounded-xl bg-orange-100 p-3 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400">
-                    <RefreshCcw size={22} />
+              {/* Change Password */}
+              <div className="hover:bg-muted/10 flex flex-col p-6 transition-colors">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="rounded-xl bg-orange-100 p-3 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400">
+                      <RefreshCcw size={22} />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-semibold">
+                        تحديث كلمة المرور
+                      </h4>
+                      <p className="text-muted-foreground text-xs">
+                        قم بتغيير كلمة المرور بانتظام لتعزيز الأمان.
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-sm font-semibold">
-                      إعادة تعيين كلمة المرور
-                    </h4>
-                    <p className="text-muted-foreground text-xs">
-                      قم بتغيير كلمة المرور بانتظام لتعزيز الأمان.
-                    </p>
-                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      setIsChangingPasswordMode(!isChangingPasswordMode)
+                    }
+                  >
+                    {isChangingPasswordMode ? 'إلغاء' : 'تحديث كلمة المرور'}
+                  </Button>
                 </div>
-                <Button variant="outline" size="sm">
-                  تحديث كلمة المرور
-                </Button>
+
+                {isChangingPasswordMode && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="mt-6 space-y-6 overflow-hidden pt-4"
+                  >
+                    <Separator className="mb-6" />
+                    <div className="grid gap-6 md:grid-cols-2">
+                      {/* Left column: old password + validation hints */}
+                      <div className="space-y-4">
+                        <Field>
+                          <FieldLabel className="text-xs font-bold tracking-wider uppercase">
+                            كلمة المرور الحالية
+                          </FieldLabel>
+                          <PasswordInput
+                            value={passwordData.oldPassword}
+                            onChange={(e) =>
+                              setPasswordData({
+                                ...passwordData,
+                                oldPassword: e.target.value,
+                              })
+                            }
+                            placeholder="أدخل كلمة المرور الحالية"
+                          />
+                        </Field>
+
+                        {/* Validation hints under old password */}
+                        <div className="bg-muted/30 rounded-xl p-4">
+                          {/* <h5 className="mb-3 text-xs font-bold text-gray-500 uppercase">
+                            شروط كلمة المرور الجديدة:
+                          </h5> */}
+                          <div className="grid grid-cols-1 gap-2">
+                            {passwordRequirements.map((req, index) => {
+                              const isMet = req.check(passwordData.newPassword)
+                              return (
+                                <div
+                                  key={index}
+                                  className="flex items-center gap-2 text-xs"
+                                >
+                                  {isMet ? (
+                                    <CheckCircle2 className="h-4 w-4 text-green-500" />
+                                  ) : (
+                                    <Circle className="h-4 w-4 text-gray-300" />
+                                  )}
+                                  <span
+                                    className={
+                                      isMet ? 'text-green-600' : 'text-gray-500'
+                                    }
+                                  >
+                                    {req.label}
+                                  </span>
+                                </div>
+                              )
+                            })}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Right column: new password + confirm password */}
+                      <div className="space-y-6">
+                        <Field>
+                          <FieldLabel className="text-xs font-bold tracking-wider uppercase">
+                            كلمة المرور الجديدة
+                          </FieldLabel>
+                          <PasswordInput
+                            value={passwordData.newPassword}
+                            onChange={(e) =>
+                              setPasswordData({
+                                ...passwordData,
+                                newPassword: e.target.value,
+                              })
+                            }
+                            placeholder="أدخل كلمة المرور الجديدة"
+                          />
+                        </Field>
+
+                        <Field>
+                          <FieldLabel className="text-xs font-bold tracking-wider uppercase">
+                            تأكيد كلمة المرور الجديدة
+                          </FieldLabel>
+                          <PasswordInput
+                            value={passwordData.confirmPassword}
+                            onChange={(e) =>
+                              setPasswordData({
+                                ...passwordData,
+                                confirmPassword: e.target.value,
+                              })
+                            }
+                            placeholder="تأكيد كلمة المرور الجديدة"
+                          />
+                          {passwordData.confirmPassword &&
+                            passwordData.newPassword !==
+                              passwordData.confirmPassword && (
+                              <p className="mt-1 text-xs text-red-500">
+                                كلمة المرور غير متطابقة
+                              </p>
+                            )}
+                        </Field>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end pt-4">
+                      <Button
+                        size="sm"
+                        onClick={handleChangePassword}
+                        disabled={
+                          isChangingPassword ||
+                          !isPasswordValid ||
+                          passwordData.newPassword !==
+                            passwordData.confirmPassword ||
+                          !passwordData.oldPassword
+                        }
+                      >
+                        {isChangingPassword && (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        )}
+                        حفظ كلمة المرور الجديدة
+                      </Button>
+                    </div>
+                  </motion.div>
+                )}
               </div>
             </div>
           </CardContent>

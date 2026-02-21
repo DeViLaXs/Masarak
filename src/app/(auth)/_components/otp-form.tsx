@@ -14,34 +14,72 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from '@/components/ui/input-otp'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { VerifyOtpDto } from '@/services/auth-service'
 import { useAuth } from '@/auth/use-auth'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { toast } from 'sonner'
 
 export function OTPForm({ className, ...props }: React.ComponentProps<'div'>) {
   const searchParams = useSearchParams()
+  const email = searchParams.get('email') || ''
 
-  console.log(searchParams.get('email'))
+  console.log(email)
 
   const router = useRouter()
   const [otp, setOtp] = useState<VerifyOtpDto>({
-    Email: searchParams.get('email') || '',
+    Email: email,
     EmailConfirmationCode: '',
   })
 
-  const { verifyOtp, isVerifyingOtp } = useAuth({ middleware: 'guest' })
+  const [expiresAt, setExpiresAt] = useState<number>(Date.now() + 60000)
+  const [timeLeft, setTimeLeft] = useState(60)
+  const [canResend, setCanResend] = useState(false)
+
+  const { verifyOtp, isVerifyingOtp, resendOtp, isResendingOtp } = useAuth({
+    middleware: 'guest',
+  })
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const remaining = Math.max(0, Math.ceil((expiresAt - Date.now()) / 1000))
+      setTimeLeft(remaining)
+
+      if (remaining <= 0) {
+        setCanResend(true)
+        clearInterval(timer)
+      }
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [expiresAt])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
     verifyOtp(otp, {
       onSuccess: () => {
+        toast.success('تم التحقق بنجاح')
         router.push('/company')
       },
       onError: () => {
-        alert('Invalid OTP or Verification Failed')
+        toast.error('رمز التحقق غير صحيح')
+      },
+    })
+  }
+
+  const handleResend = () => {
+    if (!canResend || isResendingOtp) return
+
+    resendOtp(email, {
+      onSuccess: () => {
+        toast.success('تم إعادة إرسال رمز التحقق')
+        setExpiresAt(Date.now() + 60000)
+        setCanResend(false)
+      },
+      onError: () => {
+        toast.error('حدث خطأ أثناء إعادة إرسال الرمز')
       },
     })
   }
@@ -89,7 +127,19 @@ export function OTPForm({ className, ...props }: React.ComponentProps<'div'>) {
               </InputOTPGroup>
             </InputOTP>
             <FieldDescription className="text-center">
-              لم تلقي رمز التحقق؟ <a href="/admin">أعد الارسال</a>
+              لم تلقي رمز التحقق؟{' '}
+              <button
+                type="button"
+                onClick={handleResend}
+                disabled={!canResend || isResendingOtp}
+                className={cn(
+                  'text-primary font-medium transition-opacity',
+                  (!canResend || isResendingOtp) && 'opacity-50',
+                  canResend && 'hover:underline',
+                )}
+              >
+                {canResend ? 'أعد الارسال' : <>أعد الارسال ({timeLeft}ث)</>}
+              </button>
             </FieldDescription>
           </Field>
           <Field>

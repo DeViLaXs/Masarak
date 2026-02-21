@@ -344,8 +344,6 @@ export function SignupForm({
                       )
                     })}
                   </div>
-
-                  
                 </Field>
               </motion.div>
 

@@ -26,6 +26,11 @@ export interface UpdateProfileDto {
   logoFile?: File | null
 }
 
+export interface ChangePasswordDto {
+  OldPassword: string
+  NewPassword: string
+}
+
 // ============== Service ==============
 
 export const userService = {
@@ -57,6 +62,13 @@ export const userService = {
   deleteAccount: async (): Promise<String> => {
     const res = await api.delete('/Account/DeleteAccount')
     return res.data
+  },
+
+  /**
+   * Change password for logged in user
+   */
+  changePassword: async (data: ChangePasswordDto): Promise<void> => {
+    await api.patch('/Account/ChangePassword', data)
   },
 
   /* 

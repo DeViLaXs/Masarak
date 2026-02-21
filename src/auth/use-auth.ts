@@ -167,6 +167,16 @@ export function useAuth(options: UseAuthOptions = {}) {
     mutationFn: (data: ResetPasswordDto) => authService.resetPassword(data),
   })
 
+  // Resend OTP mutation
+  const resendOtpMutation = useMutation({
+    mutationFn: (email: string) => authService.resendOtp(email),
+  })
+
+  // Resend verification link mutation
+  const resendLinkMutation = useMutation({
+    mutationFn: (email: string) => authService.resendLink(email),
+  })
+
   return {
     // State
     user,
@@ -203,5 +213,13 @@ export function useAuth(options: UseAuthOptions = {}) {
     resetPassword: resetPasswordMutation.mutate,
     resetPasswordAsync: resetPasswordMutation.mutateAsync,
     isResettingPassword: resetPasswordMutation.isPending,
+
+    resendOtp: resendOtpMutation.mutate,
+    resendOtpAsync: resendOtpMutation.mutateAsync,
+    isResendingOtp: resendOtpMutation.isPending,
+
+    resendLink: resendLinkMutation.mutate,
+    resendLinkAsync: resendLinkMutation.mutateAsync,
+    isResendingLink: resendLinkMutation.isPending,
   }
 }

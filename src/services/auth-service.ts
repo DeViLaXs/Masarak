@@ -70,6 +70,20 @@ export const authService = {
   },
 
   /**
+   * Resend OTP code to email
+   */
+  resendOtp: async (email: string): Promise<void> => {
+    await api.post('/Account/ResendOtp', { Email: email })
+  },
+
+  /**
+   * Resend verification link to email
+   */
+  resendLink: async (email: string): Promise<void> => {
+    await api.post('/Account/ResendLink', { Email: email })
+  },
+
+  /**
    * Login with email and password
    */
   login: async (data: LoginDto): Promise<LoginResponse> => {

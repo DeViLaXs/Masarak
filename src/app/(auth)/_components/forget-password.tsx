@@ -31,7 +31,7 @@ export function ForgetPassword({
       { Email: email },
       {
         onSuccess: () => {
-          router.push('/check-email')
+          router.push(`/check-email?email=${encodeURIComponent(email)}`)
         },
         onError: (error) => {
           alert(error.message)

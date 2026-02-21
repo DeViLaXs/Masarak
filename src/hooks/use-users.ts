@@ -1,5 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { userService, type UpdateProfileDto } from '@/services/user-service'
+import {
+  userService,
+  type UpdateProfileDto,
+  type ChangePasswordDto,
+} from '@/services/user-service'
 
 export const userKeys = {
   all: ['users'] as const,
@@ -54,6 +58,11 @@ export function useUser() {
     },
   })
 
+  // Change password mutation
+  const changePasswordMutation = useMutation({
+    mutationFn: (data: ChangePasswordDto) => userService.changePassword(data),
+  })
+
   return {
     // State
     user,
@@ -71,5 +80,10 @@ export function useUser() {
     deleteAccountAsync: deleteAccountMutation.mutateAsync,
     isDeletingAccount: deleteAccountMutation.isPending,
     deleteAccountError: deleteAccountMutation.error,
+
+    changePassword: changePasswordMutation.mutate,
+    changePasswordAsync: changePasswordMutation.mutateAsync,
+    isChangingPassword: changePasswordMutation.isPending,
+    changePasswordError: changePasswordMutation.error,
   }
 }
