@@ -4,14 +4,16 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { useAuth } from '@/auth/use-auth'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 
 export default function CheckEmail() {
   const searchParams = useSearchParams()
   const email = searchParams.get('email') || ''
+  const router = useRouter()
 
+  const [isAllowed, setIsAllowed] = useState(false)
   const [expiresAt, setExpiresAt] = useState<number>(Date.now() + 60000)
   const [timeLeft, setTimeLeft] = useState(60)
   const [canResend, setCanResend] = useState(false)
@@ -19,6 +21,16 @@ export default function CheckEmail() {
   const { resendLink, isResendingLink } = useAuth({
     middleware: 'guest',
   })
+
+  // 🛡️ Guard: only allow access if routed here programmatically
+  useEffect(() => {
+    const allowed = sessionStorage.getItem('check_email_allowed')
+    if (!allowed || !email) {
+      router.replace('/login')
+      return
+    }
+    setIsAllowed(true)
+  }, [])
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -49,12 +61,13 @@ export default function CheckEmail() {
     })
   }
 
+  if (!isAllowed) return null
+
   return (
     <div className="mt-20 text-center">
       <p className="text-2xl font-bold">تحقق من بريدك الإلكتروني</p>
       <p className="mt-5 text-gray-500">
-        لقد أرسلنا رابط تحقق إلى بريدك الإلكتروني{' '}
-        <br />
+        لقد أرسلنا رابط تحقق إلى بريدك الإلكتروني <br />
         <span className="font-semibold">{email}</span>
       </p>
 
@@ -63,9 +76,8 @@ export default function CheckEmail() {
           onClick={handleResend}
           disabled={!canResend || isResendingLink}
           className={cn(
-            ' font-medium transition-opacity',
+            'font-medium transition-opacity',
             (!canResend || isResendingLink) && 'opacity-50',
-            
           )}
         >
           {canResend ? 'أعد إرسال الرابط' : <>أعد إرسال الرابط ({timeLeft})</>}

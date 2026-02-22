@@ -40,6 +40,7 @@ export function LoginForm({
       onError: (err: any) => {
         console.log(err)
         if (err.status === 401) {
+          sessionStorage.setItem('otp_allowed', '1')
           router.push(`/otp?email=${encodeURIComponent(loginForm.Email)}`)
         }
       },
@@ -134,7 +135,15 @@ export function LoginForm({
                 transition={{ delay: 0.3, duration: 0.5 }}
               >
                 <Field>
-                  <Link href="/forget-password">نسيت كلمة المرور؟</Link>
+                  <button
+                    type="button"
+                    className="text-sm underline-offset-4 hover:underline"
+                    onClick={() => {
+                      router.push('/forget-password')
+                    }}
+                  >
+                    نسيت كلمة المرور؟
+                  </button>
                 </Field>
               </motion.div>
 

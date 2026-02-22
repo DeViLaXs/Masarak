@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/auth/use-auth'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export function ForgetPassword({
   className,
@@ -21,9 +21,32 @@ export function ForgetPassword({
 }: React.ComponentProps<'div'>) {
   const router = useRouter()
 
-  const { forgetPassword, isRequestingReset } = useAuth({ middleware: 'guest' })
-
+  //const [isAllowed, setIsAllowed] = useState(false)
   const [email, setEmail] = useState('')
+
+  // 🛡️ Guard: only accessible via the login page link
+  // useEffect(() => {
+  //   const allowed = sessionStorage.getItem('forget_password_allowed')
+  //   if (!allowed) {
+  //     router.replace('/login')
+  //     return
+  //   }
+  //   setIsAllowed(true)
+  // }, [])
+
+  // useEffect(() => {
+  //   const allowed = sessionStorage.getItem('forget_password_allowed')
+  //   if (!allowed) {
+  //     router.replace('/login')
+  //     return
+  //   }
+  //   setIsAllowed(true)
+  // }, [])
+
+ 
+
+
+  const { forgetPassword, isRequestingReset } = useAuth({ middleware: 'guest' })
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -31,6 +54,7 @@ export function ForgetPassword({
       { Email: email },
       {
         onSuccess: () => {
+          sessionStorage.setItem('check_email_allowed', '1')
           router.push(`/check-email?email=${encodeURIComponent(email)}`)
         },
         onError: (error) => {
@@ -39,6 +63,9 @@ export function ForgetPassword({
       },
     )
   }
+
+  //if (!isAllowed) return null
+
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card className="mt-20">

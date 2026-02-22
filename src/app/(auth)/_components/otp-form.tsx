@@ -33,6 +33,7 @@ export function OTPForm({ className, ...props }: React.ComponentProps<'div'>) {
     EmailConfirmationCode: '',
   })
 
+  const [isAllowed, setIsAllowed] = useState(false)
   const [expiresAt, setExpiresAt] = useState<number>(Date.now() + 60000)
   const [timeLeft, setTimeLeft] = useState(60)
   const [canResend, setCanResend] = useState(false)
@@ -40,6 +41,16 @@ export function OTPForm({ className, ...props }: React.ComponentProps<'div'>) {
   const { verifyOtp, isVerifyingOtp, resendOtp, isResendingOtp } = useAuth({
     middleware: 'guest',
   })
+
+  // 🛡️ Guard: only allow access if routed here programmatically
+  useEffect(() => {
+    const allowed = sessionStorage.getItem('otp_allowed')
+    if (!allowed || !email) {
+      router.replace('/login')
+      return
+    }
+    setIsAllowed(true)
+  }, [])
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -60,6 +71,7 @@ export function OTPForm({ className, ...props }: React.ComponentProps<'div'>) {
 
     verifyOtp(otp, {
       onSuccess: () => {
+        sessionStorage.removeItem('otp_allowed')
         toast.success('تم التحقق بنجاح')
         router.push('/company')
       },
@@ -83,6 +95,8 @@ export function OTPForm({ className, ...props }: React.ComponentProps<'div'>) {
       },
     })
   }
+
+  if (!isAllowed) return null
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>

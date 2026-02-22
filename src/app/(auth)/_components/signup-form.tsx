@@ -132,6 +132,7 @@ export function SignupForm({
     // 5. Submit if valid
     register(registerForm, {
       onSuccess: () => {
+        sessionStorage.setItem('otp_allowed', '1')
         router.push(`/otp?email=${encodeURIComponent(registerForm.Email)}`)
         toast.success('تم إنشاء الحساب بنجاح')
       },

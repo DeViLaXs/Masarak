@@ -19,6 +19,7 @@ export function NewPassword({
 
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [isAllowed, setIsAllowed] = useState(false)
 
   const email = searchParams.get('email')
   const token = searchParams.get('token')
@@ -30,6 +31,8 @@ export function NewPassword({
   useEffect(() => {
     if (!token || !email) {
       router.replace('/login')
+    } else {
+      setIsAllowed(true)
     }
   }, [token, email, router])
 
@@ -51,6 +54,8 @@ export function NewPassword({
       },
     )
   }
+
+  if (!isAllowed) return null
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
