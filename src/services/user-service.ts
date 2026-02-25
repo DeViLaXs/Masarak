@@ -10,7 +10,7 @@ export interface UserProfile {
   id: string
   companyName: string
   email: string
-  sasUrl: string
+  sasUrl: string | null
   phoneNumber: string
   industry: string
   role: UserRole
