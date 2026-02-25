@@ -33,6 +33,17 @@ import { useRouter } from 'next/navigation'
 import { Loader2, Check, X } from 'lucide-react'
 import { DeleteAlert } from '@/components/delete-alert'
 import { PasswordInput } from '@/components/ui/password-input'
+import { z } from 'zod'
+
+// Define validation schema matching signup-form.tsx
+const profileSchema = z.object({
+  companyName: z.string().min(2, 'اسم الشركة يجب أن يكون 2 أحرف على الأقل'),
+  phoneNumber: z
+    .string()
+    .min(9, 'رقم الهاتف يجب أن يكون 9 أرقام')
+    .regex(/^[0-9]+$/, 'يجب أن يحتوي رقم الهاتف على أرقام فقط'),
+  industry: z.string().min(2, 'يرجى إدخال اسم الصناعة'),
+})
 
 export default function ProfilePage() {
   const router = useRouter()
@@ -63,6 +74,7 @@ export default function ProfilePage() {
     newPassword: '',
     confirmPassword: '',
   })
+  const [errors, setErrors] = useState<Record<string, string>>({})
 
   // Sync local state when user data is loaded
   useEffect(() => {
@@ -108,7 +120,37 @@ export default function ProfilePage() {
     }
   }
 
+  const handleFieldChange = (field: string, value: any) => {
+    setFormData((prev) => ({ ...prev, [field]: value }))
+    if (errors[field]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev }
+        delete newErrors[field]
+        return newErrors
+      })
+    }
+  }
+
   const handleUpdateProfile = () => {
+    // Validate using Zod
+    const result = profileSchema.safeParse({
+      companyName: formData.companyName,
+      phoneNumber: formData.phoneNumber,
+      industry: formData.industry,
+    })
+
+    if (!result.success) {
+      const fieldErrors: Record<string, string> = {}
+      result.error.issues.forEach((err) => {
+        const path = err.path[0]
+        if (path) {
+          fieldErrors[path.toString()] = err.message
+        }
+      })
+      setErrors(fieldErrors)
+      return
+    }
+
     updateProfile(
       {
         companyName: formData.companyName,
@@ -204,8 +246,14 @@ export default function ProfilePage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" size="sm">
-            إلغاء
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              router.push('/company')
+            }}
+          >
+            رجوع
           </Button>
           <Button
             size="sm"
@@ -313,10 +361,15 @@ export default function ProfilePage() {
                 <Input
                   value={formData.companyName}
                   onChange={(e) =>
-                    setFormData({ ...formData, companyName: e.target.value })
+                    handleFieldChange('companyName', e.target.value)
                   }
                   className="bg-muted/20 focus:bg-background transition-colors"
                 />
+                {errors.companyName && (
+                  <span className="pr-1 text-xs text-red-500">
+                    {errors.companyName}
+                  </span>
+                )}
               </Field>
               <Field>
                 <FieldLabel className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
@@ -336,10 +389,15 @@ export default function ProfilePage() {
                 <Input
                   value={formData.phoneNumber}
                   onChange={(e) =>
-                    setFormData({ ...formData, phoneNumber: e.target.value })
+                    handleFieldChange('phoneNumber', e.target.value)
                   }
                   className="bg-muted/20 focus:bg-background transition-colors"
                 />
+                {errors.phoneNumber && (
+                  <span className="pr-1 text-xs text-red-500">
+                    {errors.phoneNumber}
+                  </span>
+                )}
               </Field>
               <Field>
                 <FieldLabel className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
@@ -348,10 +406,15 @@ export default function ProfilePage() {
                 <Input
                   value={formData.industry}
                   onChange={(e) =>
-                    setFormData({ ...formData, industry: e.target.value })
+                    handleFieldChange('industry', e.target.value)
                   }
                   className="bg-muted/20 focus:bg-background transition-colors"
                 />
+                {errors.industry && (
+                  <span className="pr-1 text-xs text-red-500">
+                    {errors.industry}
+                  </span>
+                )}
               </Field>
             </div>
           </CardContent>
@@ -361,9 +424,7 @@ export default function ProfilePage() {
         <Card className="ring-border overflow-hidden rounded-2xl border-none shadow-sm ring-1">
           <CardHeader className="px-6 py-4">
             <CardTitle className="text-lg">الأمان</CardTitle>
-            <CardDescription>
-              حافظ على أمان حسابك.
-            </CardDescription>
+            <CardDescription>حافظ على أمان حسابك.</CardDescription>
           </CardHeader>
           <CardContent className="p-0">
             <div className="divide-border divide-y">
@@ -524,18 +585,16 @@ export default function ProfilePage() {
         {/* Danger Zone */}
         <Card className="border-destructive/20 bg-destructive/5 overflow-hidden">
           <CardContent className="flex items-center justify-between p-6 sm:p-8">
-            <div className="space-y-1">
-              <h4 className="text-destructive text-sm font-bold">
-                إلغاء تنشيط الحساب
-              </h4>
+            <div className="space-y-1 pl-10">
+              <h4 className="text-destructive text-sm font-bold">حذف الحساب</h4>
               <p className="text-muted-foreground max-w-lg text-xs leading-relaxed">
-                سيؤدي هذا الإجراء إلى حذف بيانات شركتك وجميع الحسابات المرتبطة
-                بها بشكل نهائي. هذا الإجراء غير قابل للتراجع.
+                سيؤدي هذا الإجراء إلى حذف بيانات شركتك بشكل نهائي. هذا الإجراء
+                غير قابل للتراجع.
               </p>
             </div>
             <DeleteAlert
               title="حذف الحساب"
-              description="سيؤدي هذا الإجراء إلى حذف بيانات شركتك. هذا الإجراء غير قابل للتراجع."
+              description="سيؤدي هذا الإجراء إلى حذف بيانات شركتك بشكل نهائي. هذا الإجراء غير قابل للتراجع."
               onConfirm={handleDeleteAccount}
               isLoading={isDeletingAccount}
               triggerText="حذف الحساب"
