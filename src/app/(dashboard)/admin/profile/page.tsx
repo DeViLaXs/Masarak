@@ -84,7 +84,7 @@ export default function ProfilePage() {
             <div className="flex items-center gap-6">
               <div className="group relative">
                 <Avatar className="ring-background h-24 w-24 shadow-md ring-4 transition-transform group-hover:scale-105">
-                  <AvatarImage src={user?.sasUrl ?? ''} />
+                  <AvatarImage src={user?.sasUrl || '/User-icon.webp'} />
                   <AvatarFallback className="bg-primary/5 text-primary text-xl font-bold">
                     Masarak
                   </AvatarFallback>

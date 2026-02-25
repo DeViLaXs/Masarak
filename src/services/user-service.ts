@@ -10,7 +10,7 @@ export interface UserProfile {
   id: string
   companyName: string
   email: string
-  sasUrl: string
+  sasUrl: string | null
   phoneNumber: string
   industry: string
   role: UserRole
@@ -24,6 +24,8 @@ export interface UpdateProfileDto {
   phoneNumber: string
   industry: string
   logoFile?: File | null
+  isLogoChanged: boolean
+  isLogoDeleted: boolean
 }
 
 export interface ChangePasswordDto {
@@ -50,8 +52,10 @@ export const userService = {
     formData.append('CompanyName', data.companyName)
     formData.append('PhoneNumber', data.phoneNumber)
     formData.append('Industry', data.industry)
+    formData.append('IsLogoChanged', String(data.isLogoChanged))
+    formData.append('IsLogoDeleted', String(data.isLogoDeleted))
 
-    if (data.logoFile) {
+    if (data.isLogoChanged && !data.isLogoDeleted && data.logoFile) {
       formData.append('LogoUrl', data.logoFile)
     }
 
