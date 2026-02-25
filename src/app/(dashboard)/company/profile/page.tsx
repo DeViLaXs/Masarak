@@ -66,6 +66,8 @@ export default function ProfilePage() {
     phoneNumber: '',
     industry: '',
     logoFile: null as File | null,
+    isLogoChanged: false,
+    isLogoDeleted: false,
   })
 
   const [isChangingPasswordMode, setIsChangingPasswordMode] = useState(false)
@@ -114,7 +116,7 @@ export default function ProfilePage() {
         return
       }
 
-      setFormData((prev) => ({ ...prev, logoFile: file }))
+      setFormData((prev) => ({ ...prev, logoFile: file, isLogoChanged: true, isLogoDeleted: false }))
       const url = URL.createObjectURL(file)
       setPreviewUrl(url)
     }
@@ -157,11 +159,13 @@ export default function ProfilePage() {
         phoneNumber: formData.phoneNumber,
         industry: formData.industry,
         logoFile: formData.logoFile,
+        isLogoChanged: formData.isLogoChanged,
+        isLogoDeleted: formData.isLogoDeleted,
       },
       {
         onSuccess: () => {
           toast.success('تم تحديث الملف الشخصي بنجاح')
-          setFormData((prev) => ({ ...prev, logoFile: null }))
+          setFormData((prev) => ({ ...prev, logoFile: null, isLogoChanged: false, isLogoDeleted: false }))
           setPreviewUrl(null)
         },
         onError: () => {
@@ -290,7 +294,7 @@ export default function ProfilePage() {
             <div className="flex items-center gap-6">
               <div className="group relative">
                 <Avatar className="ring-background h-24 w-24 shadow-md ring-4 transition-transform group-hover:scale-105">
-                  <AvatarImage src={previewUrl || user?.sasUrl} />
+                  <AvatarImage src={previewUrl || user?.sasUrl || '/User-icon.webp'} />
                   <AvatarFallback className="bg-primary/5 text-primary text-xl font-bold">
                     {user?.companyName?.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
@@ -328,19 +332,9 @@ export default function ProfilePage() {
                       variant="ghost"
                       size="xs"
                       className="text-destructive hover:text-destructive hover:bg-destructive/5 h-8"
-                      onClick={async () => {
-                        try {
-                          const response = await fetch('/User-icon.webp')
-                          const blob = await response.blob()
-                          const file = new File([blob], 'User-icon.webp', {
-                            type: 'image/webp',
-                          })
-                          setFormData((prev) => ({ ...prev, logoFile: file }))
-                          setPreviewUrl('/User-icon.webp')
-                        } catch (error) {
-                          console.error('Failed to load default logo:', error)
-                          toast.error('حدث خطأ أثناء إزالة الشعار')
-                        }
+                      onClick={() => {
+                        setFormData((prev) => ({ ...prev, logoFile: null, isLogoChanged: true, isLogoDeleted: true }))
+                        setPreviewUrl('/User-icon.webp')
                       }}
                     >
                       إزالة
@@ -548,7 +542,7 @@ export default function ProfilePage() {
                           />
                           {passwordData.confirmPassword &&
                             passwordData.newPassword !==
-                              passwordData.confirmPassword && (
+                            passwordData.confirmPassword && (
                               <p className="mt-1 text-xs text-red-500">
                                 كلمة المرور غير متطابقة
                               </p>
@@ -565,7 +559,7 @@ export default function ProfilePage() {
                           isChangingPassword ||
                           !isPasswordValid ||
                           passwordData.newPassword !==
-                            passwordData.confirmPassword ||
+                          passwordData.confirmPassword ||
                           !passwordData.oldPassword
                         }
                       >
