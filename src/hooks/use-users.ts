@@ -41,6 +41,7 @@ export function useUser() {
     },
   })
 
+
   // Delete account mutation
   const deleteAccountMutation = useMutation({
     mutationFn: userService.deleteAccount,

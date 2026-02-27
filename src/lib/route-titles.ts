@@ -3,6 +3,7 @@ export const routeTitles = [
   { path: '/admin/companies', title: 'إدارة الشركات' },
   { path: '/admin/feedbacks', title: 'إدارة التعليقات' },
   { path: '/admin/profile', title: 'الملف الشخصي' },
+  { path: '/admin/create-sub-admin', title: 'إضافة مشرف فرعي' },
 
   { path: '/company', title: 'لوحة التحكم' },
   { path: '/company/manage-job', title: 'إدارة الوظائف' },

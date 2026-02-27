@@ -37,7 +37,7 @@ import { z } from 'zod'
 
 // Define validation schema matching signup-form.tsx
 const profileSchema = z.object({
-  companyName: z.string().min(2, 'اسم الشركة يجب أن يكون 2 أحرف على الأقل'),
+  name: z.string().min(2, 'اسم الشركة يجب أن يكون 2 أحرف على الأقل'),
   phoneNumber: z
     .string()
     .min(9, 'رقم الهاتف يجب أن يكون 9 أرقام')
@@ -62,7 +62,7 @@ export default function ProfilePage() {
   } = useUser()
 
   const [formData, setFormData] = useState({
-    companyName: '',
+    name: '',
     phoneNumber: '',
     industry: '',
     logoFile: null as File | null,
@@ -83,7 +83,7 @@ export default function ProfilePage() {
     if (user) {
       setFormData((prev) => ({
         ...prev,
-        companyName: user.companyName || '',
+        name: user.name || '',
         phoneNumber: user.phoneNumber || '',
         industry: user.industry || '',
       }))
@@ -116,7 +116,12 @@ export default function ProfilePage() {
         return
       }
 
-      setFormData((prev) => ({ ...prev, logoFile: file, isLogoChanged: true, isLogoDeleted: false }))
+      setFormData((prev) => ({
+        ...prev,
+        logoFile: file,
+        isLogoChanged: true,
+        isLogoDeleted: false,
+      }))
       const url = URL.createObjectURL(file)
       setPreviewUrl(url)
     }
@@ -136,7 +141,7 @@ export default function ProfilePage() {
   const handleUpdateProfile = () => {
     // Validate using Zod
     const result = profileSchema.safeParse({
-      companyName: formData.companyName,
+      name: formData.name,
       phoneNumber: formData.phoneNumber,
       industry: formData.industry,
     })
@@ -155,7 +160,7 @@ export default function ProfilePage() {
 
     updateProfile(
       {
-        companyName: formData.companyName,
+        name: formData.name,
         phoneNumber: formData.phoneNumber,
         industry: formData.industry,
         logoFile: formData.logoFile,
@@ -165,7 +170,12 @@ export default function ProfilePage() {
       {
         onSuccess: () => {
           toast.success('تم تحديث الملف الشخصي بنجاح')
-          setFormData((prev) => ({ ...prev, logoFile: null, isLogoChanged: false, isLogoDeleted: false }))
+          setFormData((prev) => ({
+            ...prev,
+            logoFile: null,
+            isLogoChanged: false,
+            isLogoDeleted: false,
+          }))
           setPreviewUrl(null)
         },
         onError: () => {
@@ -217,8 +227,8 @@ export default function ProfilePage() {
 
     changePassword(
       {
-        OldPassword: passwordData.oldPassword,
-        NewPassword: passwordData.newPassword,
+        oldPassword: passwordData.oldPassword,
+        newPassword: passwordData.newPassword,
       },
       {
         onSuccess: () => {
@@ -254,7 +264,7 @@ export default function ProfilePage() {
             variant="outline"
             size="sm"
             onClick={() => {
-              router.push('/company')
+              router.back()
             }}
           >
             رجوع
@@ -294,9 +304,11 @@ export default function ProfilePage() {
             <div className="flex items-center gap-6">
               <div className="group relative">
                 <Avatar className="ring-background h-24 w-24 shadow-md ring-4 transition-transform group-hover:scale-105">
-                  <AvatarImage src={previewUrl || user?.sasUrl || '/User-icon.webp'} />
+                  <AvatarImage
+                    src={previewUrl || user?.sasUrl || '/User-icon.webp'}
+                  />
                   <AvatarFallback className="bg-primary/5 text-primary text-xl font-bold">
-                    {user?.companyName?.slice(0, 2).toUpperCase()}
+                    {user?.name?.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 {/* <div
@@ -333,7 +345,12 @@ export default function ProfilePage() {
                       size="xs"
                       className="text-destructive hover:text-destructive hover:bg-destructive/5 h-8"
                       onClick={() => {
-                        setFormData((prev) => ({ ...prev, logoFile: null, isLogoChanged: true, isLogoDeleted: true }))
+                        setFormData((prev) => ({
+                          ...prev,
+                          logoFile: null,
+                          isLogoChanged: true,
+                          isLogoDeleted: true,
+                        }))
                         setPreviewUrl('/User-icon.webp')
                       }}
                     >
@@ -353,15 +370,13 @@ export default function ProfilePage() {
                   اسم الشركة
                 </FieldLabel>
                 <Input
-                  value={formData.companyName}
-                  onChange={(e) =>
-                    handleFieldChange('companyName', e.target.value)
-                  }
+                  value={formData.name}
+                  onChange={(e) => handleFieldChange('name', e.target.value)}
                   className="bg-muted/20 focus:bg-background transition-colors"
                 />
-                {errors.companyName && (
+                {errors.name && (
                   <span className="pr-1 text-xs text-red-500">
-                    {errors.companyName}
+                    {errors.name}
                   </span>
                 )}
               </Field>
@@ -542,7 +557,7 @@ export default function ProfilePage() {
                           />
                           {passwordData.confirmPassword &&
                             passwordData.newPassword !==
-                            passwordData.confirmPassword && (
+                              passwordData.confirmPassword && (
                               <p className="mt-1 text-xs text-red-500">
                                 كلمة المرور غير متطابقة
                               </p>
@@ -559,7 +574,7 @@ export default function ProfilePage() {
                           isChangingPassword ||
                           !isPasswordValid ||
                           passwordData.newPassword !==
-                          passwordData.confirmPassword ||
+                            passwordData.confirmPassword ||
                           !passwordData.oldPassword
                         }
                       >

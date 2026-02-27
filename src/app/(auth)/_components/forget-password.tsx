@@ -51,7 +51,7 @@ export function ForgetPassword({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     forgetPassword(
-      { Email: email },
+      { email: email },
       {
         onSuccess: () => {
           sessionStorage.setItem('check_email_allowed', '1')

@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import {
   Card,
   CardContent,
@@ -30,10 +30,28 @@ import { useUser } from '@/hooks/use-users'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { DeleteAlert } from '@/components/delete-alert'
+import { PasswordInput } from '@/components/ui/password-input'
+import { z } from 'zod'
+import { Check, X, Circle, CheckCircle2 } from 'lucide-react'
+import Image from 'next/image'
 
 export default function ProfilePage() {
   const router = useRouter()
-  const { user, isLoading, deleteAccount, isDeletingAccount } = useUser()
+  const {
+    user,
+    isLoading,
+    deleteAccount,
+    isDeletingAccount,
+    changePassword,
+    isChangingPassword,
+  } = useUser()
+
+  const [isChangingPasswordMode, setIsChangingPasswordMode] = useState(false)
+  const [passwordData, setPasswordData] = useState({
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  })
 
   const handleDeleteAccount = () => {
     deleteAccount(undefined, {
@@ -47,6 +65,56 @@ export default function ProfilePage() {
     })
   }
 
+  const passwordRequirements = [
+    { label: '8 أحرف على الأقل', check: (p: string) => p.length >= 8 },
+    { label: 'حرف كبير واحد على الأقل', check: (p: string) => /[A-Z]/.test(p) },
+    { label: 'رقم واحد على الأقل', check: (p: string) => /[0-9]/.test(p) },
+    {
+      label: 'رمز خاص واحد على الأقل',
+      check: (p: string) => /[!@#$%^&*(),.?":{}|<>]/.test(p),
+    },
+  ]
+
+  const isPasswordValid = passwordRequirements.every((req) =>
+    req.check(passwordData.newPassword),
+  )
+
+  const handleChangePassword = () => {
+    if (!passwordData.oldPassword) {
+      toast.error('يرجى إدخال كلمة المرور الحالية')
+      return
+    }
+    if (!isPasswordValid) {
+      toast.error('كلمة المرور الجديدة غير مطابقة للشروط')
+      return
+    }
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      toast.error('كلمة المرور غير متطابقة')
+      return
+    }
+
+    changePassword(
+      {
+        oldPassword: passwordData.oldPassword,
+        newPassword: passwordData.newPassword,
+      },
+      {
+        onSuccess: () => {
+          toast.success('تم تغيير كلمة المرور بنجاح')
+          setPasswordData({
+            oldPassword: '',
+            newPassword: '',
+            confirmPassword: '',
+          })
+          setIsChangingPasswordMode(false)
+        },
+        onError: (err: any) => {
+          toast.error(err?.response?.data?.message || 'فشل تغيير كلمة المرور')
+        },
+      },
+    )
+  }
+
   return (
     <div className="mx-auto max-w-4xl space-y-8 pb-10">
       {/* Header Section */}
@@ -57,10 +125,15 @@ export default function ProfilePage() {
           </h1>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" size="sm">
-            إلغاء
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              router.back()
+            }}
+          >
+            رجوع
           </Button>
-          <Button size="sm">حفظ التغييرات</Button>
         </div>
       </div>
 
@@ -83,33 +156,23 @@ export default function ProfilePage() {
             {/* Logo Section */}
             <div className="flex items-center gap-6">
               <div className="group relative">
-                <Avatar className="ring-background h-24 w-24 shadow-md ring-4 transition-transform group-hover:scale-105">
-                  <AvatarImage src={user?.sasUrl || '/User-icon.webp'} />
+                <Avatar className="ring-background h-24 w-24 bg-white p-2 shadow-md ring-4 transition-transform hover:scale-105">
+                  <AvatarImage
+                    src="/Masarak-logo.png"
+                    alt="Logo"
+                    className="object-contain"
+                  />
                   <AvatarFallback className="bg-primary/5 text-primary text-xl font-bold">
                     Masarak
                   </AvatarFallback>
                 </Avatar>
-                <div className="bg-primary text-primary-foreground ring-background hover:bg-primary/90 absolute -bottom-1 -left-1 cursor-pointer rounded-full p-2 shadow-lg ring-2 transition-colors">
-                  <Camera size={16} />
-                </div>
               </div>
-              <div className="space-y-2">
-                <h4 className="text-sm font-semibold">الصورة الشخصية</h4>
-                <p className="text-muted-foreground text-xs">
-                  تنسيق WEBP أو PNG أو JPEG، بحد أقصى 1 ميجابايت.
+              <div className="space-y-1">
+                <h4 className="text-sm font-semibold">شعار المنصة الرسمي</h4>
+                <p className="text-muted-foreground text-xs leading-relaxed">
+                  هذا هو الشعار الرسمي المعتمد للمنصة. <br />
+                  لا يمكن للمسؤولين تغيير شعار النظام.
                 </p>
-                <div className="flex gap-3 pt-1">
-                  <Button variant="outline" size="xs" className="h-8">
-                    تحميل جديد
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="xs"
-                    className="text-destructive hover:text-destructive hover:bg-destructive/5 h-8"
-                  >
-                    إزالة
-                  </Button>
-                </div>
               </div>
             </div>
 
@@ -122,8 +185,19 @@ export default function ProfilePage() {
                   اسم المسؤول
                 </FieldLabel>
                 <Input
-                  value={user?.companyName ?? ''}
-                  className="bg-muted/20 focus:bg-background transition-colors"
+                  value={user?.name ?? ''}
+                  readOnly
+                  className="bg-muted/10 cursor-not-allowed opacity-70"
+                />
+              </Field>
+              <Field>
+                <FieldLabel className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
+                  رقم الهاتف
+                </FieldLabel>
+                <Input
+                  value={user?.phoneNumber ?? ''}
+                  readOnly
+                  className="bg-muted/10 cursor-not-allowed opacity-70"
                 />
               </Field>
               <Field>
@@ -152,23 +226,135 @@ export default function ProfilePage() {
           <CardContent className="p-0">
             <div className="divide-border divide-y">
               {/* Reset Password */}
-              <div className="hover:bg-muted/10 flex items-center justify-between p-6 transition-colors">
-                <div className="flex items-center gap-4">
-                  <div className="rounded-xl bg-orange-100 p-3 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400">
-                    <RefreshCcw size={22} />
+              <div className="hover:bg-muted/10 flex flex-col p-6 transition-colors">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="rounded-xl bg-orange-100 p-3 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400">
+                      <RefreshCcw size={22} />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-semibold">
+                        إعادة تعيين كلمة المرور
+                      </h4>
+                      <p className="text-muted-foreground text-xs">
+                        قم بتغيير كلمة المرور بانتظام لتعزيز الأمان.
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-sm font-semibold">
-                      إعادة تعيين كلمة المرور
-                    </h4>
-                    <p className="text-muted-foreground text-xs">
-                      قم بتغيير كلمة المرور بانتظام لتعزيز الأمان.
-                    </p>
-                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      setIsChangingPasswordMode(!isChangingPasswordMode)
+                    }
+                  >
+                    {isChangingPasswordMode
+                      ? 'إلغاء التغيير'
+                      : 'تحديث كلمة المرور'}
+                  </Button>
                 </div>
-                <Button variant="outline" size="sm">
-                  تحديث كلمة المرور
-                </Button>
+
+                {isChangingPasswordMode && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="border-border/50 mt-6 border-t pt-6"
+                  >
+                    <div className="grid gap-6 md:grid-cols-2">
+                      <Field>
+                        <FieldLabel className="text-xs font-bold tracking-wider uppercase">
+                          كلمة المرور الحالية
+                        </FieldLabel>
+                        <PasswordInput
+                          value={passwordData.oldPassword}
+                          onChange={(e) =>
+                            setPasswordData({
+                              ...passwordData,
+                              oldPassword: e.target.value,
+                            })
+                          }
+                        />
+                      </Field>
+
+                      <div className="space-y-6">
+                        <Field>
+                          <FieldLabel className="text-xs font-bold tracking-wider uppercase">
+                            كلمة المرور الجديدة
+                          </FieldLabel>
+                          <PasswordInput
+                            value={passwordData.newPassword}
+                            onChange={(e) =>
+                              setPasswordData({
+                                ...passwordData,
+                                newPassword: e.target.value,
+                              })
+                            }
+                          />
+                        </Field>
+                        <Field>
+                          <FieldLabel className="text-xs font-bold tracking-wider uppercase">
+                            تأكيد كلمة المرور الجديدة
+                          </FieldLabel>
+                          <PasswordInput
+                            value={passwordData.confirmPassword}
+                            onChange={(e) =>
+                              setPasswordData({
+                                ...passwordData,
+                                confirmPassword: e.target.value,
+                              })
+                            }
+                          />
+                        </Field>
+
+                        <div className="bg-muted/30 space-y-3 rounded-xl p-4">
+                          <h5 className="text-muted-foreground text-[11px] font-bold tracking-wider uppercase">
+                            متطلبات كلمة المرور:
+                          </h5>
+                          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                            {passwordRequirements.map((req, index) => {
+                              const isMet = req.check(passwordData.newPassword)
+                              return (
+                                <div
+                                  key={index}
+                                  className={cn(
+                                    'flex items-center gap-2 text-[11px] transition-colors',
+                                    isMet
+                                      ? 'font-medium text-green-600 dark:text-green-400'
+                                      : 'text-muted-foreground',
+                                  )}
+                                >
+                                  {isMet ? (
+                                    <CheckCircle2 className="h-3.5 w-3.5" />
+                                  ) : (
+                                    <Circle className="h-3.5 w-3.5" />
+                                  )}
+                                  <span>{req.label}</span>
+                                </div>
+                              )
+                            })}
+                          </div>
+                        </div>
+
+                        <div className="flex justify-end gap-3 pt-2">
+                          <Button
+                            size="sm"
+                            className="bg-primary hover:bg-primary/90"
+                            onClick={handleChangePassword}
+                            disabled={isChangingPassword || !isPasswordValid}
+                          >
+                            {isChangingPassword ? (
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            ) : (
+                              <Check className="mr-2 h-4 w-4" />
+                            )}
+                            حفظ كلمة المرور الجديدة
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
               </div>
             </div>
           </CardContent>

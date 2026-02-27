@@ -1,7 +1,7 @@
 /**
  * User roles
  */
-export type UserRole = 'Admin' | 'Company' | 'Candidate'
+export type UserRole = 'Admin' | 'Company'| 'SubAdmin'
 
 /**
  * Middleware types for route protection
@@ -24,7 +24,7 @@ export type LoginResponse = {
   sasUrl?: string
   expiresAt?: string
   role: UserRole
-  companyName: string
+  name: string
 }
 
 /**
@@ -36,7 +36,7 @@ export type RegisterResponse = {
   sasUrl?: string
   expiresAt?: string
   role: UserRole
-  companyName: string
+  name: string
 }
 
 /**

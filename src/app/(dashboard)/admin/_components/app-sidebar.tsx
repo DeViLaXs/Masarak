@@ -6,6 +6,7 @@ import {
   Building2,
   MessagesSquare,
   EllipsisVertical,
+  Users,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -34,7 +35,30 @@ import { useAuth } from '@/auth/use-auth'
 import Logo from '@/components/logo'
 import { useUser } from '@/hooks/use-users'
 
-const links = [
+const adminLinks = [
+  {
+    title: 'لوحة التحكم ',
+    path: '/admin',
+    icon: LayoutDashboard,
+  },
+  {
+    title: 'إدارة الشركات',
+    path: '/admin/companies',
+    icon: Building2,
+  },
+  {
+    title: 'إدارة التعليقات',
+    path: '/admin/feedbacks',
+    icon: MessagesSquare,
+  },
+  {
+    title: 'إضافة مشرف فرعي',
+    path: '/admin/create-sub-admin',
+    icon: Users,
+  },
+]
+
+const subAdminLinks = [
   {
     title: 'لوحة التحكم ',
     path: '/admin',
@@ -56,12 +80,14 @@ export function AppSidebar() {
   const pathname = usePathname()
   console.log('الصفحة الحالية:', pathname)
 
-  const { logout, isLoggingOut } = useAuth()
+  const { logout, isLoggingOut, role } = useAuth()
   const { user } = useUser()
 
   const handleLogout = () => {
     logout()
   }
+
+  const links = role === 'SubAdmin' ? subAdminLinks : adminLinks
 
   return (
     <Sidebar side="right">
@@ -101,10 +127,10 @@ export function AppSidebar() {
                   <Avatar>
                     <AvatarImage src={user?.sasUrl || '/User-icon.webp'} />
                     <AvatarFallback className="bg-primary/5 text-primary text-xl font-bold">
-                      {user?.companyName.charAt(0)}
+                      {user?.name.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
-                  {user?.companyName}
+                  {user?.name}
                   <EllipsisVertical className="ms-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>

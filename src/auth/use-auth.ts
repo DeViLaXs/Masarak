@@ -10,6 +10,7 @@ import type {
   ForgetPasswordDto,
   LoginDto,
   RegisterDto,
+  RegisterSubAdminDto,
   ResetPasswordDto,
   VerifyOtpDto,
 } from '@/services/auth-service'
@@ -72,13 +73,14 @@ export function useAuth(options: UseAuthOptions = {}) {
       if (isAuthenticated) {
         // Guest middleware means redirect authenticated users away
         if (middleware === 'guest') {
-          const destination = role === 'Admin' ? '/admin' : '/company'
+          const destination =
+            role === 'Admin' || role === 'SubAdmin' ? '/admin' : '/company'
           router.replace(destination)
           return
         }
 
         // Check role-based access - redirect back to own dashboard
-        if (middleware === 'admin' && role !== 'Admin') {
+        if (middleware === 'admin' && role !== 'Admin' && role !== 'SubAdmin') {
           router.replace('/company')
           return
         }
@@ -117,7 +119,7 @@ export function useAuth(options: UseAuthOptions = {}) {
       })
 
       // Redirect based on role
-      if (userData?.role === 'Admin') {
+      if (userData?.role === 'Admin' || userData?.role === 'SubAdmin') {
         router.push('/admin')
       } else if (userData?.role === 'Company') {
         router.push('/company')
@@ -147,6 +149,12 @@ export function useAuth(options: UseAuthOptions = {}) {
   // Register mutation
   const registerMutation = useMutation({
     mutationFn: (data: RegisterDto) => authService.register(data),
+  })
+
+  // Register Sub-Admin mutation
+  const registerSubAdminMutation = useMutation({
+    mutationFn: (data: RegisterSubAdminDto) =>
+      authService.registerSubAdmin(data),
   })
 
   // Verify OTP mutation
@@ -200,6 +208,11 @@ export function useAuth(options: UseAuthOptions = {}) {
     registerAsync: registerMutation.mutateAsync,
     isRegistering: registerMutation.isPending,
     registerError: registerMutation.error,
+
+    registerSubAdmin: registerSubAdminMutation.mutate,
+    registerSubAdminAsync: registerSubAdminMutation.mutateAsync,
+    isRegisteringSubAdmin: registerSubAdminMutation.isPending,
+    registerSubAdminError: registerSubAdminMutation.error,
 
     verifyOtp: verifyOtpMutation.mutate,
     verifyOtpAsync: verifyOtpMutation.mutateAsync,

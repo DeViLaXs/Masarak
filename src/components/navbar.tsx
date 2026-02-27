@@ -22,7 +22,8 @@ import Logo from './logo'
 export default function NavBar() {
   const { isAuthenticated, role, isLoading } = useAuth()
 
-  const dashboardLink = role === 'Admin' ? '/admin' : '/company'
+  const dashboardLink =
+    role === 'Admin' || role === 'SubAdmin' ? '/admin' : '/company'
 
   return (
     <nav className="bg-card sticky top-0 z-50 flex h-19 items-center justify-between gap-4 border-b px-12 py-4 shadow-sm max-md:px-4 max-md:py-3">

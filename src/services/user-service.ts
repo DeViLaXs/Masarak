@@ -8,7 +8,7 @@ import { UserRole } from '@/auth/types'
  */
 export interface UserProfile {
   id: string
-  companyName: string
+  name: string
   email: string
   sasUrl: string | null
   phoneNumber: string
@@ -20,7 +20,7 @@ export interface UserProfile {
  * Data needed to update user profile
  */
 export interface UpdateProfileDto {
-  companyName: string
+  name: string
   phoneNumber: string
   industry: string
   logoFile?: File | null
@@ -28,9 +28,10 @@ export interface UpdateProfileDto {
   isLogoDeleted: boolean
 }
 
+
 export interface ChangePasswordDto {
-  OldPassword: string
-  NewPassword: string
+  oldPassword: string
+  newPassword: string
 }
 
 // ============== Service ==============
@@ -49,21 +50,23 @@ export const userService = {
    */
   updateProfile: async (data: UpdateProfileDto): Promise<UserProfile> => {
     const formData = new FormData()
-    formData.append('CompanyName', data.companyName)
-    formData.append('PhoneNumber', data.phoneNumber)
-    formData.append('Industry', data.industry)
-    formData.append('IsLogoChanged', String(data.isLogoChanged))
-    formData.append('IsLogoDeleted', String(data.isLogoDeleted))
+    formData.append('name', data.name)
+    formData.append('phoneNumber', data.phoneNumber)
+    formData.append('industry', data.industry)
+    formData.append('isLogoChanged', String(data.isLogoChanged))
+    formData.append('isLogoDeleted', String(data.isLogoDeleted))
 
     if (data.isLogoChanged && !data.isLogoDeleted && data.logoFile) {
-      formData.append('LogoUrl', data.logoFile)
+      formData.append('logoUrl', data.logoFile)
     }
 
     const res = await api.patch('/Account/UpdateProfile', formData)
     return res.data
   },
 
-  deleteAccount: async (): Promise<String> => {
+ 
+
+  deleteAccount: async (): Promise<string> => {
     const res = await api.delete('/Account/DeleteAccount')
     return res.data
   },

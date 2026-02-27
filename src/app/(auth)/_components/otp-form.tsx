@@ -29,8 +29,8 @@ export function OTPForm({ className, ...props }: React.ComponentProps<'div'>) {
 
   const router = useRouter()
   const [otp, setOtp] = useState<VerifyOtpDto>({
-    Email: email,
-    EmailConfirmationCode: '',
+    email: email,
+    emailConfirmationCode: '',
   })
 
   const [isAllowed, setIsAllowed] = useState(false)
@@ -121,8 +121,8 @@ export function OTPForm({ className, ...props }: React.ComponentProps<'div'>) {
               رمز التحقق
             </FieldLabel>
             <InputOTP
-              value={otp.EmailConfirmationCode}
-              onChange={(e) => setOtp({ ...otp, EmailConfirmationCode: e })}
+              value={otp.emailConfirmationCode}
+              onChange={(e) => setOtp({ ...otp, emailConfirmationCode: e })}
               maxLength={6}
               id="otp"
               required

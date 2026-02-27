@@ -28,14 +28,14 @@ import { CheckCircle2, Circle } from 'lucide-react'
 // 1. Simple Validation Schema
 const signupSchema = z
   .object({
-    CompanyName: z.string().min(2, 'اسم الشركة مطلوب'),
-    Email: z.string().email('بريد إلكتروني غير صالح'),
-    PhoneNumber: z
+    name: z.string().min(2, 'اسم الشركة مطلوب'),
+    email: z.string().email('بريد إلكتروني غير صالح'),
+    phoneNumber: z
       .string()
       .min(9, 'رقم الهاتف يجب أن يكون 9 أرقام')
       .regex(/^[0-9]+$/, 'يجب أن يحتوي رقم الهاتف على أرقام فقط'),
-    Industry: z.string().min(2, 'يرجى إدخال اسم الصناعة'),
-    LogoUrl: z
+    industry: z.string().min(2, 'يرجى إدخال اسم الصناعة'),
+    logoUrl: z
       .any()
       .refine((file) => file instanceof File, 'يرجى اختيار شعار الشركة')
       .refine(
@@ -51,20 +51,20 @@ const signupSchema = z
           fileName.endsWith('.webp')
         )
       }, 'الصورة يجب أن تكون من نوع jpeg أو png أو webp'),
-    Password: z
+    password: z
       .string()
       .min(8, 'كلمة المرور يجب أن تكون 8 أحرف على الأقل')
       .regex(/[A-Z]/, 'يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل')
       .regex(/[0-9]/, 'يجب أن تحتوي كلمة المرور على رقم واحد على الأقل')
       .regex(
-        /[!@#$%^&*(),.?":{}|<>]/,
+        /[!@#$%^&*(),.?\":{}|<>]/,
         'يجب أن تحتوي كلمة المرور على رمز خاص واحد على الأقل',
       ),
-    PasswordConfirmation: z.string().min(1, 'يرجى تأكيد كلمة المرور'),
+    passwordConfirmation: z.string().min(1, 'يرجى تأكيد كلمة المرور'),
   })
-  .refine((data) => data.Password === data.PasswordConfirmation, {
+  .refine((data) => data.password === data.passwordConfirmation, {
     message: 'كلمة المرور غير متطابقة',
-    path: ['PasswordConfirmation'],
+    path: ['passwordConfirmation'],
   })
 
 export function SignupForm({
@@ -78,13 +78,13 @@ export function SignupForm({
 
   // 2. Form & Error State
   const [registerForm, setRegisterForm] = useState<RegisterDto>({
-    CompanyName: '',
-    Email: '',
-    Password: '',
-    PasswordConfirmation: '',
-    PhoneNumber: '',
-    Industry: '',
-    LogoUrl: null,
+    name: '',
+    email: '',
+    password: '',
+    passwordConfirmation: '',
+    phoneNumber: '',
+    industry: '',
+    logoUrl: null,
   })
 
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -133,7 +133,7 @@ export function SignupForm({
     register(registerForm, {
       onSuccess: () => {
         sessionStorage.setItem('otp_allowed', '1')
-        router.push(`/otp?email=${encodeURIComponent(registerForm.Email)}`)
+        router.push(`/otp?email=${encodeURIComponent(registerForm.email)}`)
         toast.success('تم إنشاء الحساب بنجاح')
       },
     })
@@ -183,13 +183,11 @@ export function SignupForm({
                   <Input
                     id="name"
                     type="text"
-                    onChange={(e) =>
-                      handleFieldChange('CompanyName', e.target.value)
-                    }
+                    onChange={(e) => handleFieldChange('name', e.target.value)}
                   />
-                  {errors.CompanyName && (
+                  {errors.name && (
                     <span className="pr-1 text-xs text-red-500">
-                      {errors.CompanyName}
+                      {errors.name}
                     </span>
                   )}
                 </Field>
@@ -204,11 +202,11 @@ export function SignupForm({
                   <Input
                     id="email"
                     type="email"
-                    onChange={(e) => handleFieldChange('Email', e.target.value)}
+                    onChange={(e) => handleFieldChange('email', e.target.value)}
                   />
-                  {(errors.Email || registerError) && (
+                  {(errors.email || registerError) && (
                     <span className="pr-1 text-xs text-red-500">
-                      {errors.Email || registerError?.message}
+                      {errors.email || registerError?.message}
                     </span>
                   )}
                 </Field>
@@ -226,7 +224,7 @@ export function SignupForm({
                         id="phone"
                         type="text"
                         onChange={(e) =>
-                          handleFieldChange('PhoneNumber', e.target.value)
+                          handleFieldChange('phoneNumber', e.target.value)
                         }
                       />
                     </Field>
@@ -236,19 +234,19 @@ export function SignupForm({
                         id="industry"
                         type="text"
                         onChange={(e) =>
-                          handleFieldChange('Industry', e.target.value)
+                          handleFieldChange('industry', e.target.value)
                         }
                       />
                     </Field>
                   </Field>
-                  {errors.Industry && (
+                  {errors.industry && (
                     <span className="pr-1 text-xs text-red-500">
-                      {errors.Industry}
+                      {errors.industry}
                     </span>
                   )}
-                  {errors.PhoneNumber && (
+                  {errors.phoneNumber && (
                     <span className="pr-1 text-xs text-red-500">
-                      {errors.PhoneNumber}
+                      {errors.phoneNumber}
                     </span>
                   )}
                 </Field>
@@ -265,12 +263,12 @@ export function SignupForm({
                     type="file"
                     accept=".jpeg,.png,.webp"
                     onChange={(e) =>
-                      handleFieldChange('LogoUrl', e.target.files?.[0] || null)
+                      handleFieldChange('logoUrl', e.target.files?.[0] || null)
                     }
                   />
-                  {errors.LogoUrl && (
+                  {errors.logoUrl && (
                     <span className="pr-1 text-xs text-red-500">
-                      {errors.LogoUrl}
+                      {errors.logoUrl}
                     </span>
                   )}
                   <FieldDescription className="text-xs text-black/60 dark:text-white/60">
@@ -290,7 +288,7 @@ export function SignupForm({
                       <PasswordInput
                         id="password"
                         onChange={(e) =>
-                          handleFieldChange('Password', e.target.value)
+                          handleFieldChange('password', e.target.value)
                         }
                       />
                     </Field>
@@ -302,7 +300,7 @@ export function SignupForm({
                         id="confirm-password"
                         onChange={(e) =>
                           handleFieldChange(
-                            'PasswordConfirmation',
+                            'passwordConfirmation',
                             e.target.value,
                           )
                         }
@@ -312,19 +310,19 @@ export function SignupForm({
                   {/* <FieldDescription  className="text-xs text-black/60 dark:text-white/60">
                     يجب ان تحتوي كلمة المرور على حرف كبير و رقم ورمز خاص
                   </FieldDescription> */}
-                  {errors.Password && (
+                  {errors.password && (
                     <span className="pr-1 text-xs text-red-500">
-                      {errors.Password}
+                      {errors.password}
                     </span>
                   )}
-                  {errors.PasswordConfirmation && (
+                  {errors.passwordConfirmation && (
                     <span className="pr-1 text-xs text-red-500">
-                      {errors.PasswordConfirmation}
+                      {errors.passwordConfirmation}
                     </span>
                   )}
                   <div className="mt-3 space-y-2 px-1">
                     {passwordRequirements.map((req, index) => {
-                      const isMet = req.check(registerForm.Password || '')
+                      const isMet = req.check(registerForm.password || '')
                       return (
                         <div
                           key={index}

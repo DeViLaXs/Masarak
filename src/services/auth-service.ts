@@ -9,33 +9,41 @@ import type {
 // ============== DTOs ==============
 
 export type RegisterDto = {
-  CompanyName: string
-  Email: string
-  PhoneNumber: string
-  Password: string
-  PasswordConfirmation: string
-  Industry: string
-  LogoUrl?: File | null
+  name: string
+  email: string
+  phoneNumber: string
+  password: string
+  passwordConfirmation: string
+  industry: string
+  logoUrl?: File | null
+}
+
+export type RegisterSubAdminDto = {
+  name: string
+  email: string
+  phoneNumber: string
+  password: string
+  passwordConfirmation: string
 }
 
 export type LoginDto = {
-  Email: string
-  Password: string
+  email: string
+  password: string
 }
 
 export type VerifyOtpDto = {
-  Email: string
-  EmailConfirmationCode: string
+  email: string
+  emailConfirmationCode: string
 }
 
 export type ForgetPasswordDto = {
-  Email: string
+  email: string
 }
 
 export type ResetPasswordDto = {
-  Email: string | null
-  NewPassword: string
-  Token: string | null
+  email: string | null
+  newPassword: string
+  token: string | null
 }
 
 // ============== Service ==============
@@ -46,18 +54,28 @@ export const authService = {
    */
   register: async (data: RegisterDto): Promise<RegisterResponse> => {
     const formData = new FormData()
-    formData.append('CompanyName', data.CompanyName)
-    formData.append('Email', data.Email)
-    formData.append('PhoneNumber', data.PhoneNumber)
-    formData.append('Password', data.Password)
-    formData.append('PasswordConfirmation', data.PasswordConfirmation)
-    formData.append('Industry', data.Industry)
+    formData.append('name', data.name)
+    formData.append('email', data.email)
+    formData.append('phoneNumber', data.phoneNumber)
+    formData.append('password', data.password)
+    formData.append('passwordConfirmation', data.passwordConfirmation)
+    formData.append('industry', data.industry)
 
-    if (data.LogoUrl) {
-      formData.append('LogoUrl', data.LogoUrl)
+    if (data.logoUrl) {
+      formData.append('logoUrl', data.logoUrl)
     }
 
     const res = await api.post('/Account/Register', formData)
+    return res.data
+  },
+
+  /**
+   * Register a new sub-admin account
+   */
+  registerSubAdmin: async (
+    data: RegisterSubAdminDto,
+  ): Promise<RegisterResponse> => {
+    const res = await api.post('/Account/Admin/Register', data)
     return res.data
   },
 
@@ -73,14 +91,14 @@ export const authService = {
    * Resend OTP code to email
    */
   resendOtp: async (email: string): Promise<void> => {
-    await api.post('/Account/ResendOtp', { Email: email })
+    await api.post('/Account/ResendOtp', { email: email })
   },
 
   /**
    * Resend verification link to email
    */
   resendLink: async (email: string): Promise<void> => {
-    await api.post('/Account/ResendLink', { Email: email })
+    await api.post('/Account/ResendLink', { email: email })
   },
 
   /**

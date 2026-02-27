@@ -26,8 +26,8 @@ export function LoginForm({
   ...props
 }: React.ComponentProps<'div'>) {
   const [loginForm, setLoginForm] = useState<LoginDto>({
-    Email: '',
-    Password: '',
+    email: '',
+    password: '',
   })
 
   const { login, isLoggingIn, loginError } = useAuth({ middleware: 'guest' })
@@ -41,7 +41,7 @@ export function LoginForm({
         console.log(err)
         if (err.status === 401) {
           sessionStorage.setItem('otp_allowed', '1')
-          router.push(`/otp?email=${encodeURIComponent(loginForm.Email)}`)
+          router.push(`/otp?email=${encodeURIComponent(loginForm.email)}`)
         }
       },
     })
@@ -95,11 +95,11 @@ export function LoginForm({
                     id="email"
                     type="email"
                     required
-                    value={loginForm.Email}
+                    value={loginForm.email}
                     onChange={(e) =>
                       setLoginForm({
                         ...loginForm,
-                        Email: e.target.value,
+                        email: e.target.value,
                       })
                     }
                   />
@@ -119,11 +119,11 @@ export function LoginForm({
                   <PasswordInput
                     id="password"
                     required
-                    value={loginForm.Password}
+                    value={loginForm.password}
                     onChange={(e) =>
                       setLoginForm({
                         ...loginForm,
-                        Password: e.target.value,
+                        password: e.target.value,
                       })
                     }
                   />

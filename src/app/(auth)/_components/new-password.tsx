@@ -43,7 +43,7 @@ export function NewPassword({
       return
     }
     resetPassword(
-      { Email: email, NewPassword: password, Token: token },
+      { email: email, newPassword: password, token: token },
       {
         onSuccess: () => {
           router.push('/login')

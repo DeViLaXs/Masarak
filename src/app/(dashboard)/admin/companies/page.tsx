@@ -32,7 +32,7 @@ export default function CompaniesPage() {
         />
       ),
     }),
-    columnHelper.accessor('companyName', {
+    columnHelper.accessor('name', {
       header: () => 'اسم الشركة',
       cell: (info) => info.getValue(),
     }),

@@ -108,10 +108,10 @@ export function AppSidebar() {
                   <Avatar>
                     <AvatarImage src={user?.sasUrl || '/User-icon.webp'} />
                     <AvatarFallback className="bg-primary/5 text-primary text-xl font-bold">
-                      {user?.companyName.charAt(0)}
+                      {user?.name.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
-                  {user?.companyName}
+                  {user?.name}
                   <EllipsisVertical className="ms-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
