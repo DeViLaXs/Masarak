@@ -20,7 +20,7 @@ import { useAuth } from '@/auth/use-auth'
 import Logo from './logo'
 
 export default function NavBar() {
-  const { isAuthenticated, role, isLoading } = useAuth()
+  const { isAuthenticated, role, isLoading, user } = useAuth()
 
   const dashboardLink =
     role === 'Admin' || role === 'SubAdmin' ? '/admin' : '/company'
@@ -36,12 +36,14 @@ export default function NavBar() {
             <Skeleton className="h-10 w-35 bg-gray-700" />
           </div>
         ) : isAuthenticated ? (
-          <Link
-            href={dashboardLink}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-5 py-2.5 text-sm font-semibold transition max-sm:px-3 max-sm:py-2 max-sm:text-xs"
-          >
-            لوحة التحكم
-          </Link>
+          user?.status && user.status !== 'Active' ? null : (
+            <Link
+              href={dashboardLink}
+              className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-5 py-2.5 text-sm font-semibold transition max-sm:px-3 max-sm:py-2 max-sm:text-xs"
+            >
+              لوحة التحكم
+            </Link>
+          )
         ) : (
           <>
             <Link

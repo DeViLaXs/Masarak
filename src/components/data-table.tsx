@@ -20,21 +20,33 @@ import {
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  rowSelection?: Record<string, boolean>
+  onRowSelectionChange?: React.Dispatch<
+    React.SetStateAction<Record<string, boolean>>
+  >
+  onRowClick?: (row: TData) => void
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  rowSelection = {},
+  onRowSelectionChange,
+  onRowClick,
 }: DataTableProps<TData, TValue>) {
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [internalRowSelection, setInternalRowSelection] = React.useState({})
+
+  const isControlled = onRowSelectionChange !== undefined
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    onRowSelectionChange: setRowSelection,
+    onRowSelectionChange: isControlled
+      ? onRowSelectionChange
+      : setInternalRowSelection,
     state: {
-      rowSelection,
+      rowSelection: isControlled ? rowSelection : internalRowSelection,
     },
   })
 
@@ -65,6 +77,8 @@ export function DataTable<TData, TValue>({
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && 'selected'}
+                onClick={() => onRowClick && onRowClick(row.original)}
+                className={onRowClick ? 'cursor-pointer' : ''}
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>

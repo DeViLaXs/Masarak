@@ -1,3 +1,5 @@
+'use client'
+
 import {
   Card,
   CardAction,
@@ -5,18 +7,20 @@ import {
   CardHeader,
   CardTitle,
 } from '../../../../components/ui/card'
-import {
-  Building2,
-  User,
-  Mails,
-  CircleDollarSign,
-  Clock,
-  Verified,
-  ShieldCheck,
-  CircleX,
-} from 'lucide-react'
+import { Building2, Clock, ShieldCheck, CircleX } from 'lucide-react'
+import { useAdmin } from '@/hooks/use-admin'
 
 export default function CompaniesCard() {
+  const { useStatistics } = useAdmin()
+  const { data: response, isLoading } = useStatistics()
+
+  const stats = response?.data || {
+    totalCompanies: 0,
+    pendingVerification: 0,
+    verified: 0,
+    rejected: 0,
+  }
+
   return (
     <div className="grid grid-cols-4 gap-4 max-sm:grid-cols-2">
       <Card>
@@ -26,7 +30,9 @@ export default function CompaniesCard() {
           </CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-blue-500">247</h1>
+          <h1 className="text-2xl font-bold text-blue-500">
+            {isLoading ? '...' : stats.totalCompanies}
+          </h1>
           <div className="rounded-[12px] bg-blue-400/25 p-3 max-sm:hidden">
             <Building2 className="text-blue-500" />
           </div>
@@ -39,7 +45,9 @@ export default function CompaniesCard() {
           </CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-orange-500">18</h1>
+          <h1 className="text-2xl font-bold text-orange-500">
+            {isLoading ? '...' : stats.pendingVerification}
+          </h1>
           <div className="rounded-[12px] bg-orange-400/25 p-3 max-sm:hidden">
             <Clock className="text-orange-500" />
           </div>
@@ -52,7 +60,9 @@ export default function CompaniesCard() {
           </CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-green-500">195</h1>
+          <h1 className="text-2xl font-bold text-green-500">
+            {isLoading ? '...' : stats.verified}
+          </h1>
           <div className="rounded-[12px] bg-green-400/25 p-3 max-sm:hidden">
             <ShieldCheck className="text-green-700" />
           </div>
@@ -65,7 +75,9 @@ export default function CompaniesCard() {
           </CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-red-500">34</h1>
+          <h1 className="text-2xl font-bold text-red-500">
+            {isLoading ? '...' : stats.rejected}
+          </h1>
           <div className="rounded-[12px] bg-red-400/25 p-3 max-sm:hidden">
             <CircleX className="text-red-500" />
           </div>

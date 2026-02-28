@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { authKeys } from './query-keys'
 import { authService } from '@/services/auth-service'
@@ -29,6 +29,7 @@ import type {
 export function useAuth(options: UseAuthOptions = {}) {
   const { middleware, redirectTo } = options
   const router = useRouter()
+  const pathname = usePathname()
   const queryClient = useQueryClient()
 
   // Fetch current user session
@@ -41,10 +42,17 @@ export function useAuth(options: UseAuthOptions = {}) {
     queryKey: authKeys.me(),
     queryFn: authService.me,
     retry: 0, // 🛡️ Absolute no retry for session check
-    refetchOnWindowFocus: false,
-    refetchOnMount: false, // 🛡️ Prevent loops on remount
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: true, // Re-check when user focuses window
+    refetchInterval: 15 * 1000, // Poll every 15 seconds to catch status changes
+    staleTime: 5 * 1000,
   })
+
+  // Invalidate session on route transitions to ensure real-time status checks
+  useEffect(() => {
+    if (pathname) {
+      queryClient.invalidateQueries({ queryKey: authKeys.me() })
+    }
+  }, [pathname, queryClient])
 
   const role = user?.role ?? null
   const isAuthenticated = !!user && !isSessionError
@@ -73,10 +81,22 @@ export function useAuth(options: UseAuthOptions = {}) {
       if (isAuthenticated) {
         // Guest middleware means redirect authenticated users away
         if (middleware === 'guest') {
-          const destination =
-            role === 'Admin' || role === 'SubAdmin' ? '/admin' : '/company'
-          router.replace(destination)
-          return
+          if (role === 'Admin' || role === 'SubAdmin') {
+            router.replace('/admin')
+            return
+          }
+          if (role === 'Company') {
+            if (user.status === 'PendingApproval') {
+              router.replace('/under-process')
+            } else if (user.status === 'Suspended') {
+              router.replace('/suspended')
+            } else if (user.status === 'Blocked') {
+              router.replace('/blocked')
+            } else {
+              router.replace('/company')
+            }
+            return
+          }
         }
 
         // Check role-based access - redirect back to own dashboard
@@ -85,9 +105,23 @@ export function useAuth(options: UseAuthOptions = {}) {
           return
         }
 
-        if (middleware === 'company' && role !== 'Company') {
-          router.replace('/admin')
-          return
+        if (middleware === 'company') {
+          if (role !== 'Company') {
+            router.replace('/admin')
+            return
+          }
+          if (user.status === 'PendingApproval') {
+            router.replace('/under-process')
+            return
+          }
+          if (user.status === 'Suspended') {
+            router.replace('/suspended')
+            return
+          }
+          if (user.status === 'Blocked') {
+            router.replace('/blocked')
+            return
+          }
         }
       }
     }
@@ -99,6 +133,7 @@ export function useAuth(options: UseAuthOptions = {}) {
     isAuthenticated,
     middleware,
     role,
+    user?.status,
     router,
     redirectTo,
   ])
@@ -122,7 +157,15 @@ export function useAuth(options: UseAuthOptions = {}) {
       if (userData?.role === 'Admin' || userData?.role === 'SubAdmin') {
         router.push('/admin')
       } else if (userData?.role === 'Company') {
-        router.push('/company')
+        if (userData?.status === 'PendingApproval') {
+          router.push('/under-process')
+        } else if (userData?.status === 'Suspended') {
+          router.push('/suspended')
+        } else if (userData?.status === 'Blocked') {
+          router.push('/blocked')
+        } else {
+          router.push('/company')
+        }
       }
     },
   })

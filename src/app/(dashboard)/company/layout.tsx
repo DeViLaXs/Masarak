@@ -12,10 +12,16 @@ export default function CompanyLayout({
 }: {
   children: React.ReactNode
 }) {
-  const { isLoading, role } = useAuth({ middleware: 'company' })
+  const { isLoading, role, user } = useAuth({ middleware: 'company' })
 
-  // Show nothing while checking auth (proxy handles initial redirect)
-  if (isLoading || role !== 'Company') {
+  // Show nothing while checking auth (proxy handles initial redirect) or if pending approval/suspended/blocked
+  if (
+    isLoading ||
+    role !== 'Company' ||
+    user?.status === 'PendingApproval' ||
+    user?.status === 'Suspended' ||
+    user?.status === 'Blocked'
+  ) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="border-primary h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" />

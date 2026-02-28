@@ -1,18 +1,27 @@
 /**
  * User roles
  */
-export type UserRole = 'Admin' | 'Company'| 'SubAdmin'
+export type UserRole = 'Admin' | 'Company' | 'SubAdmin'
 
 /**
  * Middleware types for route protection
  */
 export type AuthMiddleware = 'admin' | 'company' | 'guest'
 
+export type CompanyStatus =
+  | 'PendingApproval'
+  | 'Active'
+  | 'Rejected'
+  | 'Suspended'
+  | 'Blocked'
+
 /**
  * Session user data from /Account/Me
  */
 export type SessionUser = {
   role: UserRole
+  name?: string
+  status?: CompanyStatus
 }
 
 /**
@@ -25,6 +34,7 @@ export type LoginResponse = {
   expiresAt?: string
   role: UserRole
   name: string
+  status?: CompanyStatus
 }
 
 /**
@@ -37,6 +47,7 @@ export type RegisterResponse = {
   expiresAt?: string
   role: UserRole
   name: string
+  status?: CompanyStatus
 }
 
 /**
