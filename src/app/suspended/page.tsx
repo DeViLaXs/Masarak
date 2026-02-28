@@ -21,13 +21,17 @@ export default function SuspendedPage() {
 
   useEffect(() => {
     if (user?.status === 'Active') {
-      router.replace('/company')
+      if (user?.role === 'Admin' || user?.role === 'SubAdmin') {
+        router.replace('/admin')
+      } else {
+        router.replace('/company')
+      }
     } else if (user?.status === 'Blocked') {
       router.replace('/blocked')
     } else if (user?.status === 'PendingApproval') {
       router.replace('/under-process')
     }
-  }, [user?.status, router])
+  }, [user?.status, user?.role, router])
 
   const handleRefresh = async () => {
     setIsRefreshing(true)
@@ -40,7 +44,11 @@ export default function SuspendedPage() {
       })
 
       if (latestUser?.status === 'Active') {
-        router.replace('/company')
+        if (latestUser?.role === 'Admin' || latestUser?.role === 'SubAdmin') {
+          router.replace('/admin')
+        } else {
+          router.replace('/company')
+        }
       } else {
         toast.error('الحساب لا يزال معلقاً', {
           description: 'يرجى التواصل مع الدعم الفني لمزيد من المعلومات.',

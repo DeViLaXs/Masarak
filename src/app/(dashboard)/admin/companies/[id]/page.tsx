@@ -4,53 +4,33 @@ import { useParams, useRouter } from 'next/navigation'
 import { useAdmin } from '@/hooks/use-admin'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
+  ArrowLeft,
   ArrowRight,
   Building2,
+  MapPin,
   Mail,
   Phone,
-  Calendar,
+  Briefcase,
+  FileText,
   CheckCircle2,
   XCircle,
   AlertCircle,
-  MapPin,
-  Ban,
-  CircleX,
 } from 'lucide-react'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 export default function CompanyDetailsPage() {
   const params = useParams()
   const router = useRouter()
-  const companyId = parseInt(params.id as string)
+  const companyId = Number(params.id)
 
   const { useCompany } = useAdmin()
-  const { data: response, isLoading, error } = useCompany(companyId)
+  const { data: response, isLoading } = useCompany(companyId)
 
-  if (isLoading) {
-    return (
-      <div className="flex h-[50vh] items-center justify-center">
-        <div className="text-lg text-gray-500">جاري تحميل بيانات الشركة...</div>
-      </div>
-    )
-  }
+  const company = response?.data
 
-  if (error || !response?.data) {
-    return (
-      <div className="flex h-[50vh] flex-col items-center justify-center gap-4">
-        <div className="text-lg text-red-500">
-          حدث خطأ أثناء تحميل بيانات الشركة.
-        </div>
-        <Button variant="outline" onClick={() => router.back()}>
-          العودة
-        </Button>
-      </div>
-    )
-  }
-
-  const company = response.data
-
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status: string | undefined) => {
     switch (status) {
       case 'Active':
         return (
@@ -67,13 +47,7 @@ export default function CompanyDetailsPage() {
       case 'Suspended':
         return (
           <span className="flex items-center gap-1 rounded-full bg-orange-100 px-3 py-1 text-sm font-medium text-orange-700">
-            <Ban className="h-4 w-4" /> معلّقة
-          </span>
-        )
-      case 'Inactive':
-        return (
-          <span className="flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-700">
-            <CircleX className="h-4 w-4" /> غير نشطة
+            <AlertCircle className="h-4 w-4" /> معلّقة
           </span>
         )
       case 'Rejected':
@@ -82,118 +56,154 @@ export default function CompanyDetailsPage() {
             <XCircle className="h-4 w-4" /> مرفوضة
           </span>
         )
+      case 'Blocked':
+        return (
+          <span className="flex items-center gap-1 rounded-full bg-red-100 px-3 py-1 text-sm font-medium text-red-700">
+            <XCircle className="h-4 w-4" /> محظورة
+          </span>
+        )
       default:
         return (
-          <span className="rounded-full bg-gray-100 px-3 py-1 text-sm font-medium">
-            {status}
+          <span className="rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-700">
+            {status || 'غير معروف'}
           </span>
         )
     }
   }
 
+  if (isLoading) {
+    return (
+      <div className="space-y-6 px-6 py-4" dir="rtl">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-10 w-32" />
+        </div>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          <Skeleton className="h-[250px] md:col-span-1" />
+          <Skeleton className="h-[250px] md:col-span-2" />
+        </div>
+      </div>
+    )
+  }
+
+  if (!company) {
+    return (
+      <div
+        className="flex h-[50vh] flex-col items-center justify-center gap-4 text-center"
+        dir="rtl"
+      >
+        <div className="text-muted-foreground text-lg">
+          لم يتم العثور على تفاصيل الشركة.
+        </div>
+        <Button
+          onClick={() => router.back()}
+          variant="outline"
+          className="gap-2"
+        >
+          <ArrowRight className="h-4 w-4" />
+          العودة
+        </Button>
+      </div>
+    )
+  }
+
+  const registeredDate = company.createdAt
+    ? new Date(company.createdAt).toLocaleDateString('ar-EG', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+    : 'غير محدد'
+
   return (
-    <div className="px-6 py-6 max-sm:p-4" dir="rtl">
-      {/* Header */}
-      <div className="mb-6 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => router.back()}>
-            <ArrowRight className="h-5 w-5" />
-          </Button>
-          <h1 className="text-2xl font-bold text-gray-900">تفاصيل الشركة</h1>
+    <div className="space-y-6 px-6 py-4" dir="rtl">
+      {/* Header / Navigation */}
+      <div className="flex items-center justify-between">
+        <Button
+          onClick={() => router.push('/admin/companies')}
+          variant="outline"
+          className="gap-2"
+        >
+          <ArrowRight className="h-4 w-4" />
+          العودة إلى الشركات
+        </Button>
+        <div className="flex items-center gap-3">
+          {getStatusBadge(company.status)}
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-3">
-        {/* Profile Card */}
-        <Card className="h-fit md:col-span-1">
-          <CardContent className="flex flex-col items-center pt-6 text-center">
-            <Avatar className="mb-4 h-24 w-24 border-4 border-white shadow-lg">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        {/* Left Column: Profile Card */}
+        <Card className="shadow-sm md:col-span-1">
+          <CardContent className="flex flex-col items-center pt-8">
+            <Avatar className="border-muted mb-4 h-32 w-32 border-4">
               <AvatarImage
                 src={company.logoUrl || '/User-icon.webp'}
                 alt={company.companyName}
               />
-              <AvatarFallback className="bg-blue-100 text-3xl text-blue-700">
+              <AvatarFallback className="bg-primary/10 text-primary text-4xl font-bold">
                 {company.companyName.charAt(0)}
               </AvatarFallback>
             </Avatar>
-            <h2 className="mb-1 text-xl font-bold text-gray-900">
+            <h2 className="text-foreground mb-1 text-center text-2xl font-bold">
               {company.companyName}
             </h2>
-            <p className="mb-4 text-sm text-gray-500">{company.industry}</p>
-            <div className="mb-6">{getStatusBadge(company.status)}</div>
-
-            <div className="w-full space-y-4 border-t pt-4 text-right">
-              <div className="flex items-center gap-3 text-sm text-gray-600">
-                <Mail className="h-4 w-4 text-blue-500" />
-                <span>{company.email}</span>
-              </div>
-              <div className="flex items-center gap-3 text-sm text-gray-600">
-                <Phone className="h-4 w-4 text-blue-500" />
-                <span dir="ltr">{company.phoneNumber}</span>
-              </div>
-              <div className="flex items-center gap-3 text-sm text-gray-600">
-                <MapPin className="h-4 w-4 text-blue-500" />
-                <span>{company.address || 'العنوان غير متوفر'}</span>
-              </div>
-            </div>
+            <p className="text-muted-foreground mb-6 text-center">
+              {company.industry || 'قطاع غير محدد'}
+            </p>
           </CardContent>
         </Card>
 
-        {/* Details Card */}
-        <Card className="md:col-span-2">
-          <CardHeader>
-            <CardTitle className="text-xl">معلومات إضافية</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-lg border p-4">
-                <div className="mb-1 text-sm font-medium text-gray-500">
-                  رقم السجل التجاري
+        {/* Right Column: Details */}
+        <div className="space-y-6 md:col-span-2">
+          {/* Main Info */}
+          <Card className="shadow-sm">
+            <CardHeader className="border-b">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Building2 className="text-primary h-5 w-5" />
+                المعلومات الأساسية
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-6 pt-6 sm:grid-cols-2">
+              <div className="space-y-1">
+                <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                  <Mail className="h-4 w-4" />
+                  البريد الإلكتروني
                 </div>
-                <div className="font-medium text-gray-900">
-                  {company.commercialRegisterNumber || 'غير متوفر'}
-                </div>
-              </div>
-              <div className="rounded-lg border p-4">
-                <div className="mb-1 text-sm font-medium text-gray-500">
-                  الرقم الضريبي
-                </div>
-                <div className="font-medium text-gray-900">
-                  {company.taxNumber || 'غير متوفر'}
-                </div>
-              </div>
-              <div className="rounded-lg border p-4">
-                <div className="mb-1 text-sm font-medium text-gray-500">
-                  النوع
-                </div>
-                <div className="font-medium text-gray-900">
-                  {company.companyType || 'غير متوفر'}
+                <div className="flex items-center gap-2">
+                  <p className="font-medium" dir="ltr">
+                    {company.email}
+                  </p>
                 </div>
               </div>
-              <div className="rounded-lg border p-4">
-                <div className="mb-1 flex items-center gap-2 text-sm font-medium text-gray-500">
-                  <Calendar className="h-4 w-4" />
+
+              <div className="space-y-1">
+                <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                  <Phone className="h-4 w-4" />
+                  رقم الهاتف
+                </div>
+                <p className="font-medium">
+                  {company.phoneNumber}
+                </p>
+              </div>
+
+              <div className="space-y-1">
+                <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                  <Briefcase className="h-4 w-4" />
+                  مجال العمل
+                </div>
+                <p className="font-medium">{company.industry || 'غير محدد'}</p>
+              </div>
+
+              <div className="space-y-1">
+                <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                  <FileText className="h-4 w-4" />
                   تاريخ التسجيل
                 </div>
-                <div className="font-medium text-gray-900">
-                  {new Date(company.createdAt).toLocaleDateString('ar-EG', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </div>
+                <p className="font-medium">{registeredDate}</p>
               </div>
-            </div>
-
-            <div className="mt-6 rounded-lg border p-4">
-              <h3 className="mb-2 font-medium text-gray-900">وصف الشركة</h3>
-              <p className="text-sm leading-relaxed text-gray-600">
-                {company.description ||
-                  'لا يوجد وصف متاح لهذه الشركة حتى الآن.'}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   )

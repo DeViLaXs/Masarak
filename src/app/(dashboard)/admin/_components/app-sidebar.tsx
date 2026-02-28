@@ -7,6 +7,8 @@ import {
   MessagesSquare,
   EllipsisVertical,
   Users,
+  UserStar,
+  UserPlus,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -54,6 +56,11 @@ const adminLinks = [
   {
     title: 'إضافة مشرف فرعي',
     path: '/admin/create-sub-admin',
+    icon: UserPlus,
+  },
+  {
+    title: 'إدارة المشرفين الفرعيين',
+    path: '/admin/manage-sub-admin',
     icon: Users,
   },
 ]

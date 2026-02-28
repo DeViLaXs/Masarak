@@ -100,9 +100,21 @@ export function useAuth(options: UseAuthOptions = {}) {
         }
 
         // Check role-based access - redirect back to own dashboard
-        if (middleware === 'admin' && role !== 'Admin' && role !== 'SubAdmin') {
-          router.replace('/company')
-          return
+        if (middleware === 'admin') {
+          if (role !== 'Admin' && role !== 'SubAdmin') {
+            router.replace('/company')
+            return
+          }
+          if (role === 'SubAdmin') {
+            if (user.status === 'Suspended') {
+              router.replace('/suspended')
+              return
+            }
+            if (user.status === 'Blocked') {
+              router.replace('/blocked')
+              return
+            }
+          }
         }
 
         if (middleware === 'company') {
@@ -155,7 +167,17 @@ export function useAuth(options: UseAuthOptions = {}) {
 
       // Redirect based on role
       if (userData?.role === 'Admin' || userData?.role === 'SubAdmin') {
-        router.push('/admin')
+        if (userData?.role === 'SubAdmin') {
+          if (userData?.status === 'Suspended') {
+            router.push('/suspended')
+          } else if (userData?.status === 'Blocked') {
+            router.push('/blocked')
+          } else {
+            router.push('/admin')
+          }
+        } else {
+          router.push('/admin')
+        }
       } else if (userData?.role === 'Company') {
         if (userData?.status === 'PendingApproval') {
           router.push('/under-process')

@@ -21,13 +21,17 @@ export default function BlockedPage() {
 
   useEffect(() => {
     if (user?.status === 'Active') {
-      router.replace('/company')
+      if (user?.role === 'Admin' || user?.role === 'SubAdmin') {
+        router.replace('/admin')
+      } else {
+        router.replace('/company')
+      }
     } else if (user?.status === 'Suspended') {
       router.replace('/suspended')
     } else if (user?.status === 'PendingApproval') {
       router.replace('/under-process')
     }
-  }, [user?.status, router])
+  }, [user?.status, user?.role, router])
 
   const handleRefresh = async () => {
     setIsRefreshing(true)
@@ -40,7 +44,11 @@ export default function BlockedPage() {
       })
 
       if (latestUser?.status === 'Active') {
-        router.replace('/company')
+        if (latestUser?.role === 'Admin' || latestUser?.role === 'SubAdmin') {
+          router.replace('/admin')
+        } else {
+          router.replace('/company')
+        }
       } else {
         toast.error('الحساب لا يزال محظوراً', {
           description: 'نأسف، لا يزال حسابك تحت الحظر من قبل الإدارة.',

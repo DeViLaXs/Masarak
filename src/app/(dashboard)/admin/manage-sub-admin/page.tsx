@@ -1,13 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import CompaniesCard from '@/app/(dashboard)/admin/_components/companies-card'
+import SubadminsCard from '@/app/(dashboard)/admin/_components/subadmins-card'
 import { DataTable } from '@/components/data-table'
-import { columns } from '../_components/columns'
-import { useAdmin } from '@/hooks/use-admin'
+import { columns } from '../_components/subadmin-columns'
+import { useSubadmins } from '@/hooks/use-subadmins'
 import { Input } from '@/components/ui/input'
-import { Search, Check, X, UserX, Ban } from 'lucide-react'
+import { Search, Check, UserX, Ban, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import Link from 'next/link'
 import {
   Combobox,
   ComboboxContent,
@@ -28,7 +29,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { useRouter } from 'next/navigation'
 
-export default function CompaniesPage() {
+export default function ManageSubAdminPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('All')
@@ -37,12 +38,12 @@ export default function CompaniesPage() {
 
   const [bulkActionDialogOpen, setBulkActionDialogOpen] = useState(false)
   const [bulkActionType, setBulkActionType] = useState<
-    'Approve' | 'Reject' | 'Suspend' | 'Delete' | null
+    'Approve' | 'Suspend' | 'Delete' | null
   >(null)
 
   const router = useRouter()
 
-  const { useCompanies, bulkAction, isExecutingBulkAction } = useAdmin()
+  const { getSubadmins, bulkAction, isExecutingBulkAction } = useSubadmins()
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(searchQuery), 500)
@@ -53,18 +54,15 @@ export default function CompaniesPage() {
     setPage(1)
   }, [debouncedSearch, statusFilter])
 
-  const {
-    data: response,
-    isLoading,
-    error,
-  } = useCompanies({
+  const { data: response, isLoading } = getSubadmins({
     page,
     pageSize: 10,
     search: debouncedSearch || undefined,
     status: statusFilter === 'All' ? undefined : statusFilter,
   })
 
-  const companies = response?.data?.items || []
+  // Access the wrapped data object
+  const subadmins = response?.data?.items || []
   const pag = response?.data
 
   const selectedRowsIndices = Object.keys(rowSelection).filter(
@@ -72,9 +70,7 @@ export default function CompaniesPage() {
   )
   const selectedCount = selectedRowsIndices.length
 
-  const handleBulkActionClick = (
-    type: 'Approve' | 'Reject' | 'Suspend' | 'Delete',
-  ) => {
+  const handleBulkActionClick = (type: 'Approve' | 'Suspend' | 'Delete') => {
     setBulkActionType(type)
     setBulkActionDialogOpen(true)
   }
@@ -82,12 +78,12 @@ export default function CompaniesPage() {
   const handleConfirmBulkAction = async () => {
     if (!bulkActionType) return
 
-    const companyIds = selectedRowsIndices.map(
-      (index) => companies[parseInt(index)].id,
+    const subadminIds = selectedRowsIndices.map(
+      (index) => subadmins[parseInt(index)].id,
     )
 
     try {
-      await bulkAction({ companyIds, action: bulkActionType })
+      await bulkAction({ ids: subadminIds, action: bulkActionType })
       setRowSelection({}) // clear selection after action
     } finally {
       setBulkActionDialogOpen(false)
@@ -99,29 +95,22 @@ export default function CompaniesPage() {
     switch (bulkActionType) {
       case 'Approve':
         return {
-          title: 'تأكيد توثيق الشركات',
-          description: `هل أنت متأكد من رغبتك في توثيق ${selectedCount} شركة/شركات المحددة؟`,
-          confirmText: 'نعم، توثيق',
+          title: 'تأكيد التنشيط',
+          description: `هل أنت متأكد من رغبتك في تنشيط ${selectedCount} مشرف/مشرفين محددين؟`,
+          confirmText: 'نعم، تنشيط',
           variant: 'default' as const,
         }
       case 'Suspend':
         return {
-          title: 'تأكيد تعليق الشركات',
-          description: `هل أنت متأكد من رغبتك في تعليق ${selectedCount} شركة/شركات المحددة؟ لن يتمكنوا من تسجيل الدخول أو نشر وظائف.`,
+          title: 'تأكيد التعليق',
+          description: `هل أنت متأكد من رغبتك في تعليق ${selectedCount} مشرف/مشرفين محددين؟ لن يتمكنوا من تسجيل الدخول.`,
           confirmText: 'نعم، تعليق',
-          variant: 'destructive' as const,
-        }
-      case 'Reject':
-        return {
-          title: 'تأكيد رفض الشركات',
-          description: `هل أنت متأكد من رغبتك في رفض ${selectedCount} شركة/شركات المحددة؟`,
-          confirmText: 'نعم، رفض',
           variant: 'destructive' as const,
         }
       case 'Delete':
         return {
           title: 'تأكيد الحظر',
-          description: `هل أنت متأكد من رغبتك في حظر ${selectedCount} شركة/شركات المحددة؟ سيؤدي هذا الإجراء حالياً إلى تعليق هذه الحسابات (إخفائها وتعليق صلاحياتها) كإجراء أمان.`,
+          description: `هل أنت متأكد من رغبتك في حظر ${selectedCount} مشرف/مشرفين محددين؟`,
           confirmText: 'نعم، حظر',
           variant: 'destructive' as const,
         }
@@ -139,21 +128,29 @@ export default function CompaniesPage() {
 
   return (
     <div className="px-6 py-1 max-sm:p-4">
-      <CompaniesCard />
+      <SubadminsCard />
 
       <div className="mt-6 flex flex-col gap-4">
         {/* Search and Filters Bar */}
         <div className="bg-card flex flex-col gap-4 rounded-xl border p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-          {/* Search Input on the Right */}
-          <div className="relative w-full max-w-md">
-            <Search className="absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-            <Input
-              placeholder="البحث عن الشركات..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-background w-full pr-9 pl-3 text-right"
-              dir="rtl"
-            />
+          {/* Search Input and Add Button on the Right */}
+          <div className="flex w-full max-w-md items-center gap-3">
+            <div className="relative w-full">
+              <Search className="absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <Input
+                placeholder="البحث عن المشرفين..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="bg-background w-full pr-9 pl-3 text-right"
+                dir="rtl"
+              />
+            </div>
+            <Link href="/admin/create-sub-admin">
+              <Button className="bg-primary hover:bg-primary/80 flex items-center gap-2 whitespace-nowrap">
+                <Plus className="h-4 w-4" />
+                <span className="max-sm:hidden">إضافة مشرف</span>
+              </Button>
+            </Link>
           </div>
 
           {/* Status Filter on the Left */}
@@ -168,29 +165,20 @@ export default function CompaniesPage() {
                 setPage(1)
               }}
             >
-              <ComboboxTrigger className="bg-card flex h-10 w-full min-w-[210px] items-center justify-between rounded-lg border px-3 text-sm sm:w-[210px]">
+              <ComboboxTrigger className="bg-card flex h-10 w-full min-w-[140px] items-center justify-between rounded-lg border px-3 text-sm sm:w-[140px]">
                 {statusFilter === 'All' && 'جميع الحالات'}
-                {statusFilter === 'Active' && 'موثقة (Active)'}
-                {statusFilter === 'PendingApproval' &&
-                  'في انتظار التوثيق (Pending)'}
-                {statusFilter === 'Suspended' && 'معلّقة (Suspended)'}
-                {statusFilter === 'Rejected' && 'مرفوضة (Rejected)'}
-                {statusFilter === 'Blocked' && 'محظورة (Blocked)'}
+                {statusFilter === 'Active' && 'نشط (Active)'}
+                {statusFilter === 'Suspended' && 'معلّق (Suspended)'}
+                {statusFilter === 'Blocked' && 'محظور (Blocked)'}
               </ComboboxTrigger>
-              <ComboboxContent className="w-[210px] p-0">
+              <ComboboxContent className="w-[140px] p-0">
                 <ComboboxList>
                   <ComboboxItem value="All">جميع الحالات</ComboboxItem>
-                  <ComboboxItem value="Active">موثقة (Active)</ComboboxItem>
-                  <ComboboxItem value="PendingApproval">
-                    في انتظار التوثيق (Pending)
-                  </ComboboxItem>
+                  <ComboboxItem value="Active">نشط (Active)</ComboboxItem>
                   <ComboboxItem value="Suspended">
-                    معلّقة (Suspended)
+                    معلّق (Suspended)
                   </ComboboxItem>
-                  <ComboboxItem value="Rejected">
-                    مرفوضة (Rejected)
-                  </ComboboxItem>
-                  <ComboboxItem value="Blocked">محظورة (Blocked)</ComboboxItem>
+                  <ComboboxItem value="Blocked">محظور (Blocked)</ComboboxItem>
                 </ComboboxList>
               </ComboboxContent>
             </Combobox>
@@ -204,7 +192,7 @@ export default function CompaniesPage() {
             dir="rtl"
           >
             <span className="text-sm font-medium text-blue-900 dark:text-blue-400">
-              تم تحديد {selectedCount} شركات
+              تم تحديد {selectedCount} مشرفين
             </span>
             <div className="flex items-center gap-2">
               <Button
@@ -215,7 +203,7 @@ export default function CompaniesPage() {
                 disabled={isExecutingBulkAction}
               >
                 <Check className="ml-2 h-4 w-4" />
-                توثيق
+                تنشيط
               </Button>
               <Button
                 variant="outline"
@@ -226,16 +214,6 @@ export default function CompaniesPage() {
               >
                 <Ban className="ml-2 h-4 w-4" />
                 تعليق
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="border-red-200 bg-transparent text-red-500 hover:bg-red-500/10 dark:border-red-900 dark:text-red-400"
-                onClick={() => handleBulkActionClick('Reject')}
-                disabled={isExecutingBulkAction}
-              >
-                <X className="ml-2 h-4 w-4" />
-                رفض
               </Button>
               <Button
                 variant="outline"
@@ -289,7 +267,9 @@ export default function CompaniesPage() {
         {/* Table Container */}
         <div className="bg-card overflow-hidden rounded-xl border shadow-sm">
           <div className="border-b p-4">
-            <h2 className="text-right text-lg font-semibold">إدارة الشركات</h2>
+            <h2 className="text-right text-lg font-semibold">
+              إدارة المشرفين الفرعيين
+            </h2>
           </div>
 
           <div className="p-0">
@@ -301,12 +281,9 @@ export default function CompaniesPage() {
               <div className="bg-card rounded-xl p-1 shadow-sm sm:p-4">
                 <DataTable
                   columns={columns}
-                  data={companies}
+                  data={subadmins}
                   rowSelection={rowSelection}
                   onRowSelectionChange={setRowSelection}
-                  onRowClick={(row) =>
-                    router.push(`/admin/companies/${row.id}`)
-                  }
                 />
               </div>
             )}
@@ -321,7 +298,7 @@ export default function CompaniesPage() {
               <div>
                 عرض {(pag.currentPage - 1) * pag.pageSize + 1} إلى{' '}
                 {Math.min(pag.currentPage * pag.pageSize, pag.totalCount)} من
-                أصل {pag.totalCount} شركة
+                أصل {pag.totalCount} مشرف
               </div>
               <div className="flex items-center gap-2">
                 <Button

@@ -2,7 +2,7 @@
 
 import { ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '@/components/ui/checkbox'
-import { CompanyDto } from '@/services/admin-service'
+import { SubAdminDto, useSubadmins } from '@/hooks/use-subadmins'
 import { Button } from '@/components/ui/button'
 import {
   AlertDialog,
@@ -14,28 +14,21 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { Trash2, Check, X, Ban, UserX } from 'lucide-react'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-
+import { UserX, Check, Ban } from 'lucide-react'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { useState } from 'react'
-import { useAdmin } from '@/hooks/use-admin'
 
-const ActionCell = ({ company }: { company: CompanyDto }) => {
+const ActionCell = ({ subadmin }: { subadmin: SubAdminDto }) => {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [actionType, setActionType] = useState<
-    'Approve' | 'Suspend' | 'Reject' | 'Delete' | null
+    'Approve' | 'Suspend' | 'Delete' | null
   >(null)
 
-  const {
-    updateCompanyStatus,
-    deleteCompany,
-    isUpdatingStatus,
-    isDeletingCompany,
-  } = useAdmin()
+  const { updateStatus, deleteSubadmin, isUpdatingStatus, isDeleting } =
+    useSubadmins()
+  const isProcessing = isUpdatingStatus || isDeleting
 
-  const handleActionClick = (
-    type: 'Approve' | 'Suspend' | 'Reject' | 'Delete',
-  ) => {
+  const handleActionClick = (type: 'Approve' | 'Suspend' | 'Delete') => {
     setActionType(type)
     setDialogOpen(true)
   }
@@ -45,25 +38,11 @@ const ActionCell = ({ company }: { company: CompanyDto }) => {
 
     try {
       if (actionType === 'Approve') {
-        await updateCompanyStatus({
-          id: company.id,
-          data: { status: 'Active' },
-        })
-      } else if (actionType === 'Reject') {
-        await updateCompanyStatus({
-          id: company.id,
-          data: { status: 'Rejected' },
-        })
+        await updateStatus({ id: subadmin.id, data: { status: 'Active' } })
       } else if (actionType === 'Suspend') {
-        await updateCompanyStatus({
-          id: company.id,
-          data: { status: 'Suspended' },
-        })
+        await updateStatus({ id: subadmin.id, data: { status: 'Suspended' } })
       } else if (actionType === 'Delete') {
-        await updateCompanyStatus({
-          id: company.id,
-          data: { status: 'Blocked' },
-        })
+        await deleteSubadmin(subadmin.id)
       }
     } finally {
       setDialogOpen(false)
@@ -71,35 +50,26 @@ const ActionCell = ({ company }: { company: CompanyDto }) => {
     }
   }
 
-  const isProcessing = isUpdatingStatus || isDeletingCompany
-
   const getDialogContent = () => {
     switch (actionType) {
       case 'Approve':
         return {
-          title: 'تأكيد التوثيق',
-          description: `هل أنت متأكد من رغبتك في توثيق الحساب الخاص بشركة "${company.companyName}"؟ ستتمكن الشركة من استخدام جميع ميزات المنصة.`,
-          confirmText: 'نعم، توثيق',
+          title: 'تأكيد التنشيط',
+          description: `هل أنت متأكد من رغبتك في تنشيط حساب المشرف الفرعي "${subadmin.name}"؟`,
+          confirmText: 'نعم، تنشيط',
           variant: 'default' as const,
         }
       case 'Suspend':
         return {
           title: 'تأكيد التعليق',
-          description: `هل أنت متأكد من رغبتك في تعليق الحساب الخاص بشركة "${company.companyName}"؟ لن تتمكن الشركة من تسجيل الدخول أو نشر وظائف.`,
+          description: `هل أنت متأكد من رغبتك في تعليق حساب المشرف الفرعي "${subadmin.name}"؟ لن يتمكن من تسجيل الدخول.`,
           confirmText: 'نعم، تعليق',
-          variant: 'destructive' as const,
-        }
-      case 'Reject':
-        return {
-          title: 'تأكيد الرفض',
-          description: `هل أنت متأكد من رغبتك في رفض الحساب الخاص بشركة "${company.companyName}"؟ سيكون هذا الإجراء مرئياً للشركة.`,
-          confirmText: 'نعم، رفض',
           variant: 'destructive' as const,
         }
       case 'Delete':
         return {
           title: 'تأكيد الحظر',
-          description: `هل أنت متأكد من رغبتك في حظر الحساب الخاص بشركة "${company.companyName}"؟ لن يتمكنوا من الوصول إلى حسابهم نهائياً.`,
+          description: `هل أنت متأكد من رغبتك في حظر حساب المشرف الفرعي "${subadmin.name}"؟`,
           confirmText: 'نعم، احظر',
           variant: 'destructive' as const,
         }
@@ -123,10 +93,10 @@ const ActionCell = ({ company }: { company: CompanyDto }) => {
       <Button
         variant="ghost"
         size="icon"
-        title="توثيق"
+        title="تنشيط"
         className="h-8 w-8 text-green-500 hover:bg-green-50 hover:text-green-600 disabled:opacity-30 disabled:hover:bg-transparent"
         onClick={() => handleActionClick('Approve')}
-        disabled={isProcessing || company.status === 'Active'}
+        disabled={isProcessing || subadmin.status === 'Active'}
       >
         <Check className="h-4 w-4" />
       </Button>
@@ -137,24 +107,9 @@ const ActionCell = ({ company }: { company: CompanyDto }) => {
         title="تعليق"
         className="h-8 w-8 text-orange-500 hover:bg-orange-50 hover:text-orange-600 disabled:opacity-30 disabled:hover:bg-transparent"
         onClick={() => handleActionClick('Suspend')}
-        disabled={
-          isProcessing ||
-          company.status === 'Suspended' ||
-          company.status === 'Inactive'
-        }
+        disabled={isProcessing || subadmin.status === 'Suspended'}
       >
         <Ban className="h-4 w-4" />
-      </Button>
-
-      <Button
-        variant="ghost"
-        size="icon"
-        title="رفض"
-        className="h-8 w-8 text-red-500 hover:bg-red-50 hover:text-red-600 disabled:opacity-30 disabled:hover:bg-transparent"
-        onClick={() => handleActionClick('Reject')}
-        disabled={isProcessing || company.status === 'Rejected'}
-      >
-        <X className="h-4 w-4" />
       </Button>
 
       <Button
@@ -163,7 +118,7 @@ const ActionCell = ({ company }: { company: CompanyDto }) => {
         title="حظر"
         className="h-8 w-8 text-red-500 hover:bg-red-50 hover:text-red-600 disabled:opacity-30 disabled:hover:bg-transparent"
         onClick={() => handleActionClick('Delete')}
-        disabled={isProcessing || company.status === 'Blocked'}
+        disabled={isProcessing || subadmin.status === 'Blocked'}
       >
         <UserX className="h-4 w-4" />
       </Button>
@@ -198,7 +153,7 @@ const ActionCell = ({ company }: { company: CompanyDto }) => {
   )
 }
 
-export const columns: ColumnDef<CompanyDto>[] = [
+export const columns: ColumnDef<SubAdminDto>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -226,28 +181,19 @@ export const columns: ColumnDef<CompanyDto>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'companyName',
-    header: () => <div className="min-w-[200px] text-right">اسم الشركة</div>,
+    accessorKey: 'name',
+    header: () => <div className="min-w-[200px] text-right">اسم المشرف</div>,
     cell: ({ row }) => {
-      const company = row.original
+      const subadmin = row.original
       return (
         <div className="flex min-w-[200px] items-center gap-3 text-right">
           <Avatar className="h-9 w-9 border">
-            <AvatarImage
-              src={company.logoUrl || '/User-icon.webp'}
-              alt={company.companyName}
-            />
-            <AvatarFallback className="bg-blue-100 text-blue-700">
-              {company.companyName.charAt(0)}
+            <AvatarFallback className="bg-blue-100 font-bold text-blue-700">
+              {subadmin.name.charAt(0)}
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
-            <span className="text-foreground font-medium">
-              {company.companyName}
-            </span>
-            <span className="text-muted-foreground text-xs">
-              {company.industry}
-            </span>
+            <span className="text-foreground font-medium">{subadmin.name}</span>
           </div>
         </div>
       )
@@ -275,7 +221,7 @@ export const columns: ColumnDef<CompanyDto>[] = [
   },
   {
     accessorKey: 'createdAt',
-    header: () => <div className="min-w-[120px] text-right">تاريخ التسجيل</div>,
+    header: () => <div className="min-w-[120px] text-right">تاريخ الإضافة</div>,
     cell: ({ row }) => {
       const dateStr = row.getValue('createdAt') as string
       try {
@@ -305,15 +251,7 @@ export const columns: ColumnDef<CompanyDto>[] = [
           return (
             <div className="flex w-[120px] items-center justify-center">
               <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
-                موثقة
-              </span>
-            </div>
-          )
-        case 'PendingApproval':
-          return (
-            <div className="flex w-[120px] items-center justify-center">
-              <span className="flex items-center gap-1 rounded-full bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-700">
-                في انتظار التوثيق
+                نشط
               </span>
             </div>
           )
@@ -321,23 +259,7 @@ export const columns: ColumnDef<CompanyDto>[] = [
           return (
             <div className="flex w-[120px] items-center justify-center">
               <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-medium text-orange-700">
-                معلّقة
-              </span>
-            </div>
-          )
-        case 'Inactive':
-          return (
-            <div className="flex w-[120px] items-center justify-center">
-              <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700">
-                غير نشطة
-              </span>
-            </div>
-          )
-        case 'Rejected':
-          return (
-            <div className="flex w-[120px] items-center justify-center">
-              <span className="rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-700">
-                مرفوضة
+                معلّق
               </span>
             </div>
           )
@@ -345,7 +267,7 @@ export const columns: ColumnDef<CompanyDto>[] = [
           return (
             <div className="flex w-[120px] items-center justify-center">
               <span className="rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-700">
-                محظورة
+                محظور
               </span>
             </div>
           )
@@ -356,10 +278,10 @@ export const columns: ColumnDef<CompanyDto>[] = [
   },
   {
     id: 'actions',
-    header: () => <div className="w-[160px] text-center">الإجراءات</div>,
+    header: () => <div className="w-[120px] text-center">الإجراءات</div>,
     cell: ({ row }) => (
-      <div className="w-[160px]">
-        <ActionCell company={row.original} />
+      <div className="w-[120px]">
+        <ActionCell subadmin={row.original} />
       </div>
     ),
   },
