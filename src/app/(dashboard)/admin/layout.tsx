@@ -34,7 +34,7 @@ export default function AdminLayout({
       <div className="hidden md:block">
         <SidebarProvider>
           <AppSidebar />
-          <SidebarInset>
+          <SidebarInset className="max-h-svh overflow-y-auto">
             <DashboardNavbar />
             <div className="flex flex-1 flex-col gap-4 p-4">{children}</div>
           </SidebarInset>

@@ -52,6 +52,48 @@ export type CreateJobDto = {
   newSkills?: string[]
 }
 
+export type JobListItemDto = {
+  id: number
+  title: string
+  description: string
+  jobType: string
+  minSalary: number
+  maxSalary: number
+  currency: string
+  postedDate: string // ISO string
+  expirationDate: string // ISO string
+  applicantsCount: number
+  status: 'Published' | 'Closed' | 'Filled' | 'Expired'
+}
+
+export type JobDetailDto = {
+  id: number
+  title: string
+  description: string
+  jobTypeId: number
+  jobType: string
+  categoryId: number
+  category: string
+  jobLocationTypeId: number
+  jobLocationType: string
+  currencyId: number
+  currency: string
+  minSalary: number
+  maxSalary: number
+  postedDate: string // ISO string
+  expirationDate: string // ISO string
+  applicantsCount: number
+  status: 'Published' | 'Closed' | 'Filled' | 'Expired'
+  addressLine?: string
+  countryId: number
+  country: string
+  governateId: number
+  governate: string
+  skills: Array<{ id: number; name: string }>
+}
+
+export type UpdateJobDto = Partial<CreateJobDto>
+
 // ============== Job Service ==============
 
 export const jobService = {
@@ -60,6 +102,50 @@ export const jobService = {
    */
   createJob: async (data: CreateJobDto): Promise<{ message: string }> => {
     const res = await api.post('/Job/jobs', data)
+    return res.data?.data
+  },
+
+  /**
+   * Get paginated list of company jobs
+   */
+  getCompanyJobs: async (params?: {
+    page?: number
+    pageSize?: number
+    search?: string
+    status?: string
+    jobTypeId?: number
+  }): Promise<PaginatedData<JobListItemDto>> => {
+    const res = await api.get('/Job/jobs', { params })
+    return res.data?.data
+  },
+
+  /**
+   * Get job by ID
+   */
+  getJobById: async (id: number): Promise<JobDetailDto> => {
+    const res = await api.get(`/Job/jobs/${id}`)
+    return res.data?.data
+  },
+
+  /**
+   * Update an existing job
+   */
+  updateJob: async (
+    id: number,
+    data: UpdateJobDto,
+  ): Promise<{ message: string }> => {
+    const res = await api.put(`/Job/jobs/${id}`, data)
+    return res.data?.data
+  },
+
+  /**
+   * Update job status (Publish, Close, etc.)
+   */
+  updateJobStatus: async (
+    id: number,
+    status: 'Published' | 'Closed',
+  ): Promise<{ message: string }> => {
+    const res = await api.patch(`/Job/jobs/${id}/status`, { status })
     return res.data?.data
   },
 

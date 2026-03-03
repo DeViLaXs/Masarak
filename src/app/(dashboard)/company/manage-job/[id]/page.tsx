@@ -1,8 +1,9 @@
 'use client'
 
 import * as React from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import {
+  useJob,
   useJobs,
   useJobLookups,
   useGovernates,
@@ -29,6 +30,7 @@ import {
   WrenchIcon,
   Sparkles,
   SaveIcon,
+  ArrowRightIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -54,7 +56,7 @@ import {
   ComboboxEmpty,
 } from '@/components/ui/combobox'
 
-// --- Types & Initial State ---
+// --- Types ---
 
 type JobFormState = {
   title: string
@@ -72,26 +74,30 @@ type JobFormState = {
   newSkills: string[]
 }
 
-const initialFormState: JobFormState = {
-  title: '',
-  description: '',
-  jobTypeId: '',
-  categoryId: '',
-  jobLocationTypeId: '',
-  currencyId: '',
-  countryId: '',
-  governateId: '',
-  minSalary: '',
-  maxSalary: '',
-  expirationDate: undefined,
-  skillIds: [],
-  newSkills: [],
-}
-
-export function AddJobForm() {
+export default function JobDetailsPage() {
   const router = useRouter()
-  const { createJobAsync, isCreatingJob } = useJobs()
-  const [formData, setFormData] = React.useState<JobFormState>(initialFormState)
+  const params = useParams()
+  const id = Number(params.id)
+
+  const { data: job, isLoading: isJobLoading } = useJob(id)
+  const { updateJobAsync, isUpdatingJob } = useJobs()
+
+  const [formData, setFormData] = React.useState<JobFormState>({
+    title: '',
+    description: '',
+    jobTypeId: '',
+    categoryId: '',
+    jobLocationTypeId: '',
+    currencyId: '',
+    countryId: '',
+    governateId: '',
+    minSalary: '',
+    maxSalary: '',
+    expirationDate: undefined,
+    skillIds: [],
+    newSkills: [],
+  })
+
   const [skillsSearch, setSkillsSearch] = React.useState('')
   const [selectedSkillsMap, setSelectedSkillsMap] = React.useState<
     Record<number, string>
@@ -107,13 +113,39 @@ export function AddJobForm() {
   const skillsInputRef = React.useRef<HTMLInputElement>(null)
   const skillsContainerRef = React.useRef<HTMLDivElement>(null)
 
+  // Initialize form data when job is loaded
+  React.useEffect(() => {
+    if (job) {
+      setFormData({
+        title: job.title,
+        description: job.description,
+        jobTypeId: job.jobTypeId,
+        categoryId: job.categoryId,
+        jobLocationTypeId: job.jobLocationTypeId,
+        currencyId: job.currencyId,
+        countryId: job.countryId,
+        governateId: job.governateId,
+        minSalary: job.minSalary.toString(),
+        maxSalary: job.maxSalary.toString(),
+        expirationDate: new Date(job.expirationDate),
+        skillIds: job.skills.map((s) => s.id),
+        newSkills: [],
+      })
+
+      const skillMap: Record<number, string> = {}
+      job.skills.forEach((s) => {
+        skillMap[s.id] = s.name
+      })
+      setSelectedSkillsMap(skillMap)
+    }
+  }, [job])
+
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         skillsContainerRef.current &&
         !skillsContainerRef.current.contains(event.target as Node)
       ) {
-        // Clear the search to close the dropdown
         setSkillsSearch('')
       }
     }
@@ -173,26 +205,29 @@ export function AddJobForm() {
     }
 
     try {
-      await createJobAsync({
-        title: formData.title,
-        description: formData.description,
-        jobTypeId: Number(formData.jobTypeId),
-        categoryId: Number(formData.categoryId),
-        jobLocationTypeId: Number(formData.jobLocationTypeId),
-        currencyId: Number(formData.currencyId),
-        countryId: Number(formData.countryId),
-        governateId: Number(formData.governateId),
-        minSalary: Number(formData.minSalary),
-        maxSalary: Number(formData.maxSalary),
-        expirationDate: formData.expirationDate.toISOString(),
-        skillIds: formData.skillIds,
-        newSkills: formData.newSkills,
+      await updateJobAsync({
+        id,
+        data: {
+          title: formData.title,
+          description: formData.description,
+          jobTypeId: Number(formData.jobTypeId),
+          categoryId: Number(formData.categoryId),
+          jobLocationTypeId: Number(formData.jobLocationTypeId),
+          currencyId: Number(formData.currencyId),
+          countryId: Number(formData.countryId),
+          governateId: Number(formData.governateId),
+          minSalary: Number(formData.minSalary),
+          maxSalary: Number(formData.maxSalary),
+          expirationDate: formData.expirationDate.toISOString(),
+          skillIds: formData.skillIds,
+          newSkills: formData.newSkills,
+        },
       })
 
-      toast.success('تمت إضافة الوظيفة بنجاح')
+      toast.success('تم تحديث الوظيفة بنجاح')
       router.push('/company/manage-job')
     } catch (error: any) {
-      toast.error(error?.message || 'حدث خطأ أثناء الإضافة')
+      toast.error(error?.message || 'حدث خطأ أثناء التحديث')
     }
   }
 
@@ -237,13 +272,27 @@ export function AddJobForm() {
     return selectedSkillsMap[id] || `مهارة ${id}`
   }
 
-  if (isCategoriesLoading) {
+  if (isJobLoading || isCategoriesLoading) {
     return (
       <div className="flex min-h-[400px] flex-col items-center justify-center gap-4 xl:min-h-[500px]">
         <Loader2 className="text-primary size-10 animate-spin" />
         <p className="text-muted-foreground animate-pulse text-sm font-medium">
-          جاري إعداد نموذج الإضافة...
+          جاري تحميل بيانات الوظيفة...
         </p>
+      </div>
+    )
+  }
+
+  if (!job) {
+    return (
+      <div className="flex min-h-[400px] flex-col items-center justify-center gap-4">
+        <BriefcaseIcon className="size-12 text-slate-300" />
+        <h3 className="text-lg font-medium text-slate-700">
+          لم يتم العثور على الوظيفة
+        </h3>
+        <Button onClick={() => router.push('/company/manage-job')}>
+          العودة لإدارة الوظائف
+        </Button>
       </div>
     )
   }
@@ -253,17 +302,27 @@ export function AddJobForm() {
       {/* Header Banner */}
       <div className="border-primary/10 from-primary/10 via-background to-background dark:from-primary/5 relative overflow-hidden rounded-2xl border bg-gradient-to-l p-8 text-right shadow-sm">
         <div className="relative z-10 flex flex-col gap-3">
-          <div className="flex items-center gap-3">
-            <div className="bg-primary/10 text-primary ring-primary/20 flex size-14 items-center justify-center rounded-xl shadow-sm ring-1 backdrop-blur-md">
-              <Sparkles className="size-6" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="bg-primary/10 text-primary ring-primary/20 flex size-14 items-center justify-center rounded-xl shadow-sm ring-1 backdrop-blur-md">
+                <BriefcaseIcon className="size-6" />
+              </div>
+              <h1 className="text-foreground text-3xl font-extrabold tracking-tight">
+                تعديل تفاصيل الوظيفة
+              </h1>
             </div>
-            <h1 className="text-foreground text-3xl font-extrabold tracking-tight">
-              إضافة وظيفة جديدة
-            </h1>
+            <Button
+              variant="ghost"
+              className="text-muted-foreground hover:text-primary rounded-full"
+              onClick={() => router.push('/company/manage-job')}
+            >
+              <ArrowRightIcon className="ml-2 size-4" />
+              العودة
+            </Button>
           </div>
           <p className="text-muted-foreground mr-[68px] max-w-2xl text-base leading-relaxed">
-            أنشئ إعلاناً وظيفياً مميزاً واجذب أفضل الكفاءات والمواهب لفريقك
-            بخطوات بسيطة وواضحة.
+            قم بتحديث مسمى الوظيفة، المتطلبات، أو أي تفاصيل أخرى لضمان وصولها
+            للمرشحين المناسبين.
           </p>
         </div>
 
@@ -290,14 +349,14 @@ export function AddJobForm() {
           <CardHeader className="dark:bg-muted/10 border-b pb-5">
             <div className="flex items-center gap-3">
               <div className="bg-primary/10 text-primary ring-primary/20 flex size-10 items-center justify-center rounded-lg ring-1">
-                <BriefcaseIcon className="size-5" />
+                <Sparkles className="size-5" />
               </div>
               <div>
                 <CardTitle size="bold" className="text-lg">
-                  تفاصيل الوظيفة الأساسية
+                  المعلومات الأساسية
                 </CardTitle>
                 <CardDescription className="mt-1">
-                  المعلومات العامة حول الوظيفة وتصنيفها
+                  العنوان والتصنيف والوصف الوظيفي
                 </CardDescription>
               </div>
             </div>
@@ -365,7 +424,7 @@ export function AddJobForm() {
               <Textarea
                 id="description"
                 className="bg-background focus-visible:ring-primary/20 min-h-[140px] resize-y transition-shadow"
-                placeholder="اكتب وصفاً مفصلاً للوظيفة والمهام المطلوبة بطريقة واضحة ومختصرة..."
+                placeholder="اكتب وصفاً مفصلاً للوظيفة..."
                 value={formData.description}
                 onChange={(e) =>
                   setFormData((prev) => ({
@@ -404,7 +463,7 @@ export function AddJobForm() {
                   موقع وطبيعة العمل
                 </CardTitle>
                 <CardDescription className="mt-1">
-                  حدد نوع الدوام والمكان الذي سيعمل منه الموظف
+                  تحديد مكان ونظام العمل
                 </CardDescription>
               </div>
             </div>
@@ -431,7 +490,6 @@ export function AddJobForm() {
                   />
                   <ComboboxContent>
                     <ComboboxList>
-                      <ComboboxEmpty>لا يوجد نتائج</ComboboxEmpty>
                       {jobTypes?.map((jt) => (
                         <ComboboxItem key={jt.id} value={jt}>
                           {jt.name}
@@ -464,7 +522,6 @@ export function AddJobForm() {
                   />
                   <ComboboxContent>
                     <ComboboxList>
-                      <ComboboxEmpty>لا يوجد نتائج</ComboboxEmpty>
                       {locationTypes?.map((lt) => (
                         <ComboboxItem key={lt.id} value={lt}>
                           {lt.name}
@@ -501,11 +558,6 @@ export function AddJobForm() {
                   />
                   <ComboboxContent>
                     <ComboboxList>
-                      {countries && countries.length === 0 && (
-                        <div className="text-muted-foreground py-2 text-center text-sm">
-                          لا يوجد نتائج
-                        </div>
-                      )}
                       {countries?.map((country) => (
                         <ComboboxItem key={country.id} value={country}>
                           {country.name}
@@ -548,11 +600,6 @@ export function AddJobForm() {
                   />
                   <ComboboxContent>
                     <ComboboxList>
-                      {governates && governates.length === 0 && (
-                        <div className="text-muted-foreground py-2 text-center text-sm">
-                          لا يوجد نتائج
-                        </div>
-                      )}
                       {governates?.map((gov) => (
                         <ComboboxItem key={gov.id} value={gov}>
                           {gov.name}
@@ -575,10 +622,10 @@ export function AddJobForm() {
               </div>
               <div>
                 <CardTitle size="bold" className="text-lg">
-                  تحديد الراتب والمدة
+                  الراتب وتاريخ الانتهاء
                 </CardTitle>
                 <CardDescription className="mt-1">
-                  نطاق الراتب المتوقع ومدة إتاحة الإعلان الوظيفي
+                  نطاق الراتب المتوقع ومدة الإعلان
                 </CardDescription>
               </div>
             </div>
@@ -613,11 +660,6 @@ export function AddJobForm() {
                   />
                   <ComboboxContent>
                     <ComboboxList>
-                      {currencies && currencies.length === 0 && (
-                        <div className="text-muted-foreground py-2 text-center text-sm">
-                          لا يوجد نتائج
-                        </div>
-                      )}
                       {currencies?.map((curr) => (
                         <ComboboxItem key={curr.id} value={curr}>
                           {curr.name} ({curr.code})
@@ -718,7 +760,7 @@ export function AddJobForm() {
                   المتطلبات والمهارات
                 </CardTitle>
                 <CardDescription className="mt-1">
-                  أضف المهارات التي يجب أن تتوفر في المتقدم
+                  تحديث المهارات المطلوبة للوظيفة
                 </CardDescription>
               </div>
             </div>
@@ -769,7 +811,7 @@ export function AddJobForm() {
                     <SearchIcon className="text-muted-foreground/70 pointer-events-none absolute right-3 size-4" />
                     <Input
                       ref={skillsInputRef}
-                      placeholder="ابحث لاختيار مهارة موجودة أو اكتب لإضافة مهارة جديدة..."
+                      placeholder="ابحث عن مهارات أو أضف مهارات جديدة..."
                       className="w-full border-none bg-transparent py-2.5 pr-10 pl-3 text-sm font-medium shadow-none focus-visible:ring-0"
                       value={skillsSearch}
                       onChange={(e) => setSkillsSearch(e.target.value)}
@@ -783,51 +825,38 @@ export function AddJobForm() {
                         <div className="text-primary/50 flex items-center justify-center p-6">
                           <Loader2 className="size-6 animate-spin" />
                         </div>
-                      ) : skillsOptions && skillsOptions.length > 0 ? (
+                      ) : (
                         <ul className="flex flex-col gap-1">
-                          {skillsOptions.map((skill) => (
-                            <li key={skill.id}>
-                              <button
-                                type="button"
-                                className="hover:bg-muted focus:bg-muted flex w-full cursor-pointer items-center rounded-md px-3 py-2.5 text-right text-sm font-medium transition-colors focus:outline-none"
-                                onClick={() =>
-                                  handleAddSkill(skill.id, skill.name)
-                                }
-                              >
-                                {skill.name}
-                              </button>
-                            </li>
-                          ))}
-                          {!skillsOptions.find(
-                            (s) =>
-                              s.name.toLowerCase() ===
-                              skillsSearch.toLowerCase(),
-                          ) && (
+                          {skillsOptions &&
+                            skillsOptions.length > 0 &&
+                            skillsOptions.map((skill) => (
+                              <li key={skill.id}>
+                                <button
+                                  type="button"
+                                  className="hover:bg-muted focus:bg-muted flex w-full cursor-pointer items-center rounded-md px-3 py-2.5 text-right text-sm font-medium transition-colors focus:outline-none"
+                                  onClick={() =>
+                                    handleAddSkill(skill.id, skill.name)
+                                  }
+                                >
+                                  {skill.name}
+                                </button>
+                              </li>
+                            ))}
+                          {skillsSearch.trim().length > 1 && (
                             <li>
                               <button
                                 type="button"
-                                className="bg-primary/5 text-primary hover:bg-primary/10 flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2.5 text-right text-sm font-bold transition-colors focus:outline-none"
+                                className="hover:bg-primary/5 focus:bg-primary/5 text-primary flex w-full cursor-pointer items-center justify-between rounded-md px-3 py-3 text-right text-sm font-bold transition-colors focus:outline-none"
                                 onClick={() =>
-                                  handleAddSkill(null, skillsSearch)
+                                  handleAddSkill(null, skillsSearch.trim())
                                 }
                               >
+                                <span>إضافة مهارة جديدة: "{skillsSearch}"</span>
                                 <PlusIcon className="size-4" />
-                                إضافة &quot;{skillsSearch}&quot; كمهارة جديدة
                               </button>
                             </li>
                           )}
                         </ul>
-                      ) : (
-                        <div className="p-1">
-                          <button
-                            type="button"
-                            className="bg-primary/5 text-primary hover:bg-primary/10 flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2.5 text-right text-sm font-bold transition-colors focus:outline-none"
-                            onClick={() => handleAddSkill(null, skillsSearch)}
-                          >
-                            <PlusIcon className="size-4" />
-                            إضافة &quot;{skillsSearch}&quot; كمهارة جديدة
-                          </button>
-                        </div>
                       )}
                     </div>
                   )}
@@ -837,20 +866,33 @@ export function AddJobForm() {
           </CardContent>
         </Card>
 
-        {/* --- Form Actions --- */}
-        <div className="border-border/50 z-40 flex items-center justify-end gap-4 rounded-2xl border p-5 shadow-lg backdrop-blur-xl">
+        {/* Action Buttons */}
+        <div className="flex flex-col-reverse gap-4 md:flex-row md:justify-end">
+          <Button
+            type="button"
+            variant="outline"
+            className="h-12 rounded-xl px-10 font-bold"
+            onClick={() => router.push('/company/manage-job')}
+            disabled={isUpdatingJob}
+          >
+            إلغاء التغييرات
+          </Button>
           <Button
             type="submit"
-            size="lg"
-            disabled={isCreatingJob}
-            className="min-w-44 font-bold tracking-wide shadow-md transition-transform hover:scale-[1.02]"
+            className="h-12 rounded-xl bg-[#3b82f6] px-10 font-bold text-white shadow-md hover:bg-blue-600 disabled:opacity-70"
+            disabled={isUpdatingJob}
           >
-            {isCreatingJob ? (
-              <Loader2 className="ml-2 size-5 animate-spin" />
+            {isUpdatingJob ? (
+              <>
+                <Loader2 className="ml-2 size-5 animate-spin" />
+                جاري الحفظ...
+              </>
             ) : (
-              <SaveIcon className="ml-2 size-5" />
+              <>
+                <SaveIcon className="ml-2 size-5" />
+                حفظ التعديلات
+              </>
             )}
-            نشر الإعلان الوظيفي
           </Button>
         </div>
       </form>

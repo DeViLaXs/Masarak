@@ -1,10 +1,10 @@
 import React from 'react'
+import ManageJobClient from './_components/manage-job-client'
 
 export default function ManageJobPage() {
   return (
-    <div className='max-md:flex max-md:flex-col'>
-      <div className='hidden md:block'>desktop</div>
-      <div className='max-md:flex max-md:justify-center max-md:items-center md:hidden'>Open Website in Desktop</div>
+    <div className="w-full">
+      <ManageJobClient />
     </div>
   )
 }
