@@ -7,7 +7,7 @@ export const routeTitles = [
 
   { path: '/company', title: 'لوحة التحكم' },
   { path: '/company/manage-job', title: 'إدارة الوظائف' },
-  { path: '/company/new-job', title: 'إضافة وظيفة جديدة' },
+  { path: '/company/add-job', title: 'إضافة وظيفة جديدة' },
   { path: '/company/job-order', title: 'طلبات الوظائف' },
   { path: '/company/job-history', title: 'سجل الوظائف' },
   { path: '/company/profile', title: 'الملف الشخصي' },

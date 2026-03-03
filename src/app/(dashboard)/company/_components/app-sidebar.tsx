@@ -47,7 +47,7 @@ const links = [
   },
   {
     title: 'إضافة وظيفة جديدة',
-    path: '/company/new-job',
+    path: '/company/add-job',
     icon: MessagesSquare,
   },
   {

@@ -119,7 +119,7 @@ export default function CompanyDetailsPage() {
       {/* Header / Navigation */}
       <div className="flex items-center justify-between">
         <Button
-          onClick={() => router.push('/admin/companies')}
+          onClick={() => router.back()}
           variant="outline"
           className="gap-2"
         >

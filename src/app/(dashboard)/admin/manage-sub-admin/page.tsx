@@ -5,6 +5,7 @@ import SubadminsCard from '@/app/(dashboard)/admin/_components/subadmins-card'
 import { DataTable } from '@/components/data-table'
 import { columns } from '../_components/subadmin-columns'
 import { useSubadmins } from '@/hooks/use-subadmins'
+import { useAuth } from '@/auth/use-auth'
 import { Input } from '@/components/ui/input'
 import { Search, Check, UserX, Ban, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -42,8 +43,20 @@ export default function ManageSubAdminPage() {
   >(null)
 
   const router = useRouter()
+  const { role } = useAuth({ middleware: 'admin' })
+
+  // Prevent SubAdmins from accessing this page
+  useEffect(() => {
+    if (role === 'SubAdmin') {
+      router.replace('/admin')
+    }
+  }, [role, router])
 
   const { getSubadmins, bulkAction, isExecutingBulkAction } = useSubadmins()
+
+  if (role === 'SubAdmin') {
+    return null
+  }
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(searchQuery), 500)
