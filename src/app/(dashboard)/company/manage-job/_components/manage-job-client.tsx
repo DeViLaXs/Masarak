@@ -1,10 +1,21 @@
 'use client'
 
-import React, { useState } from 'react'
-import { useCompanyJobs, useUpdateJobStatus, useJobs, useJobLookups } from '@/hooks/use-jobs'
+import React, { useState, useMemo } from 'react'
+import {
+  useCompanyJobs,
+  useUpdateJobStatus,
+  useJobs,
+  useJobLookups,
+} from '@/hooks/use-jobs'
 import { useDebounce } from 'use-debounce'
 import { format } from 'date-fns'
 import { ar } from 'date-fns/locale'
+import {
+  type ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from '@tanstack/react-table'
 import {
   SearchIcon,
   UsersIcon,
@@ -25,6 +36,59 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { Calendar } from '@/components/ui/calendar'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import type { JobListItemDto } from '@/services/job-service'
+
+// --- Arabic Translation Helpers ---
+
+const formatJobType = (type: string) => {
+  const map: Record<string, string> = {
+    FullTime: 'دوام كامل',
+    PartTime: 'دوام جزئي',
+    Remote: 'عن بعد',
+    Hybrid: 'هجين',
+    Contract: 'عقد',
+    Freelance: 'عمل حر',
+    Internship: 'تدريب',
+  }
+  return map[type] || type
+}
+
+const formatLocationType = (type: string) => {
+  const map: Record<string, string> = {
+    OnSite: 'حضوري',
+    Remote: 'عن بعد',
+    Hybrid: 'هجين',
+  }
+  return map[type] || type
+}
+
+const statusMap: Record<string, { label: string; className: string }> = {
+  Published: {
+    label: 'نشطة',
+    className:
+      'bg-emerald-50 text-emerald-600 ring-1 ring-inset ring-emerald-500/20',
+  },
+  Closed: {
+    label: 'غير نشطة',
+    className: 'bg-slate-50 text-slate-600 ring-1 ring-inset ring-slate-500/20',
+  },
+  Expired: {
+    label: 'منتهية',
+    className: 'bg-red-50 text-red-600 ring-1 ring-inset ring-red-500/20',
+  },
+  Filled: {
+    label: 'تم التعيين',
+    className: 'bg-blue-50 text-blue-600 ring-1 ring-inset ring-blue-500/20',
+  },
+}
 
 export default function ManageJobClient() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -37,7 +101,11 @@ export default function ManageJobClient() {
   const { jobTypes } = useJobLookups()
 
   // Fetch jobs
-  const { data: jobsData, isPending, refetch } = useCompanyJobs({
+  const {
+    data: jobsData,
+    isPending,
+    refetch,
+  } = useCompanyJobs({
     page,
     pageSize: 10,
     search: debouncedSearch || undefined,
@@ -69,13 +137,11 @@ export default function ManageJobClient() {
       { id, data: { expirationDate: newDate.toISOString() } },
       {
         onSuccess: () => {
-          // Frontend workaround: Manually set status to Published after updating the date
           updateStatus(
             { id, status: 'Published' },
             {
               onSuccess: () => {
                 toast.success('تم إعادة الجدولة وتنشيط الوظيفة بنجاح')
-                // Force a refetch to get the latest data from the backend
                 refetch()
               },
             },
@@ -88,63 +154,188 @@ export default function ManageJobClient() {
   const jobs = jobsData?.items || []
   const totalPages = jobsData?.totalPages || 1
 
-  const renderStatusBadge = (status: string) => {
-    switch (status) {
-      case 'Published':
-        return (
-          <span className="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-600 ring-1 ring-emerald-500/20 ring-inset">
-            نشطة
-          </span>
-        )
-      case 'Closed':
-        return (
-          <span className="inline-flex items-center rounded-full bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600 ring-1 ring-slate-500/20 ring-inset">
-            غير نشطة
-          </span>
-        )
-      case 'Expired':
-        return (
-          <span className="inline-flex items-center rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-600 ring-1 ring-red-500/20 ring-inset">
-            منتهية
-          </span>
-        )
-      case 'Filled':
-        return (
-          <span className="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600 ring-1 ring-blue-500/20 ring-inset">
-            تم التعيين
-          </span>
-        )
-      default:
-        return (
-          <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-800">
-            {status}
-          </span>
-        )
-    }
-  }
+  // --- Column Definitions ---
 
-  const formatJobType = (type: string) => {
-    if (type === 'FullTime') return 'دوام كامل'
-    if (type === 'PartTime') return 'دوام جزئي'
-    if (type === 'Remote') return 'عن بعد'
-    if (type === 'Hybrid') return 'هجين'
-    return type
-  }
+  const columns = useMemo<ColumnDef<JobListItemDto>[]>(
+    () => [
+      {
+        accessorKey: 'title',
+        size: 250,
+        header: () => <div className="font-medium">عنوان الوظيفة</div>,
+        cell: ({ row }) => (
+          <div className="max-w-[250px]">
+            <div className="mb-1 truncate text-base font-bold text-slate-900">
+              {row.original.title}
+            </div>
+            <div
+              className="truncate text-xs text-slate-500"
+              title={row.original.description}
+            >
+              {row.original.description}
+            </div>
+          </div>
+        ),
+      },
+      {
+        accessorKey: 'jobType',
+        size: 120,
+        header: () => <div className="text-center font-medium">نوع الدوام</div>,
+        cell: ({ row }) => (
+          <div className="text-center">
+            <span className="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600">
+              {formatJobType(row.original.jobType)}
+            </span>
+          </div>
+        ),
+      },
+      {
+        id: 'salary',
+        size: 160,
+        header: () => <div className="text-center font-medium">الراتب</div>,
+        cell: ({ row }) => (
+          <div className="text-center font-medium whitespace-nowrap text-slate-600">
+            {row.original.minSalary.toLocaleString()} -{' '}
+            {row.original.maxSalary.toLocaleString()} ريال
+          </div>
+        ),
+        enableSorting: false,
+      },
+      {
+        accessorKey: 'postedDate',
+        size: 120,
+        header: () => (
+          <div className="text-center font-medium">تاريخ النشر</div>
+        ),
+        cell: ({ row }) => (
+          <div className="text-center font-medium whitespace-nowrap text-slate-500">
+            {format(new Date(row.original.postedDate), 'yyyy-MM-dd')}
+          </div>
+        ),
+      },
+      {
+        accessorKey: 'expirationDate',
+        size: 130,
+        header: () => (
+          <div className="text-center font-medium">انتهاء الصلاحية</div>
+        ),
+        cell: ({ row }) => (
+          <div className="text-center font-medium whitespace-nowrap text-slate-500">
+            {format(new Date(row.original.expirationDate), 'yyyy-MM-dd')}
+          </div>
+        ),
+      },
+      {
+        accessorKey: 'applicantsCount',
+        size: 90,
+        header: () => <div className="text-center font-medium">المتقدمين</div>,
+        cell: ({ row }) => (
+          <div className="mt-1 flex flex-col items-center justify-center gap-1 text-center font-bold text-slate-700">
+            <UsersIcon className="size-4 text-slate-400" />
+            <span>{row.original.applicantsCount}</span>
+          </div>
+        ),
+      },
+      {
+        accessorKey: 'status',
+        size: 110,
+        header: () => <div className="text-center font-medium">الحالة</div>,
+        cell: ({ row }) => {
+          const s = statusMap[row.original.status]
+          return (
+            <div className="text-center">
+              <span
+                className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${s?.className || 'bg-slate-100 text-slate-800'}`}
+              >
+                {s?.label || row.original.status}
+              </span>
+            </div>
+          )
+        },
+      },
+      {
+        id: 'actions',
+        size: 160,
+        header: () => <div className="text-center font-medium">الإجراءات</div>,
+        cell: ({ row }) => {
+          const job = row.original
+          return (
+            <div className="flex items-center justify-center gap-3 text-sm font-semibold opacity-80 transition-opacity group-hover:opacity-100">
+              <a
+                href={`/company/manage-job/${job.id}`}
+                className="text-[#3b82f6] transition-colors hover:text-blue-700 hover:underline"
+              >
+                تعديل
+              </a>
+
+              {job.status === 'Published' && (
+                <button
+                  disabled={isUpdating || isUpdatingJob}
+                  onClick={() => handleStatusChange(job.id, 'Closed')}
+                  className="text-amber-500 transition-colors hover:text-amber-600 hover:underline disabled:opacity-50"
+                >
+                  إغلاق
+                </button>
+              )}
+
+              {job.status === 'Closed' && (
+                <button
+                  disabled={isUpdating || isUpdatingJob}
+                  onClick={() => handleStatusChange(job.id, 'Published')}
+                  className="text-emerald-500 transition-colors hover:text-emerald-600 hover:underline disabled:opacity-50"
+                >
+                  تنشيط
+                </button>
+              )}
+
+              {job.status === 'Expired' && (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button
+                      disabled={isUpdating || isUpdatingJob}
+                      className="flex items-center gap-1 text-emerald-500 transition-colors hover:text-emerald-600 hover:underline disabled:opacity-50"
+                    >
+                      إعادة جدولة
+                      {isUpdatingJob && (
+                        <Loader2 className="size-3 animate-spin" />
+                      )}
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent align="end" className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={new Date(job.expirationDate)}
+                      onSelect={(date) => {
+                        if (date) {
+                          handleReschedule(job.id, date)
+                        }
+                      }}
+                      disabled={(date) => date < new Date()}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              )}
+            </div>
+          )
+        },
+        enableSorting: false,
+      },
+    ],
+    [isUpdating, isUpdatingJob],
+  )
+
+  // --- TanStack Table Instance ---
+
+  const table = useReactTable({
+    data: jobs,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    manualPagination: true,
+    pageCount: totalPages,
+  })
 
   return (
     <div className="mx-auto block max-w-[1200px] space-y-6 pb-20">
-      {/* Header section */}
-      {/* <div className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-            إدارة الوظائف
-          </h1>
-          <p className="mt-1 text-sm text-slate-500">
-            إدارة وتتبع جميع الوظائف المنشورة
-          </p>
-        </div>
-      </div> */}
-
       {/* Filters Card */}
       <Card className="border-border/40 rounded-2xl bg-white shadow-sm">
         <CardContent className="p-6">
@@ -223,44 +414,52 @@ export default function ManageJobClient() {
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <table className="w-full text-right text-sm">
-              <thead className="bg-[#f8fafc] font-medium text-slate-500">
-                <tr>
-                  <th className="px-6 py-4 font-medium">عنوان الوظيفة</th>
-                  <th className="px-6 py-4 text-center font-medium">
-                    نوع الدوام
-                  </th>
-                  <th className="px-6 py-4 text-center font-medium whitespace-nowrap">
-                    الراتب
-                  </th>
-                  <th className="px-6 py-4 text-center font-medium">
-                    تاريخ النشر
-                  </th>
-                  <th className="px-6 py-4 text-center font-medium">
-                    انتهاء الصلاحية
-                  </th>
-                  <th className="px-6 py-4 text-center font-medium">
-                    المتقدمين
-                  </th>
-                  <th className="px-6 py-4 text-center font-medium">الحالة</th>
-                  <th className="px-6 py-4 text-center font-medium">
-                    الإجراءات
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
+            <Table className="table-fixed">
+              <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow
+                    key={headerGroup.id}
+                    className="bg-[#f8fafc] text-slate-500"
+                  >
+                    {headerGroup.headers.map((header) => (
+                      <TableHead
+                        key={header.id}
+                        className="px-6 py-4 text-right"
+                        style={{
+                          width: header.getSize(),
+                          minWidth: header.getSize(),
+                        }}
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody>
                 {isPending ? (
-                  <tr>
-                    <td colSpan={8} className="h-[300px] p-8 text-center">
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-[300px] p-8 text-center"
+                    >
                       <div className="flex flex-col items-center justify-center text-slate-400">
                         <Loader2 className="mb-4 size-8 animate-spin text-blue-500" />
                         <p>جاري جلب بيانات الوظائف...</p>
                       </div>
-                    </td>
-                  </tr>
-                ) : jobs.length === 0 ? (
-                  <tr>
-                    <td colSpan={8} className="h-[300px] p-8 text-center">
+                    </TableCell>
+                  </TableRow>
+                ) : table.getRowModel().rows.length === 0 ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-[300px] p-8 text-center"
+                    >
                       <div className="flex flex-col items-center justify-center text-slate-400">
                         <BriefcaseIcon className="mb-4 size-12 text-slate-300" />
                         <h3 className="text-lg font-medium text-slate-700">
@@ -270,117 +469,34 @@ export default function ManageJobClient() {
                           لم يتم العثور على أي نتائج مطابقة لبحثك.
                         </p>
                       </div>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ) : (
-                  jobs.map((job) => (
-                    <tr
-                      key={job.id}
+                  table.getRowModel().rows.map((row) => (
+                    <TableRow
+                      key={row.id}
                       className="group transition-colors hover:bg-slate-50/50"
                     >
-                      <td className="max-w-[250px] px-6 py-4">
-                        <div className="mb-1 truncate text-base font-bold text-slate-900">
-                          {job.title}
-                        </div>
-                        <div
-                          className="truncate text-xs text-slate-500"
-                          title={job.description}
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell
+                          key={cell.id}
+                          className="px-6 py-4"
+                          style={{
+                            width: cell.column.getSize(),
+                            minWidth: cell.column.getSize(),
+                          }}
                         >
-                          {job.description}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <span className="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600">
-                          {formatJobType(job.jobType)}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-center font-medium whitespace-nowrap text-slate-600">
-                        {job.minSalary.toLocaleString()} -{' '}
-                        {job.maxSalary.toLocaleString()} ريال
-                      </td>
-                      <td className="px-6 py-4 text-center font-medium whitespace-nowrap text-slate-500">
-                        {format(new Date(job.postedDate), 'yyyy-MM-dd')}
-                      </td>
-                      <td className="px-6 py-4 text-center font-medium whitespace-nowrap text-slate-500">
-                        {format(new Date(job.expirationDate), 'yyyy-MM-dd')}
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <div className="mt-1 flex flex-col items-center justify-center gap-1 text-center font-bold text-slate-700">
-                          <UsersIcon className="size-4 text-slate-400" />
-                          <span>{job.applicantsCount}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        {renderStatusBadge(job.status)}
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <div className="flex items-center justify-center gap-3 text-sm font-semibold opacity-80 transition-opacity group-hover:opacity-100">
-                          <a
-                            href={`/company/manage-job/${job.id}`}
-                            className="text-[#3b82f6] transition-colors hover:text-blue-700 hover:underline"
-                          >
-                            تعديل
-                          </a>
-
-                          {job.status === 'Published' && (
-                            <button
-                              disabled={isUpdating || isUpdatingJob}
-                              onClick={() =>
-                                handleStatusChange(job.id, 'Closed')
-                              }
-                              className="text-amber-500 transition-colors hover:text-amber-600 hover:underline disabled:opacity-50"
-                            >
-                              إغلاق
-                            </button>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
                           )}
-
-                          {job.status === 'Closed' && (
-                            <button
-                              disabled={isUpdating || isUpdatingJob}
-                              onClick={() =>
-                                handleStatusChange(job.id, 'Published')
-                              }
-                              className="text-emerald-500 transition-colors hover:text-emerald-600 hover:underline disabled:opacity-50"
-                            >
-                              تنشيط
-                            </button>
-                          )}
-
-                          {job.status === 'Expired' && (
-                            <Popover>
-                              <PopoverTrigger asChild>
-                                <button
-                                  disabled={isUpdating || isUpdatingJob}
-                                  className="text-emerald-500 transition-colors hover:text-emerald-600 hover:underline disabled:opacity-50 flex items-center gap-1"
-                                >
-                                  إعادة جدولة
-                                  {isUpdatingJob && (
-                                    <Loader2 className="size-3 animate-spin" />
-                                  )}
-                                </button>
-                              </PopoverTrigger>
-                              <PopoverContent align="end" className="w-auto p-0">
-                                <Calendar
-                                  mode="single"
-                                  selected={new Date(job.expirationDate)}
-                                  onSelect={(date) => {
-                                    if (date) {
-                                      handleReschedule(job.id, date)
-                                    }
-                                  }}
-                                  disabled={(date) => date < new Date()}
-                                  initialFocus
-                                />
-                              </PopoverContent>
-                            </Popover>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
+                        </TableCell>
+                      ))}
+                    </TableRow>
                   ))
                 )}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         </CardContent>
       </Card>
