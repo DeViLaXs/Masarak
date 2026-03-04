@@ -54,6 +54,30 @@ import {
   ComboboxEmpty,
 } from '@/components/ui/combobox'
 
+// --- Arabic Translation Helpers ---
+
+const formatJobTypeName = (name: string) => {
+  const map: Record<string, string> = {
+    FullTime: 'دوام كامل',
+    PartTime: 'دوام جزئي',
+    Remote: 'عن بعد',
+    Hybrid: 'هجين',
+    Contract: 'عقد',
+    Freelance: 'عمل حر',
+    Internship: 'تدريب',
+  }
+  return map[name] || name
+}
+
+const formatLocationTypeName = (name: string) => {
+  const map: Record<string, string> = {
+    OnSite: 'حضوري',
+    Remote: 'عن بعد',
+    Hybrid: 'هجين',
+  }
+  return map[name] || name
+}
+
 // --- Types & Initial State ---
 
 type JobFormState = {
@@ -423,7 +447,10 @@ export function AddJobForm() {
                       jobTypeId: val ? val.id : '',
                     }))
                   }
-                  itemToStringLabel={(item: any) => item?.name || ''}
+                  filter={null}
+                  itemToStringLabel={(item: any) =>
+                    item ? formatJobTypeName(item.name) : ''
+                  }
                 >
                   <ComboboxInput
                     placeholder="اختر نوع الدوام..."
@@ -431,10 +458,14 @@ export function AddJobForm() {
                   />
                   <ComboboxContent>
                     <ComboboxList>
-                      <ComboboxEmpty>لا يوجد نتائج</ComboboxEmpty>
+                      {jobTypes && jobTypes.length === 0 && (
+                        <div className="text-muted-foreground py-3 text-center text-sm">
+                          لا يوجد نتائج
+                        </div>
+                      )}
                       {jobTypes?.map((jt) => (
                         <ComboboxItem key={jt.id} value={jt}>
-                          {jt.name}
+                          {formatJobTypeName(jt.name)}
                         </ComboboxItem>
                       ))}
                     </ComboboxList>
@@ -456,7 +487,10 @@ export function AddJobForm() {
                       jobLocationTypeId: val ? val.id : '',
                     }))
                   }
-                  itemToStringLabel={(item: any) => item?.name || ''}
+                  filter={null}
+                  itemToStringLabel={(item: any) =>
+                    item ? formatLocationTypeName(item.name) : ''
+                  }
                 >
                   <ComboboxInput
                     placeholder="حضوري، عن بعد، إلخ..."
@@ -464,10 +498,14 @@ export function AddJobForm() {
                   />
                   <ComboboxContent>
                     <ComboboxList>
-                      <ComboboxEmpty>لا يوجد نتائج</ComboboxEmpty>
+                      {locationTypes && locationTypes.length === 0 && (
+                        <div className="text-muted-foreground py-3 text-center text-sm">
+                          لا يوجد نتائج
+                        </div>
+                      )}
                       {locationTypes?.map((lt) => (
                         <ComboboxItem key={lt.id} value={lt}>
-                          {lt.name}
+                          {formatLocationTypeName(lt.name)}
                         </ComboboxItem>
                       ))}
                     </ComboboxList>
@@ -634,7 +672,6 @@ export function AddJobForm() {
                   id="minSalary"
                   type="number"
                   min="0"
-                  placeholder="8000"
                   className="bg-background focus-visible:ring-primary/20 [appearance:textfield] transition-shadow [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                   value={formData.minSalary}
                   onChange={(e) =>
@@ -653,7 +690,6 @@ export function AddJobForm() {
                   id="maxSalary"
                   type="number"
                   min="0"
-                  placeholder="12000"
                   className="bg-background focus-visible:ring-primary/20 [appearance:textfield] transition-shadow [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                   value={formData.maxSalary}
                   onChange={(e) =>

@@ -56,6 +56,30 @@ import {
   ComboboxEmpty,
 } from '@/components/ui/combobox'
 
+// --- Arabic Translation Helpers ---
+
+const formatJobTypeName = (name: string) => {
+  const map: Record<string, string> = {
+    FullTime: 'دوام كامل',
+    PartTime: 'دوام جزئي',
+    Remote: 'عن بعد',
+    Hybrid: 'هجين',
+    Contract: 'عقد',
+    Freelance: 'عمل حر',
+    Internship: 'تدريب',
+  }
+  return map[name] || name
+}
+
+const formatLocationTypeName = (name: string) => {
+  const map: Record<string, string> = {
+    OnSite: 'حضوري',
+    Remote: 'عن بعد',
+    Hybrid: 'هجين',
+  }
+  return map[name] || name
+}
+
 // --- Types ---
 
 type JobFormState = {
@@ -482,7 +506,10 @@ export default function JobDetailsPage() {
                       jobTypeId: val ? val.id : '',
                     }))
                   }
-                  itemToStringLabel={(item: any) => item?.name || ''}
+                  filter={null}
+                  itemToStringLabel={(item: any) =>
+                    item ? formatJobTypeName(item.name) : ''
+                  }
                 >
                   <ComboboxInput
                     placeholder="اختر نوع الدوام..."
@@ -490,9 +517,14 @@ export default function JobDetailsPage() {
                   />
                   <ComboboxContent>
                     <ComboboxList>
+                      {jobTypes && jobTypes.length === 0 && (
+                        <div className="text-muted-foreground py-3 text-center text-sm">
+                          لا يوجد نتائج
+                        </div>
+                      )}
                       {jobTypes?.map((jt) => (
                         <ComboboxItem key={jt.id} value={jt}>
-                          {jt.name}
+                          {formatJobTypeName(jt.name)}
                         </ComboboxItem>
                       ))}
                     </ComboboxList>
@@ -514,7 +546,10 @@ export default function JobDetailsPage() {
                       jobLocationTypeId: val ? val.id : '',
                     }))
                   }
-                  itemToStringLabel={(item: any) => item?.name || ''}
+                  filter={null}
+                  itemToStringLabel={(item: any) =>
+                    item ? formatLocationTypeName(item.name) : ''
+                  }
                 >
                   <ComboboxInput
                     placeholder="حضوري، عن بعد، إلخ..."
@@ -522,9 +557,14 @@ export default function JobDetailsPage() {
                   />
                   <ComboboxContent>
                     <ComboboxList>
+                      {locationTypes && locationTypes.length === 0 && (
+                        <div className="text-muted-foreground py-3 text-center text-sm">
+                          لا يوجد نتائج
+                        </div>
+                      )}
                       {locationTypes?.map((lt) => (
                         <ComboboxItem key={lt.id} value={lt}>
-                          {lt.name}
+                          {formatLocationTypeName(lt.name)}
                         </ComboboxItem>
                       ))}
                     </ComboboxList>
