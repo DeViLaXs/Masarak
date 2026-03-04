@@ -28,6 +28,10 @@
 | `Filled` | تم التعيين | Position filled |
 | `Expired` | منتهية | Auto-detected: `ExpirationDate < now` |
 
+> **Auto-Expiration & Auto-Republishing Logic:**
+> 1. Jobs are **automatically marked as `Expired`** in the database as soon as their `ExpirationDate` passes (checked whenever jobs are queried).
+> 2. If a job is `Expired` and the employer edits the job (via `PUT /api/Job/jobs/{id}`) to extend the `ExpirationDate` to a future date, the job is **automatically republished** (status changes back to `Published`).
+
 ---
 
 ## 1. GET `/api/Job/jobs`

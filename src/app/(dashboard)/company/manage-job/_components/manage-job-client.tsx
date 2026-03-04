@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useCompanyJobs, useUpdateJobStatus } from '@/hooks/use-jobs'
+import { useCompanyJobs, useUpdateJobStatus, useJobs, useJobLookups } from '@/hooks/use-jobs'
 import { useDebounce } from 'use-debounce'
 import { format } from 'date-fns'
 import { ar } from 'date-fns/locale'
@@ -12,12 +12,19 @@ import {
   ChevronDownIcon,
   BriefcaseIcon,
   Loader2,
+  CalendarIcon,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+import { Calendar } from '@/components/ui/calendar'
 
 export default function ManageJobClient() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -26,23 +33,56 @@ export default function ManageJobClient() {
   const [jobTypeFilter, setJobTypeFilter] = useState('all')
   const [page, setPage] = useState(1)
 
+  // Fetch lookups
+  const { jobTypes } = useJobLookups()
+
   // Fetch jobs
-  const { data: jobsData, isPending } = useCompanyJobs({
+  const { data: jobsData, isPending, refetch } = useCompanyJobs({
     page,
     pageSize: 10,
     search: debouncedSearch || undefined,
     status: statusTab !== 'all' ? statusTab : undefined,
+    jobTypeId: jobTypeFilter !== 'all' ? parseInt(jobTypeFilter) : undefined,
   })
 
   // Mutations
   const { mutate: updateStatus, isPending: isUpdating } = useUpdateJobStatus()
+  const { updateJob, isUpdatingJob } = useJobs()
 
   // Handlers
   const handleStatusChange = (
     id: number,
     newStatus: 'Published' | 'Closed',
   ) => {
-    updateStatus({ id, status: newStatus })
+    updateStatus(
+      { id, status: newStatus },
+      {
+        onSuccess: () => {
+          refetch()
+        },
+      },
+    )
+  }
+
+  const handleReschedule = (id: number, newDate: Date) => {
+    updateJob(
+      { id, data: { expirationDate: newDate.toISOString() } },
+      {
+        onSuccess: () => {
+          // Frontend workaround: Manually set status to Published after updating the date
+          updateStatus(
+            { id, status: 'Published' },
+            {
+              onSuccess: () => {
+                toast.success('تم إعادة الجدولة وتنشيط الوظيفة بنجاح')
+                // Force a refetch to get the latest data from the backend
+                refetch()
+              },
+            },
+          )
+        },
+      },
+    )
   }
 
   const jobs = jobsData?.items || []
@@ -136,9 +176,11 @@ export default function ManageJobClient() {
                   className="h-10 w-full appearance-none rounded-full border border-slate-200 bg-white px-4 py-2 pr-4 pl-10 text-sm transition-colors outline-none hover:bg-slate-50 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 sm:w-40"
                 >
                   <option value="all">نوع الدوام</option>
-                  <option value="FullTime">دوام كامل</option>
-                  <option value="PartTime">دوام جزئي</option>
-                  <option value="Remote">عن بعد</option>
+                  {jobTypes?.map((type) => (
+                    <option key={type.id} value={type.id.toString()}>
+                      {formatJobType(type.name)}
+                    </option>
+                  ))}
                 </select>
                 <ChevronDownIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-slate-500" />
               </div>
@@ -279,21 +321,22 @@ export default function ManageJobClient() {
                           >
                             تعديل
                           </a>
+
                           {job.status === 'Published' && (
                             <button
-                              disabled={isUpdating}
+                              disabled={isUpdating || isUpdatingJob}
                               onClick={() =>
                                 handleStatusChange(job.id, 'Closed')
                               }
                               className="text-amber-500 transition-colors hover:text-amber-600 hover:underline disabled:opacity-50"
                             >
-                              إخفاء
+                              إغلاق
                             </button>
                           )}
-                          {(job.status === 'Closed' ||
-                            job.status === 'Expired') && (
+
+                          {job.status === 'Closed' && (
                             <button
-                              disabled={isUpdating}
+                              disabled={isUpdating || isUpdatingJob}
                               onClick={() =>
                                 handleStatusChange(job.id, 'Published')
                               }
@@ -302,14 +345,35 @@ export default function ManageJobClient() {
                               تنشيط
                             </button>
                           )}
-                          <button
-                            className="text-red-500 transition-colors hover:text-red-600 hover:underline disabled:opacity-50"
-                            onClick={() =>
-                              toast.error('ميزة الحذف غير متوفرة حالياً')
-                            }
-                          >
-                            حذف
-                          </button>
+
+                          {job.status === 'Expired' && (
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <button
+                                  disabled={isUpdating || isUpdatingJob}
+                                  className="text-emerald-500 transition-colors hover:text-emerald-600 hover:underline disabled:opacity-50 flex items-center gap-1"
+                                >
+                                  إعادة جدولة
+                                  {isUpdatingJob && (
+                                    <Loader2 className="size-3 animate-spin" />
+                                  )}
+                                </button>
+                              </PopoverTrigger>
+                              <PopoverContent align="end" className="w-auto p-0">
+                                <Calendar
+                                  mode="single"
+                                  selected={new Date(job.expirationDate)}
+                                  onSelect={(date) => {
+                                    if (date) {
+                                      handleReschedule(job.id, date)
+                                    }
+                                  }}
+                                  disabled={(date) => date < new Date()}
+                                  initialFocus
+                                />
+                              </PopoverContent>
+                            </Popover>
+                          )}
                         </div>
                       </td>
                     </tr>
