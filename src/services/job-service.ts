@@ -101,7 +101,7 @@ export const jobService = {
    * Create a new job
    */
   createJob: async (data: CreateJobDto): Promise<{ message: string }> => {
-    const res = await api.post('/Job/jobs', data)
+    const res = await api.post('/Jobs/jobs', data)
     return res.data?.data
   },
 
@@ -115,7 +115,7 @@ export const jobService = {
     status?: string
     jobTypeId?: number
   }): Promise<PaginatedData<JobListItemDto>> => {
-    const res = await api.get('/Job/jobs', { params })
+    const res = await api.get('/Jobs/jobs', { params })
     return res.data?.data
   },
 
@@ -123,7 +123,7 @@ export const jobService = {
    * Get job by ID
    */
   getJobById: async (id: number): Promise<JobDetailDto> => {
-    const res = await api.get(`/Job/jobs/${id}`)
+    const res = await api.get(`/Jobs/jobs/${id}`)
     return res.data?.data
   },
 
@@ -134,7 +134,7 @@ export const jobService = {
     id: number,
     data: UpdateJobDto,
   ): Promise<{ message: string }> => {
-    const res = await api.put(`/Job/jobs/${id}`, data)
+    const res = await api.put(`/Jobs/jobs/${id}`, data)
     return res.data?.data
   },
 
@@ -145,7 +145,7 @@ export const jobService = {
     id: number,
     status: 'Published' | 'Closed',
   ): Promise<{ message: string }> => {
-    const res = await api.patch(`/Job/jobs/${id}/status`, { status })
+    const res = await api.patch(`/Jobs/jobs/${id}/status`, { status })
     return res.data?.data
   },
 
@@ -153,29 +153,29 @@ export const jobService = {
 
   getCategories: async (search?: string): Promise<LookupItem[]> => {
     const q = search ? `?search=${encodeURIComponent(search)}` : ''
-    const res = await api.get(`/Job/categories${q}`)
+    const res = await api.get(`/Jobs/categories${q}`)
     return res.data?.data || []
   },
 
   getJobTypes: async (): Promise<LookupItem[]> => {
-    const res = await api.get('/Job/job-types')
+    const res = await api.get('/Jobs/job-types')
     return res.data?.data || []
   },
 
   getLocationTypes: async (): Promise<LookupItem[]> => {
-    const res = await api.get('/Job/location-types')
+    const res = await api.get('/Jobs/location-types')
     return res.data?.data || []
   },
 
   getCurrencies: async (search?: string): Promise<CurrencyItem[]> => {
     const q = search ? `?search=${encodeURIComponent(search)}` : ''
-    const res = await api.get(`/Job/currencies${q}`)
+    const res = await api.get(`/Jobs/currencies${q}`)
     return res.data?.data || []
   },
 
   getCountries: async (search?: string): Promise<CountryItem[]> => {
     const q = search ? `?search=${encodeURIComponent(search)}` : ''
-    const res = await api.get(`/Job/countries${q}`)
+    const res = await api.get(`/Jobs/countries${q}`)
     return res.data?.data || []
   },
 
@@ -184,13 +184,13 @@ export const jobService = {
     search?: string,
   ): Promise<LookupItem[]> => {
     const q = search ? `?search=${encodeURIComponent(search)}` : ''
-    const res = await api.get(`/Job/governates/${countryId}${q}`)
+    const res = await api.get(`/Jobs/governates/${countryId}${q}`)
     return res.data?.data || []
   },
 
   searchSkills: async (query: string): Promise<LookupItem[]> => {
     if (!query) return []
-    const res = await api.get(`/Job/skills?search=${encodeURIComponent(query)}`)
+    const res = await api.get(`/Jobs/skills?search=${encodeURIComponent(query)}`)
     return res.data?.data || []
   },
 }
