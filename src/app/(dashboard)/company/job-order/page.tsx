@@ -17,7 +17,8 @@ import {
   ComboboxItem,
 } from '@/components/ui/combobox'
 import { applicationService } from '@/services/application-service'
-import { jobService } from '@/services/job-service'
+import { useApplications, useUpdateApplicationStatus } from '@/hooks/use-applications'
+import { useCompanyJobs } from '@/hooks/use-jobs'
 
 const statuses = [
   { id: 1, name: 'قيد المراجعة' },
@@ -40,39 +41,17 @@ export default function JobOrderPage() {
     return () => clearTimeout(handler)
   }, [searchTerm])
 
-  const { data: jobsData, isLoading: isLoadingJobs } = useQuery({
-    queryKey: ['company-jobs'],
-    queryFn: () => jobService.getCompanyJobs({ pageSize: 100 }), // Get all jobs for filter
+  const { data: jobsData, isLoading: isLoadingJobs } = useCompanyJobs({ pageSize: 100 })
+
+  const { data: applicationsData, isLoading: isLoadingApplications } = useApplications({
+    SearchTerm: debouncedSearch || undefined,
+    JobId: jobId !== 'all' ? Number(jobId) : undefined,
+    StatusId: statusId !== 'all' ? Number(statusId) : undefined,
+    Page: 1,
+    PageSize: 50,
   })
 
-  const { data: applicationsData, isLoading: isLoadingApplications } = useQuery({
-    queryKey: [
-      'applications',
-      debouncedSearch,
-      jobId,
-      statusId,
-    ],
-    queryFn: () =>
-      applicationService.getApplications({
-        SearchTerm: debouncedSearch || undefined,
-        JobId: jobId !== 'all' ? Number(jobId) : undefined,
-        StatusId: statusId !== 'all' ? Number(statusId) : undefined,
-        Page: 1,
-        PageSize: 50,
-      }),
-  })
-
-  const { mutate: updateStatus, isPending: isUpdating } = useMutation({
-    mutationFn: ({ id, status }: { id: number; status: number }) =>
-      applicationService.updateApplicationStatus(id, status),
-    onSuccess: () => {
-      toast.success('تم تحديث حالة الطلب بنجاح')
-      queryClient.invalidateQueries({ queryKey: ['applications'] })
-    },
-    onError: () => {
-      toast.error('حدث خطأ أثناء تحديث الحالة')
-    },
-  })
+  const { mutate: updateStatus, isPending: isUpdating } = useUpdateApplicationStatus()
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -265,12 +244,15 @@ export default function JobOrderPage() {
                             size="sm"
                             className="bg-[#10b981] hover:bg-[#059669] text-white h-8 px-3 text-xs"
                             disabled={isUpdating}
-                            onClick={() =>
-                              updateStatus({
-                                id: application.applicationId,
-                                status: 4,
-                              })
-                            }
+                            onClick={() => {
+                              updateStatus(
+                                { id: application.applicationId, status: 4 },
+                                {
+                                  onSuccess: () => toast.success('تم تحديث حالة الطلب بنجاح'),
+                                  onError: () => toast.error('حدث خطأ أثناء تحديث الحالة'),
+                                }
+                              )
+                            }}
                           >
                             <Check className="size-3.5" />
                             قبول
@@ -280,12 +262,15 @@ export default function JobOrderPage() {
                             size="sm"
                             className="h-8 px-3 text-xs"
                             disabled={isUpdating}
-                            onClick={() =>
-                              updateStatus({
-                                id: application.applicationId,
-                                status: 3,
-                              })
-                            }
+                            onClick={() => {
+                              updateStatus(
+                                { id: application.applicationId, status: 3 },
+                                {
+                                  onSuccess: () => toast.success('تم تحديث حالة الطلب بنجاح'),
+                                  onError: () => toast.error('حدث خطأ أثناء تحديث الحالة'),
+                                }
+                              )
+                            }}
                           >
                             <X className="size-3.5" />
                             رفض
