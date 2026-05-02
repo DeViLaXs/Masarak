@@ -21,10 +21,15 @@ import { useApplications, useUpdateApplicationStatus } from '@/hooks/use-applica
 import { useCompanyJobs } from '@/hooks/use-jobs'
 
 const statuses = [
-  { id: 1, name: 'قيد المراجعة' },
-  { id: 3, name: 'مرفوض' },
-  { id: 4, name: 'مقبول' },
+  { value: '1', label: 'قيد المراجعة' },
+  { value: '3', label: 'مرفوض' },
+  { value: '4', label: 'مقبول' },
+  { value: '6', label: 'تم التظيف' },
+  { value: '7', label: 'انسحاب' },
 ]
+
+const allStatusesOption = { value: 'all', label: 'جميع الحالات' }
+const allJobsOption = { value: 'all', label: 'جميع الوظائف' }
 
 export default function JobOrderPage() {
   const queryClient = useQueryClient()
@@ -127,9 +132,9 @@ export default function JobOrderPage() {
           />
         </div>
         <Combobox
-          defaultValue="all"
-          value={jobId}
-          onValueChange={(val) => setJobId(val as string)}
+          defaultValue={allJobsOption}
+          value={jobId === 'all' ? allJobsOption : jobsData?.items.map((j) => ({ value: j.id.toString(), label: j.title })).find((j) => j.value === jobId) ?? allJobsOption}
+          onValueChange={(val: { value: string; label: string } | null) => setJobId(val?.value ?? 'all')}
         >
           <ComboboxInput
             placeholder="جميع الوظائف"
@@ -138,9 +143,9 @@ export default function JobOrderPage() {
           />
           <ComboboxContent>
             <ComboboxList>
-              <ComboboxItem value="all">جميع الوظائف</ComboboxItem>
+              <ComboboxItem value={allJobsOption}>جميع الوظائف</ComboboxItem>
               {jobsData?.items.map((job) => (
-                <ComboboxItem key={job.id} value={job.id.toString()}>
+                <ComboboxItem key={job.id} value={{ value: job.id.toString(), label: job.title }}>
                   {job.title}
                 </ComboboxItem>
               ))}
@@ -149,9 +154,9 @@ export default function JobOrderPage() {
         </Combobox>
 
         <Combobox
-          defaultValue="all"
-          value={statusId}
-          onValueChange={(val) => setStatusId(val as string)}
+          defaultValue={allStatusesOption}
+          value={statusId === 'all' ? allStatusesOption : statuses.find((s) => s.value === statusId) ?? allStatusesOption}
+          onValueChange={(val: { value: string; label: string } | null) => setStatusId(val?.value ?? 'all')}
         >
           <ComboboxInput
             placeholder="جميع الحالات"
@@ -160,10 +165,10 @@ export default function JobOrderPage() {
           />
           <ComboboxContent>
             <ComboboxList>
-              <ComboboxItem value="all">جميع الحالات</ComboboxItem>
+              <ComboboxItem value={allStatusesOption}>جميع الحالات</ComboboxItem>
               {statuses.map((status) => (
-                <ComboboxItem key={status.id} value={status.id.toString()}>
-                  {status.name}
+                <ComboboxItem key={status.value} value={status}>
+                  {status.label}
                 </ComboboxItem>
               ))}
             </ComboboxList>
