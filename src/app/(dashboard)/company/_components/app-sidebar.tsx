@@ -6,6 +6,7 @@ import {
   Building2,
   MessagesSquare,
   EllipsisVertical,
+  MailIcon,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -59,6 +60,16 @@ const links = [
     title: 'سجل التوظيف ',
     path: '/company/job-history',
     icon: Settings,
+  },
+  {
+    title: 'المقابلات ',
+    path: '/company/interview',
+    icon: Settings,
+  },
+  {
+    title: 'تواصل معنا ',
+    path: '/company/contact-us',
+    icon: MailIcon,
   },
 ]
 

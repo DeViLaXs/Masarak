@@ -1,9 +1,15 @@
-import FeedbackCard from '@/app/(dashboard)/company/_components/home-card'
+import React from 'react'
+import FeedbacksClient from './_components/feedbacks-client'
+
+export const metadata = {
+  title: 'إدارة الملاحظات | مسارك',
+  description: 'استعراض وإدارة ملاحظات واقتراحات الشركات',
+}
 
 export default function FeedbacksPage() {
   return (
-    <div className="p-6 max-sm:p-4">
-      <FeedbackCard />
+    <div className="w-full">
+      <FeedbacksClient />
     </div>
   )
 }

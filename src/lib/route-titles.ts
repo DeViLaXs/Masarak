@@ -11,4 +11,5 @@ export const routeTitles = [
   { path: '/company/job-order', title: 'طلبات الوظائف' },
   { path: '/company/job-history', title: 'سجل الوظائف' },
   { path: '/company/profile', title: 'الملف الشخصي' },
+  { path: '/company/interview', title: 'المقابلات' },
 ]
