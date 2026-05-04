@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { toast } from 'sonner'
+import { ContactSupportDialog } from '@/components/contact-support-dialog'
 
 export default function UnderProcessPage() {
   const { logout, user } = useAuth()
@@ -28,6 +29,8 @@ export default function UnderProcessPage() {
       router.replace('/blocked')
     } else if (user?.status === 'Suspended') {
       router.replace('/suspended')
+    } else if (user?.status === 'Rejected') {
+      router.replace('/rejected')
     }
   }, [user?.status, router])
 
@@ -43,6 +46,8 @@ export default function UnderProcessPage() {
 
       if (latestUser?.status === 'Active') {
         router.replace('/company')
+      } else if (latestUser?.status === 'Rejected') {
+        router.replace('/rejected')
       } else {
         toast.info('حسابك لا يزال قيد المراجعة', {
           description: 'سنقوم بإعلامك فور الموافقة على حسابك.',
@@ -126,6 +131,7 @@ export default function UnderProcessPage() {
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+              <ContactSupportDialog />
               <Button
                 size="lg"
                 className="w-full px-8 sm:w-auto"

@@ -20,7 +20,8 @@ export default function CompanyLayout({
     role !== 'Company' ||
     user?.status === 'PendingApproval' ||
     user?.status === 'Suspended' ||
-    user?.status === 'Blocked'
+    user?.status === 'Blocked' ||
+    user?.status === 'Rejected'
   ) {
     return (
       <div className="flex min-h-screen items-center justify-center">

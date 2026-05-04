@@ -152,7 +152,7 @@ const ActionCell = ({ company }: { company: CompanyDto }) => {
         title="رفض"
         className="h-8 w-8 text-red-500 hover:bg-red-50 hover:text-red-600 disabled:opacity-30 disabled:hover:bg-transparent"
         onClick={() => handleActionClick('Reject')}
-        disabled={isProcessing || company.status === 'Rejected'}
+        disabled={isProcessing || company.status !== 'PendingApproval'}
       >
         <X className="h-4 w-4" />
       </Button>

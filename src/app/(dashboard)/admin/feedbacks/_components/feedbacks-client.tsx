@@ -1,11 +1,11 @@
 'use client'
 
 import * as React from 'react'
-import { 
-  useFeedbacks, 
-  useFeedbackTypes, 
-  useMarkFeedbackAsRead, 
-  useDeleteFeedback 
+import {
+  useFeedbacks,
+  useFeedbackTypes,
+  useMarkFeedbackAsRead,
+  useDeleteFeedback
 } from '@/hooks/use-feedback'
 import {
   Table,
@@ -48,7 +48,11 @@ import {
   AlertCircleIcon,
   SearchIcon,
   XIcon,
-  EyeIcon
+  EyeIcon,
+  Monitor,
+  Smartphone,
+  Building2,
+  User
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
@@ -56,14 +60,15 @@ import { FeedbackResponseDTO } from '@/services/feedback-service'
 
 export default function FeedbacksClient() {
   const [selectedType, setSelectedType] = React.useState<number | undefined>(undefined)
+  const [isReadFilter, setIsReadFilter] = React.useState<boolean | undefined>(undefined)
   const [typeSearch, setTypeSearch] = React.useState('')
   const [viewFeedback, setViewFeedback] = React.useState<FeedbackResponseDTO | null>(null)
   const [deleteConfirmId, setDeleteConfirmId] = React.useState<number | null>(null)
   const [pageNumber, setPageNumber] = React.useState(1)
 
-  const { data: feedbacksData, isLoading: isFeedbacksLoading } = useFeedbacks(selectedType, pageNumber)
+  const { data: feedbacksData, isLoading: isFeedbacksLoading } = useFeedbacks(selectedType, isReadFilter, pageNumber)
   const feedbacks = feedbacksData?.items || []
-  
+
   const { data: feedbackTypes, isLoading: isTypesLoading } = useFeedbackTypes()
 
   const { mutateAsync: markAsRead, isPending: isMarking } = useMarkFeedbackAsRead()
@@ -99,6 +104,27 @@ export default function FeedbacksClient() {
     return 'secondary'
   }
 
+  const getReviewerTypeName = (type?: string) => {
+    const t = (type || '').trim().toLowerCase()
+    if (t === 'company') return 'شركة'
+    if (t === 'candidate') return 'مرشح'
+    if (t === 'user') return 'مستخدم'
+    return type || 'مجهول'
+  }
+
+  const getReviewerIcon = (type?: string) => {
+    const t = (type || '').trim().toLowerCase()
+    if (t === 'company') return <Monitor className="size-4" />
+    if (t === 'candidate') return <User className="size-4" />
+    return <Smartphone className="size-4" />
+  }
+
+  const isReadFilterOptions = React.useMemo(() => [
+    { id: 'all', name: 'الكل' },
+    { id: 'unread', name: 'غير مقروءة' },
+    { id: 'read', name: 'مقروءة' }
+  ], [])
+
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 space-y-8 pb-10 duration-500">
       {/* Header Banner */}
@@ -119,48 +145,82 @@ export default function FeedbacksClient() {
           </div>
 
           {/* Filter */}
-          <div className="flex w-full max-w-[280px] items-center gap-2 sm:mt-0">
-            <div className="w-full shadow-sm rounded-xl overflow-hidden bg-card ">
-              <Combobox
-                value={
-                  selectedType === undefined 
-                    ? { id: 0, name: 'الكل' } 
-                    : feedbackTypes?.find(t => t.id === selectedType) || null
-                }
-                onValueChange={(val: any) => {
-                  setPageNumber(1) // Reset page on filter change
-                  if (!val || val.id === 0) setSelectedType(undefined)
-                  else setSelectedType(val.id)
-                }}
-                filter={null}
-                onInputValueChange={(value: string, details: any) => {
-                  if (details?.reason === 'input-change') setTypeSearch(value)
-                }}
-                itemToStringLabel={(item: any) => {
-                  if (!item) return ''
-                  if (item.name === 'FeatureRequest') return 'اقتراح ميزة'
-                  if (item.name === 'Complaint') return 'شكوى'
-                  return item.name === 'الكل' ? 'الكل' : item.name
-                }}
-              >
-                <ComboboxInput
-                  placeholder="تصفية حسب النوع..."
-                  className="bg-transparent w-full border-none focus:ring-0"
-                  disabled={isTypesLoading}
-                />
-                <ComboboxContent>
-                  <ComboboxList>
-                    <ComboboxItem value={{ id: 0, name: 'الكل' }}>
-                      الكل
-                    </ComboboxItem>
-                    {feedbackTypes?.map((type) => (
-                      <ComboboxItem key={type.id} value={type}>
-                        {type.name === 'FeatureRequest' ? 'اقتراح ميزة' : type.name === 'Complaint' ? 'شكوى' : type.name}
+          <div className="flex w-full max-w-[400px] items-center gap-4 sm:mt-0">
+            <div className="flex-1 flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-muted-foreground pr-1">نوع الملاحظة</label>
+              <div className="w-full shadow-sm rounded-xl overflow-hidden bg-card">
+                <Combobox
+                  value={
+                    selectedType === undefined
+                      ? { id: 0, name: 'الكل' }
+                      : feedbackTypes?.find(t => t.id === selectedType) || null
+                  }
+                  onValueChange={(val: any) => {
+                    setPageNumber(1) // Reset page on filter change
+                    if (!val || val.id === 0) setSelectedType(undefined)
+                    else setSelectedType(val.id)
+                  }}
+                  filter={null}
+                  onInputValueChange={(value: string, details: any) => {
+                    if (details?.reason === 'input-change') setTypeSearch(value)
+                  }}
+                  itemToStringLabel={(item: any) => {
+                    if (!item) return ''
+                    if (item.name === 'FeatureRequest') return 'اقتراح ميزة'
+                    if (item.name === 'Complaint') return 'شكوى'
+                    return item.name === 'الكل' ? 'الكل' : item.name
+                  }}
+                >
+                  <ComboboxInput
+                    placeholder="تصفية حسب النوع..."
+                    className="bg-transparent w-full border-none focus:ring-0"
+                    disabled={isTypesLoading}
+                  />
+                  <ComboboxContent>
+                    <ComboboxList>
+                      <ComboboxItem value={{ id: 0, name: 'الكل' }}>
+                        الكل
                       </ComboboxItem>
-                    ))}
-                  </ComboboxList>
-                </ComboboxContent>
-              </Combobox>
+                      {feedbackTypes?.map((type) => (
+                        <ComboboxItem key={type.id} value={type}>
+                          {type.name === 'FeatureRequest' ? 'اقتراح ميزة' : type.name === 'Complaint' ? 'شكوى' : type.name}
+                        </ComboboxItem>
+                      ))}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
+              </div>
+            </div>
+            
+            <div className="flex-1 flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-muted-foreground pr-1">حالة القراءة</label>
+              <div className="w-full shadow-sm rounded-xl overflow-hidden bg-card">
+                <Combobox
+                  value={isReadFilterOptions.find(f => f.id === (isReadFilter === undefined ? 'all' : isReadFilter ? 'read' : 'unread'))}
+                  onValueChange={(val: any) => {
+                    setPageNumber(1)
+                    if (!val || val.id === 'all') setIsReadFilter(undefined)
+                    else if (val.id === 'read') setIsReadFilter(true)
+                    else setIsReadFilter(false)
+                  }}
+                  filter={null}
+                  itemToStringLabel={(item: any) => item ? item.name : ''}
+                >
+                  <ComboboxInput
+                    placeholder="حالة القراءة..."
+                    className="bg-transparent w-full border-none focus:ring-0"
+                  />
+                  <ComboboxContent>
+                    <ComboboxList>
+                      {isReadFilterOptions.map((opt) => (
+                        <ComboboxItem key={opt.id} value={opt}>
+                          {opt.name}
+                        </ComboboxItem>
+                      ))}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
+              </div>
             </div>
           </div>
         </div>
@@ -202,17 +262,18 @@ export default function FeedbacksClient() {
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/50 hover:bg-muted/50">
-                  <TableHead className="w-[200px] text-center">المرسل</TableHead>
-                  <TableHead className="w-[150px] text-center">النوع</TableHead>
+                  <TableHead className="w-[180px] text-center">المرسل</TableHead>
+                  <TableHead className="w-[120px] text-center">النوع</TableHead>
+                  <TableHead className="w-[140px] text-center">نوع المرسل</TableHead>
                   <TableHead className="text-center">الرسالة</TableHead>
-                  <TableHead className="w-[150px] text-center">التاريخ</TableHead>
+                  <TableHead className="w-[120px] text-center">التاريخ</TableHead>
                   <TableHead className="w-[100px] text-center">الحالة</TableHead>
-                  <TableHead className="w-[120px] text-center">الإجراءات</TableHead>
+                  <TableHead className="w-[100px] text-center">الإجراءات</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {feedbacks?.map((feedback) => (
-                  <TableRow 
+                  <TableRow
                     key={feedback.id}
                     className={cn(
                       "group transition-all duration-200 cursor-pointer",
@@ -224,7 +285,7 @@ export default function FeedbacksClient() {
                     }}
                   >
                     <TableCell>
-                      <div className="flex items-center justify-center gap-3">
+                      <div className="flex items-center justify-start gap-3">
                         <Avatar className="size-10 border border-border/50 shadow-sm transition-transform group-hover:scale-105">
                           <AvatarImage src={feedback.logoUrl || '/User-icon.webp'} alt={feedback.reviewerName} className="object-cover" />
                           <AvatarFallback className={cn(
@@ -245,10 +306,18 @@ export default function FeedbacksClient() {
                         <Badge variant={getBadgeVariant(feedback.feedbackTypeName)} className="flex w-fit items-center gap-1.5">
                           {getTypeIcon(feedback.feedbackTypeName)}
                           <span>
-                            {feedback.feedbackTypeName === 'FeatureRequest' ? 'اقتراح' : 
-                             feedback.feedbackTypeName === 'Complaint' ? 'شكوى' : 
-                             feedback.feedbackTypeName}
+                            {feedback.feedbackTypeName === 'FeatureRequest' ? 'اقتراح' :
+                              feedback.feedbackTypeName === 'Complaint' ? 'شكوى' :
+                                feedback.feedbackTypeName}
                           </span>
+                        </Badge>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex justify-center">
+                        <Badge variant="outline" className="flex w-fit items-center gap-1.5 bg-muted/30">
+                          {getReviewerIcon(feedback.reviewerType)}
+                          <span>{getReviewerTypeName(feedback.reviewerType)}</span>
                         </Badge>
                       </div>
                     </TableCell>
@@ -258,7 +327,7 @@ export default function FeedbacksClient() {
                       </p>
                     </TableCell>
                     <TableCell className="text-muted-foreground text-sm text-center">
-                      {feedback.createdAt && !isNaN(new Date(feedback.createdAt).getTime()) 
+                      {feedback.createdAt && !isNaN(new Date(feedback.createdAt).getTime())
                         ? format(new Date(feedback.createdAt), 'dd MMM yyyy', { locale: ar })
                         : '-'}
                     </TableCell>
@@ -313,7 +382,7 @@ export default function FeedbacksClient() {
           )}
         </CardContent>
       </Card>
-      
+
       {/* Pagination */}
       {feedbacksData && feedbacksData.totalPages > 1 && (
         <div className="flex items-center justify-between text-right px-2 mt-4">
@@ -367,33 +436,36 @@ export default function FeedbacksClient() {
                   </Avatar>
                   <div>
                     <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">المرسل</h4>
-                    <p className="font-bold text-foreground text-lg leading-none">{viewFeedback.reviewerName}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-bold text-foreground text-lg leading-none">{viewFeedback.reviewerName}</p>
+                      <Badge variant="outline" className="text-xs bg-muted/30">{getReviewerTypeName(viewFeedback.reviewerType)}</Badge>
+                    </div>
                     <p className="text-muted-foreground font-normal text-sm mt-1">{viewFeedback.reviewerEmail}</p>
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   <div className="rounded-xl border border-border/50 bg-muted/20 p-4">
                     <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">النوع</h4>
                     <Badge variant={getBadgeVariant(viewFeedback.feedbackTypeName)} className="flex w-fit items-center gap-1.5 shadow-sm">
                       {getTypeIcon(viewFeedback.feedbackTypeName)}
                       <span className="font-bold">
-                        {viewFeedback.feedbackTypeName === 'FeatureRequest' ? 'اقتراح' : 
-                         viewFeedback.feedbackTypeName === 'Complaint' ? 'شكوى' : 
-                         viewFeedback.feedbackTypeName}
+                        {viewFeedback.feedbackTypeName === 'FeatureRequest' ? 'اقتراح' :
+                          viewFeedback.feedbackTypeName === 'Complaint' ? 'شكوى' :
+                            viewFeedback.feedbackTypeName}
                       </span>
                     </Badge>
                   </div>
-                  
+
                   <div className="rounded-xl border border-border/50 bg-muted/20 p-4">
                     <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">التاريخ والوقت</h4>
                     <p className="text-sm font-semibold text-foreground">
-                      {viewFeedback.createdAt && !isNaN(new Date(viewFeedback.createdAt).getTime()) 
+                      {viewFeedback.createdAt && !isNaN(new Date(viewFeedback.createdAt).getTime())
                         ? format(new Date(viewFeedback.createdAt), 'dd MMM yyyy', { locale: ar })
                         : '-'}
                     </p>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      {viewFeedback.createdAt && !isNaN(new Date(viewFeedback.createdAt).getTime()) 
+                      {viewFeedback.createdAt && !isNaN(new Date(viewFeedback.createdAt).getTime())
                         ? format(new Date(viewFeedback.createdAt), 'hh:mm a', { locale: ar })
                         : ''}
                     </p>

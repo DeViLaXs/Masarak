@@ -12,6 +12,7 @@ import { authKeys } from '@/auth/query-keys'
 import { authService } from '@/services/auth-service'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { ContactSupportDialog } from '@/components/contact-support-dialog'
 
 export default function BlockedPage() {
   const { logout, user } = useAuth()
@@ -30,6 +31,8 @@ export default function BlockedPage() {
       router.replace('/suspended')
     } else if (user?.status === 'PendingApproval') {
       router.replace('/under-process')
+    } else if (user?.status === 'Rejected') {
+      router.replace('/rejected')
     }
   }, [user?.status, user?.role, router])
 
@@ -49,6 +52,8 @@ export default function BlockedPage() {
         } else {
           router.replace('/company')
         }
+      } else if (latestUser?.status === 'Rejected') {
+        router.replace('/rejected')
       } else {
         toast.error('الحساب لا يزال محظوراً', {
           description: 'نأسف، لا يزال حسابك تحت الحظر من قبل الإدارة.',
@@ -128,6 +133,7 @@ export default function BlockedPage() {
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+              <ContactSupportDialog />
               <Button
                 variant="destructive"
                 size="lg"

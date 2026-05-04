@@ -39,6 +39,7 @@ Retrieves a paginated list of all submitted feedbacks with optional filtering.
 - **Authentication:** Required (Admin Role)
 - **Query Parameters:**
   - `feedbackTypeId` (optional): Filter by type (e.g., `?feedbackTypeId=1`)
+  - `isRead` (optional): Filter by status (`true` = read, `false` = unread). Omit for all.
   - `pageNumber` (optional): Defaults to `1`
   - `pageSize` (optional): Defaults to `10`
 
@@ -54,6 +55,7 @@ Returns a `PaginatedResult` containing `FeedbackResponseDTO` items.
         "id": 1,
         "reviewerName": "John Doe",
         "reviewerEmail": "john.doe@example.com",
+        "reviewerType": "Candidate",
         "logoUrl": "https://secure-sas-url.com/logo.png",
         "feedbackTypeName": "FeatureRequest",
         "message": "I would love to see a dark mode feature!",
@@ -137,7 +139,8 @@ Permanently removes a feedback entry.
 ---
 
 ## Integration Notes
+- **Reviewer Type:** The `reviewerType` field identifies if the user is a `Company`, `Candidate`, or a general `User`.
+- **IsRead Filter:** Use `?isRead=true` for read feedbacks, `?isRead=false` for unread, or omit for both.
 - **Logo URL:** The `logoUrl` field returns a secure, temporary SAS URL for the company logo (or profile photo).
 - **Pagination:** The list of feedbacks is paginated.
 - **Admin Access:** Management endpoints are restricted to the **Admin** role.
-- **Filtering:** Use `feedbackTypeId` in the query string to filter results.

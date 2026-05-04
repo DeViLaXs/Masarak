@@ -92,6 +92,8 @@ export function useAuth(options: UseAuthOptions = {}) {
               router.replace('/suspended')
             } else if (user.status === 'Blocked') {
               router.replace('/blocked')
+            } else if (user.status === 'Rejected') {
+              router.replace('/rejected')
             } else {
               router.replace('/company')
             }
@@ -132,6 +134,10 @@ export function useAuth(options: UseAuthOptions = {}) {
           }
           if (user.status === 'Blocked') {
             router.replace('/blocked')
+            return
+          }
+          if (user.status === 'Rejected') {
+            router.replace('/rejected')
             return
           }
         }
@@ -185,6 +191,8 @@ export function useAuth(options: UseAuthOptions = {}) {
           router.push('/suspended')
         } else if (userData?.status === 'Blocked') {
           router.push('/blocked')
+        } else if (userData?.status === 'Rejected') {
+          router.push('/rejected')
         } else {
           router.push('/company')
         }

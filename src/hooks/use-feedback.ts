@@ -3,20 +3,28 @@ import { feedbackService, SubmitFeedbackDTO } from '@/services/feedback-service'
 
 export const feedbackKeys = {
   all: ['feedbacks'] as const,
-  list: (typeId?: number, pageNumber?: number, pageSize?: number) => [...feedbackKeys.all, 'list', typeId, pageNumber, pageSize] as const,
+  list: (typeId?: number, isRead?: boolean, pageNumber?: number, pageSize?: number) =>
+    [...feedbackKeys.all, 'list', typeId, isRead, pageNumber, pageSize] as const,
   types: () => [...feedbackKeys.all, 'types'] as const,
 }
 
 export function useSubmitFeedback() {
   return useMutation({
-    mutationFn: (data: SubmitFeedbackDTO) => feedbackService.submitFeedback(data),
+    mutationFn: (data: SubmitFeedbackDTO) =>
+      feedbackService.submitFeedback(data),
   })
 }
 
-export function useFeedbacks(feedbackTypeId?: number, pageNumber: number = 1, pageSize: number = 10) {
+export function useFeedbacks(
+  feedbackTypeId?: number,
+  isRead?: boolean,
+  pageNumber: number = 1,
+  pageSize: number = 10,
+) {
   return useQuery({
-    queryKey: feedbackKeys.list(feedbackTypeId, pageNumber, pageSize),
-    queryFn: () => feedbackService.getAllFeedbacks(feedbackTypeId, pageNumber, pageSize),
+    queryKey: feedbackKeys.list(feedbackTypeId, isRead, pageNumber, pageSize),
+    queryFn: () =>
+      feedbackService.getAllFeedbacks(feedbackTypeId, isRead, pageNumber, pageSize),
   })
 }
 

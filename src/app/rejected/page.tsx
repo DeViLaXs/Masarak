@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import NavBar from '@/components/navbar'
 import Footer from '@/components/footer'
 import { motion } from 'framer-motion'
-import { AlertTriangle, Clock, Loader2, Mail } from 'lucide-react'
+import { XCircle, Mail, Loader2, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/auth/use-auth'
 import { useQueryClient } from '@tanstack/react-query'
@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { ContactSupportDialog } from '@/components/contact-support-dialog'
 
-export default function SuspendedPage() {
+export default function RejectedPage() {
   const { logout, user } = useAuth()
   const router = useRouter()
   const queryClient = useQueryClient()
@@ -29,17 +29,16 @@ export default function SuspendedPage() {
       }
     } else if (user?.status === 'Blocked') {
       router.replace('/blocked')
+    } else if (user?.status === 'Suspended') {
+      router.replace('/suspended')
     } else if (user?.status === 'PendingApproval') {
       router.replace('/under-process')
-    } else if (user?.status === 'Rejected') {
-      router.replace('/rejected')
     }
   }, [user?.status, user?.role, router])
 
   const handleRefresh = async () => {
     setIsRefreshing(true)
     try {
-      // Force fetch the latest user session data (bypassing cache)
       await queryClient.invalidateQueries({ queryKey: authKeys.me() })
       const latestUser = await queryClient.fetchQuery({
         queryKey: authKeys.me(),
@@ -52,11 +51,9 @@ export default function SuspendedPage() {
         } else {
           router.replace('/company')
         }
-      } else if (latestUser?.status === 'Rejected') {
-        router.replace('/rejected')
       } else {
-        toast.error('الحساب لا يزال معلقاً', {
-          description: 'يرجى التواصل مع الدعم الفني لمزيد من المعلومات.',
+        toast.error('حسابك لا يزال مرفوضاً', {
+          description: 'نأسف، لا يزال حسابك مرفوضاً من قبل الإدارة.',
         })
       }
     } catch (error) {
@@ -72,10 +69,9 @@ export default function SuspendedPage() {
       <NavBar />
 
       <main className="relative flex flex-1 items-center justify-center p-6">
-        {/* Background Decorative Elements */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -top-[20%] -right-[10%] h-[50%] w-[50%] rounded-full bg-orange-500/5 opacity-50 blur-3xl" />
-          <div className="absolute top-[40%] -left-[10%] h-[40%] w-[40%] rounded-full bg-red-500/5 opacity-50 blur-3xl" />
+          <div className="absolute -top-[20%] -right-[10%] h-[50%] w-[50%] rounded-full bg-red-500/5 opacity-50 blur-3xl" />
+          <div className="absolute top-[40%] -left-[10%] h-[40%] w-[40%] rounded-full bg-slate-500/5 opacity-50 blur-3xl" />
         </div>
 
         <motion.div
@@ -84,37 +80,33 @@ export default function SuspendedPage() {
           transition={{ duration: 0.6, ease: 'easeOut' }}
           className="relative z-10 w-full max-w-lg"
         >
-          <div className="overflow-hidden rounded-3xl border border-orange-200 bg-white/80 p-10 text-center shadow-xl backdrop-blur-xl dark:border-orange-900/50 dark:bg-slate-900/80">
-            {/* Animated Icon */}
+          <div className="overflow-hidden rounded-3xl border border-red-200 bg-white/80 p-10 text-center shadow-xl backdrop-blur-xl dark:border-red-900/50 dark:bg-slate-900/80">
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.2, duration: 0.5, type: 'spring' }}
-              className="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-orange-50 shadow-inner dark:bg-orange-900/20"
+              className="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-red-50 shadow-inner dark:bg-red-900/20"
             >
-              <AlertTriangle className="h-10 w-10 text-orange-500" />
+              <XCircle className="h-10 w-10 text-red-500" />
             </motion.div>
 
             <h1 className="mb-4 text-3xl font-bold text-slate-800 dark:text-slate-100">
-              حسابك معلّق مؤقتاً
+              حساب مرفوض
             </h1>
 
             <p className="mb-8 text-lg leading-relaxed font-medium text-slate-600 dark:text-slate-400">
-              أهلاً بك {user?.name ? `يا ${user.name}` : ''}، نأسف لإبلاغك بأنه
-              قد تم تعليق حسابك مؤقتاً لأسباب تتعلق بسياسة المنصة أو معلومات غير
-              مكتملة.
+              {user?.name ? `مرحباً ${user.name}` : ''}، نأسف لإبلاغك بأنه قد تم رفض طلب تسجيل حسابك بناءً على معايير القبول لدى المنصة.
             </p>
 
             <div className="mb-10 flex flex-col gap-4 text-right">
-              <div className="flex items-start gap-3 rounded-xl bg-orange-50 p-4 dark:bg-orange-900/20">
-                <Clock className="mt-0.5 h-5 w-5 shrink-0 text-orange-500" />
+              <div className="flex items-start gap-3 rounded-xl bg-red-50 p-4 dark:bg-red-900/20">
+                <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-500" />
                 <div>
                   <h3 className="font-semibold text-slate-800 dark:text-slate-200">
-                    ماذا بعد؟
+                    سبب الرفض
                   </h3>
-                  <p className="text-sm text-orange-800/80 dark:text-orange-200/80">
-                    يرجى التواصل مع فريق الدعم الفني لمناقشة حالة الحساب ومعرفة
-                    ما يجب فعله لرفع التعليق.
+                  <p className="text-sm text-red-800/80 dark:text-red-200/80">
+                    قد يكون الرفض ناتجاً عن عدم صحة البيانات المدخلة أو عدم استيفاء شركتك للشروط والأحكام الخاصة بمنصة مسارك.
                   </p>
                 </div>
               </div>
@@ -122,10 +114,10 @@ export default function SuspendedPage() {
                 <Mail className="mt-0.5 h-5 w-5 shrink-0 text-slate-500" />
                 <div>
                   <h3 className="font-semibold text-slate-800 dark:text-slate-200">
-                    الدعم الفني
+                    للاستفسارات
                   </h3>
                   <p className="text-sm text-slate-500 dark:text-slate-400">
-                    يمكنك مراسلتنا في أي وقت عبر البريد الإلكتروني الخاص بالدعم.
+                    إذا كنتم تعتقدون أن هناك خطأ أو تودون معرفة المزيد من التفاصيل، يرجى التواصل مع فريق الدعم الفني.
                   </p>
                 </div>
               </div>
@@ -134,15 +126,16 @@ export default function SuspendedPage() {
             <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
               <ContactSupportDialog />
               <Button
+                variant="outline"
                 size="lg"
-                className="w-full bg-orange-500 px-8 text-white hover:bg-orange-600 sm:w-auto"
+                className="w-full px-8 sm:w-auto"
                 onClick={handleRefresh}
                 disabled={isRefreshing}
               >
                 {isRefreshing ? (
                   <>
                     <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                    جاري التقدم...
+                    جاري التحديث...
                   </>
                 ) : (
                   'تحديث الحالة'
