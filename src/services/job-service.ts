@@ -94,9 +94,22 @@ export type JobDetailDto = {
 
 export type UpdateJobDto = Partial<CreateJobDto>
 
+export type EnhanceDescriptionDto = {
+  title: string
+  description: string
+}
+
 // ============== Job Service ==============
 
 export const jobService = {
+  /**
+   * Enhance job description using AI
+   */
+  enhanceDescription: async (data: EnhanceDescriptionDto): Promise<string> => {
+    const res = await api.post('/Jobs/enhance-description', data)
+    return res.data?.data
+  },
+
   /**
    * Create a new job
    */

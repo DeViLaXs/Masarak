@@ -8,6 +8,7 @@ import {
   useJobLookups,
   useGovernates,
   useSkillsSearch,
+  useEnhanceDescription,
 } from '@/hooks/use-jobs'
 
 import { useDebounce } from 'use-debounce'
@@ -41,6 +42,14 @@ import {
   CardTitle,
   CardDescription,
 } from '@/components/ui/card'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import {
   Popover,
   PopoverContent,
@@ -105,6 +114,8 @@ export default function JobDetailsPage() {
 
   const { data: job, isLoading: isJobLoading } = useJob(id)
   const { updateJobAsync, isUpdatingJob } = useJobs()
+  const { mutateAsync: enhanceAsync, isPending: isEnhancing } =
+    useEnhanceDescription()
 
   const [formData, setFormData] = React.useState<JobFormState>({
     title: '',
@@ -131,6 +142,8 @@ export default function JobDetailsPage() {
   const [countrySearch, setCountrySearch] = React.useState('')
   const [governateSearch, setGovernateSearch] = React.useState('')
   const [currencySearch, setCurrencySearch] = React.useState('')
+  const [aiPreviewContent, setAiPreviewContent] = React.useState<string | null>(null)
+  const [isAiModalOpen, setIsAiModalOpen] = React.useState(false)
 
   const [debouncedSkillsSearch] = useDebounce(skillsSearch, 500)
 
@@ -252,6 +265,33 @@ export default function JobDetailsPage() {
       router.push('/company/manage-job')
     } catch (error: any) {
       toast.error(error?.message || 'حدث خطأ أثناء التحديث')
+    }
+  }
+ 
+  const handleEnhanceDescription = async () => {
+    if (!formData.title || !formData.description) {
+      toast.error('يرجى إدخال عنوان الوظيفة ووصف مبدئي للتحسين')
+      return
+    }
+
+    try {
+      const enhanced = await enhanceAsync({
+        title: formData.title,
+        description: formData.description,
+      })
+      setAiPreviewContent(enhanced)
+      setIsAiModalOpen(true)
+    } catch (error: any) {
+      toast.error(error?.message || 'حدث خطأ أثناء تحسين الوصف')
+    }
+  }
+
+  const handleApplyAiEnhancement = () => {
+    if (aiPreviewContent) {
+      setFormData((prev) => ({ ...prev, description: aiPreviewContent }))
+      setIsAiModalOpen(false)
+      setAiPreviewContent(null)
+      toast.success('تم تطبيق التحسين بنجاح')
     }
   }
 
@@ -392,7 +432,7 @@ export default function JobDetailsPage() {
                 <Input
                   id="title"
                   placeholder="مثال: مطور واجهات أمامية"
-                  value={formData.title}
+                  value={formData.title || ''}
                   onChange={(e) =>
                     setFormData((prev) => ({ ...prev, title: e.target.value }))
                   }
@@ -444,12 +484,29 @@ export default function JobDetailsPage() {
             </div>
 
             <Field>
-              <FieldLabel htmlFor="description">وصف الوظيفة *</FieldLabel>
+              <div className="flex items-center justify-between">
+                <FieldLabel htmlFor="description">وصف الوظيفة *</FieldLabel>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="text-primary hover:text-primary/80 h-8 gap-1.5 text-xs font-bold"
+                  onClick={handleEnhanceDescription}
+                  disabled={isEnhancing}
+                >
+                  {isEnhancing ? (
+                    <Loader2 className="size-3.5 animate-spin" />
+                  ) : (
+                    <Sparkles className="size-3.5" />
+                  )}
+                  تحسين بالذكاء الاصطناعي
+                </Button>
+              </div>
               <Textarea
                 id="description"
                 className="bg-background focus-visible:ring-primary/20 min-h-[140px] resize-y transition-shadow"
                 placeholder="اكتب وصفاً مفصلاً للوظيفة..."
-                value={formData.description}
+                value={formData.description || ''}
                 onChange={(e) =>
                   setFormData((prev) => ({
                     ...prev,
@@ -462,12 +519,12 @@ export default function JobDetailsPage() {
               <FieldDescription className="w-full text-left text-xs font-medium">
                 <span
                   className={cn(
-                    formData.description.length > 480
+                    (formData.description?.length || 0) > 480
                       ? 'text-destructive'
                       : 'text-muted-foreground',
                   )}
                 >
-                  {formData.description.length}
+                  {formData.description?.length || 0}
                 </span>
                 /500
               </FieldDescription>
@@ -809,8 +866,8 @@ export default function JobDetailsPage() {
             <Field>
               <div className="border-border bg-muted/20 focus-within:border-primary/40 focus-within:bg-background flex flex-col gap-3 rounded-xl border p-4 transition-colors">
                 {/* Selected Skills */}
-                {(formData.skillIds.length > 0 ||
-                  formData.newSkills.length > 0) && (
+                {((formData.skillIds?.length || 0) > 0 ||
+                  (formData.newSkills?.length || 0) > 0) && (
                   <div className="flex flex-wrap gap-2 pb-2">
                     {formData.skillIds.map((id) => (
                       <span
@@ -936,6 +993,70 @@ export default function JobDetailsPage() {
           </Button>
         </div>
       </form>
+
+      {/* AI Enhancement Preview Modal */}
+      <Dialog open={isAiModalOpen} onOpenChange={setIsAiModalOpen}>
+        <DialogContent className="max-w-2xl overflow-hidden p-0">
+          <DialogHeader className="bg-primary/5 border-b p-6 text-right">
+            <div className="flex items-center gap-3">
+              <div className="bg-primary/10 text-primary flex size-10 items-center justify-center rounded-lg">
+                <Sparkles className="size-5" />
+              </div>
+              <div>
+                <DialogTitle className="text-xl font-bold">
+                  مراجعة تحسين الوصف
+                </DialogTitle>
+                <DialogDescription className="mt-1">
+                  قم بمراجعة الوصف المحسن بواسطة الذكاء الاصطناعي قبل تطبيقه
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+          
+          <div className="max-h-[60vh] overflow-y-auto p-6 text-right">
+            <div className="bg-muted/30 rounded-xl border p-5">
+              <div className="space-y-4 whitespace-pre-wrap text-sm leading-relaxed text-foreground">
+                {aiPreviewContent?.split('\n').map((line, i) => {
+                  if (line.startsWith('### ')) {
+                    return (
+                      <h3 key={i} className="text-primary mt-6 mb-2 text-base font-bold first:mt-0">
+                        {line.replace('### ', '')}
+                      </h3>
+                    )
+                  }
+                  if (line.startsWith('- ')) {
+                    return (
+                      <div key={i} className="mr-2 flex items-start gap-2">
+                        <span className="bg-primary/40 mt-1.5 size-1.5 shrink-0 rounded-full" />
+                        <span>{line.replace('- ', '')}</span>
+                      </div>
+                    )
+                  }
+                  return <p key={i}>{line}</p>
+                })}
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter className="bg-muted/10 border-t p-6">
+            <div className="flex w-full items-center justify-between gap-4">
+              <Button
+                variant="outline"
+                onClick={() => setIsAiModalOpen(false)}
+                className="flex-1 font-bold"
+              >
+                إلغاء
+              </Button>
+              <Button
+                onClick={handleApplyAiEnhancement}
+                className="flex-[2] font-bold"
+              >
+                تطبيق التعديلات المحسنة
+              </Button>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

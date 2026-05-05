@@ -8,6 +8,7 @@ import {
   jobService,
   type CreateJobDto,
   type UpdateJobDto,
+  type EnhanceDescriptionDto,
 } from '@/services/job-service'
 
 export const jobKeys = {
@@ -59,6 +60,13 @@ export function useJobs() {
     isUpdatingJob: updateJobMutation.isPending,
     updateJobError: updateJobMutation.error,
   }
+}
+
+export function useEnhanceDescription() {
+  return useMutation({
+    mutationFn: (data: EnhanceDescriptionDto) =>
+      jobService.enhanceDescription(data),
+  })
 }
 
 export function useJob(id: number) {
