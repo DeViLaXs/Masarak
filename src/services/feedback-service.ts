@@ -5,6 +5,11 @@ export type SubmitFeedbackDTO = {
   message: string
 }
 
+export type SendFeedbackReplyDTO = {
+  email: string
+  message: string
+}
+
 export type FeedbackResponseDTO = {
   id: number
   reviewerName: string
@@ -77,6 +82,11 @@ export const feedbackService = {
 
   deleteFeedback: async (id: number) => {
     const res = await api.delete(`/Feedbacks/${id}`)
+    return res.data
+  },
+
+  sendReply: async (data: SendFeedbackReplyDTO) => {
+    const res = await api.post('/Feedbacks/send-reply', data)
     return res.data
   },
 }

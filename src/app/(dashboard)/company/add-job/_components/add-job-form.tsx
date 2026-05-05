@@ -454,20 +454,20 @@ export function AddJobForm() {
                     description: e.target.value,
                   }))
                 }
-                maxLength={500}
+                maxLength={700}
                 required
               />
               <FieldDescription className="w-full text-left text-xs font-medium">
                 <span
                   className={cn(
-                    (formData.description?.length || 0) > 480
+                    (formData.description?.length || 0) > 700
                       ? 'text-destructive'
                       : 'text-muted-foreground',
                   )}
                 >
                   {formData.description?.length || 0}
                 </span>
-                /500
+                /700
               </FieldDescription>
             </Field>
           </CardContent>

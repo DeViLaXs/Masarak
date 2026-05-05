@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { feedbackService, SubmitFeedbackDTO } from '@/services/feedback-service'
+import { feedbackService, SubmitFeedbackDTO, SendFeedbackReplyDTO } from '@/services/feedback-service'
 
 export const feedbackKeys = {
   all: ['feedbacks'] as const,
@@ -52,5 +52,12 @@ export function useDeleteFeedback() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: feedbackKeys.all })
     },
+  })
+}
+
+export function useSendFeedbackReply() {
+  return useMutation({
+    mutationFn: (data: SendFeedbackReplyDTO) =>
+      feedbackService.sendReply(data),
   })
 }

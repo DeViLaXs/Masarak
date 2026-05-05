@@ -5,7 +5,8 @@ import {
   useFeedbacks,
   useFeedbackTypes,
   useMarkFeedbackAsRead,
-  useDeleteFeedback
+  useDeleteFeedback,
+  useSendFeedbackReply
 } from '@/hooks/use-feedback'
 import {
   Table,
@@ -35,6 +36,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Textarea } from '@/components/ui/textarea'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
@@ -52,7 +62,9 @@ import {
   Monitor,
   Smartphone,
   Building2,
-  User
+  User,
+  Mail,
+  Send
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
@@ -73,6 +85,10 @@ export default function FeedbacksClient() {
 
   const { mutateAsync: markAsRead, isPending: isMarking } = useMarkFeedbackAsRead()
   const { mutateAsync: deleteFeedback, isPending: isDeleting } = useDeleteFeedback()
+  const { mutateAsync: sendReply, isPending: isSendingReply } = useSendFeedbackReply()
+
+  const [replyMessage, setReplyMessage] = React.useState('')
+  const [isReplyDialogOpen, setIsReplyDialogOpen] = React.useState(false)
 
   const handleMarkAsRead = async (id: number) => {
     try {
@@ -89,6 +105,25 @@ export default function FeedbacksClient() {
       toast.success('تم حذف الرسالة بنجاح')
     } catch (error: any) {
       toast.error(error?.message || 'حدث خطأ أثناء الحذف')
+    }
+  }
+
+  const handleSendReply = async () => {
+    if (!replyMessage.trim()) {
+      toast.error('يرجى كتابة رسالة الرد')
+      return
+    }
+
+    try {
+      await sendReply({
+        email: viewFeedback?.reviewerEmail || '',
+        message: replyMessage
+      })
+      toast.success('تم إرسال الرد بنجاح')
+      setIsReplyDialogOpen(false)
+      setReplyMessage('')
+    } catch (error: any) {
+      toast.error(error?.message || 'حدث خطأ أثناء إرسال الرد')
     }
   }
 
@@ -483,6 +518,17 @@ export default function FeedbacksClient() {
                     {viewFeedback.message}
                   </div>
                 </div>
+
+                <div className="pt-4">
+                  <Button 
+                    className="w-full flex items-center gap-2 font-bold h-12 text-base"
+                    onClick={() => setIsReplyDialogOpen(true)}
+                  >
+                    <Mail className="size-5" />
+                    رد عبر البريد الإلكتروني
+                  </Button>
+                </div>
+
               </div>
             </div>
           )}
@@ -513,6 +559,64 @@ export default function FeedbacksClient() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Reply Dialog */}
+      <Dialog open={isReplyDialogOpen} onOpenChange={setIsReplyDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]" dir="rtl">
+          <DialogHeader className="text-right">
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <Mail className="size-5 text-primary" />
+              الرد على {viewFeedback?.reviewerName}
+            </DialogTitle>
+            <DialogDescription>
+              سيتم إرسال هذا الرد مباشرة إلى البريد الإلكتروني: <span className="font-semibold text-foreground">{viewFeedback?.reviewerEmail}</span>
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4 text-right">
+            <div className="space-y-2">
+              <label htmlFor="reply" className="text-sm font-bold text-foreground">
+                رسالة الرد
+              </label>
+              <Textarea
+                id="reply"
+                placeholder="اكتب ردك هنا..."
+                className="min-h-[150px] resize-none"
+                value={replyMessage}
+                onChange={(e) => setReplyMessage(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              onClick={() => setIsReplyDialogOpen(false)}
+              className="font-bold"
+              disabled={isSendingReply}
+            >
+              إلغاء
+            </Button>
+            <Button
+              onClick={handleSendReply}
+              className="font-bold min-w-[120px]"
+              disabled={isSendingReply}
+            >
+              {isSendingReply ? (
+                <>
+                  <Loader2 className="ml-2 size-4 animate-spin" />
+                  جاري الإرسال...
+                </>
+              ) : (
+                <>
+                  <Send className="ml-2 size-4" />
+                  إرسال الرد
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

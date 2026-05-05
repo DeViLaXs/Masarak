@@ -107,7 +107,7 @@ export const jobService = {
    */
   enhanceDescription: async (data: EnhanceDescriptionDto): Promise<string> => {
     const res = await api.post('/Jobs/enhance-description', data)
-    return res.data?.data
+    return res.data?.data?.enhanced_description || ''
   },
 
   /**
