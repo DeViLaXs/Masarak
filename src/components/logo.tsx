@@ -9,29 +9,29 @@ export default function Logo() {
           src="/Masarak-logo-dark.png"
           className="block dark:hidden"
           alt="Logo"
-          width={25}
-          height={25}
+          width={40}
+          height={40}
         />
         <Image
           src="/Masarak-logo.png"
           className="hidden dark:block"
           alt="Logo"
-          width={25}
-          height={25}
+          width={40}
+          height={40}
         />
         <Image
-          src="/masaraknew.png"
-          className="hidden dark:block mr-5"
+          src="/masarak-new-dark.png"
+          className="hidden dark:block "
           alt="Logo"
-          width={50}
-          height={50}
+          width={100}
+          height={100}
         />
         <Image
-          src="/masaraknew.png"
-          className="block dark:hidden mr-1"
+          src="/masarak-new-light.png"
+          className="block dark:hidden"
           alt="Logo"
-          width={50}
-          height={50}
+          width={100}
+          height={100}
         />
       </Link>
     </div>
