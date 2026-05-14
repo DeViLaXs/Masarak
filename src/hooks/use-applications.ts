@@ -25,3 +25,38 @@ export function useUpdateApplicationStatus() {
     },
   })
 }
+
+export function useShortlistCandidate() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (id: number) => applicationService.shortlist(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: applicationKeys.all })
+      // Also invalidate interviews as a new entry will appear there
+      queryClient.invalidateQueries({ queryKey: ['interviews'] })
+    },
+  })
+}
+
+export function useRejectCandidate() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (id: number) => applicationService.reject(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: applicationKeys.all })
+    },
+  })
+}
+
+export function useHireCandidate() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (id: number) => applicationService.hire(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: applicationKeys.all })
+    },
+  })
+}

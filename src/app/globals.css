@@ -1,6 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
 @import 'tailwindcss';
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @custom-variant dark (&:is(.dark *));
@@ -214,4 +220,13 @@ input::-ms-clear {
 input::-webkit-password-decoration,
 input::-webkit-credentials-auto-fill-button {
   display: none;
+}
+
+/* Hide scrollbar utility */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }

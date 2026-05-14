@@ -5,14 +5,13 @@ import {
   keepPreviousData,
 } from '@tanstack/react-query'
 import { interviewService } from '@/services/interview-service'
-import { format } from 'date-fns'
 
 export const interviewKeys = {
   all: ['interviews'] as const,
   list: (params: any) => [...interviewKeys.all, 'list', params] as const,
-  detail: (id: number) => [...interviewKeys.all, 'detail', id] as const,
   stats: () => [...interviewKeys.all, 'stats'] as const,
   statuses: () => [...interviewKeys.all, 'statuses'] as const,
+  shortlisted: (params: any) => [...interviewKeys.all, 'shortlisted', params] as const,
 }
 
 export function useInterviewStats() {
@@ -30,16 +29,29 @@ export function useInterviewsList(params: {
 }) {
   return useQuery({
     queryKey: interviewKeys.list(params),
-    queryFn: () => interviewService.getInterviews(params),
+    queryFn: () => interviewService.getInterviews({
+      SearchTerm: params.searchTerm,
+      StatusId: params.statusId,
+      Page: params.page,
+      PageSize: params.pageSize,
+    }),
     placeholderData: keepPreviousData,
   })
 }
 
-export function useInterview(id: number) {
+export function useShortlistedCandidates(params?: {
+  searchTerm?: string
+  page?: number
+  pageSize?: number
+}) {
   return useQuery({
-    queryKey: interviewKeys.detail(id),
-    queryFn: () => interviewService.getInterviewById(id),
-    enabled: !!id,
+    queryKey: interviewKeys.shortlisted(params || {}),
+    queryFn: () => interviewService.getShortlistedCandidates({
+      SearchTerm: params?.searchTerm,
+      Page: params?.page,
+      PageSize: params?.pageSize,
+    }),
+    placeholderData: keepPreviousData,
   })
 }
 
@@ -62,20 +74,59 @@ export function useRescheduleInterview() {
     mutationFn: ({
       id,
       newDate,
-      time,
       notes,
-    }: {
-      id: number
-      newDate: Date
-      time: string
-      notes?: string
-    }) => {
-      const dateStr = format(newDate, 'yyyy-MM-dd')
-      const isoDate = `${dateStr}T${time}:00`
-      return interviewService.reschedule(id, { newDate: isoDate, notes })
-    },
+    }: { id: number; newDate: string; notes: string }) =>
+      interviewService.reschedule(id, { newDate, notes }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: interviewKeys.all })
+    },
+  })
+}
+
+export function useScheduleInterview() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: any) => interviewService.schedule(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: interviewKeys.all })
+    },
+  })
+}
+
+export function useCancelInterview() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (id: number) => interviewService.cancel(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: interviewKeys.all })
+      queryClient.invalidateQueries({ queryKey: ['applications'] })
+    },
+  })
+}
+
+export function useMissingInterview() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (id: number) => interviewService.missing(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: interviewKeys.all })
+      queryClient.invalidateQueries({ queryKey: ['applications'] })
+    },
+  })
+}
+
+export function useCompleteInterview() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: any }) =>
+      interviewService.complete(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: interviewKeys.all })
+      queryClient.invalidateQueries({ queryKey: ['applications'] })
     },
   })
 }

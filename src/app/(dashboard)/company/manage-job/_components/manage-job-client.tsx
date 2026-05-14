@@ -35,6 +35,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { Combobox, ComboboxInput, ComboboxContent, ComboboxList, ComboboxItem } from '@/components/ui/combobox'
 import { Calendar } from '@/components/ui/calendar'
 import {
   Table,
@@ -45,6 +46,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import type { JobListItemDto } from '@/services/job-service'
+import Link from 'next/link'
 
 // --- Arabic Translation Helpers ---
 
@@ -74,19 +76,19 @@ const statusMap: Record<string, { label: string; className: string }> = {
   Published: {
     label: 'نشطة',
     className:
-      'bg-emerald-50 text-emerald-600 ring-1 ring-inset ring-emerald-500/20',
+      'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
   },
   Closed: {
     label: 'غير نشطة',
-    className: 'bg-slate-50 text-slate-600 ring-1 ring-inset ring-slate-500/20',
+    className: 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200',
   },
   Expired: {
     label: 'منتهية',
-    className: 'bg-red-50 text-red-600 ring-1 ring-inset ring-red-500/20',
+    className: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
   },
   Filled: {
     label: 'تم التعيين',
-    className: 'bg-blue-50 text-blue-600 ring-1 ring-inset ring-blue-500/20',
+    className: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
   },
 }
 
@@ -182,7 +184,7 @@ export default function ManageJobClient() {
         header: () => <div className="text-center font-medium">نوع الدوام</div>,
         cell: ({ row }) => (
           <div className="text-center">
-            <span className="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600">
+            <span className="inline-flex items-center px-3 py-1 text-xs font-semibold ">
               {formatJobType(row.original.jobType)}
             </span>
           </div>
@@ -335,53 +337,86 @@ export default function ManageJobClient() {
   })
 
   return (
-    <div className="mx-auto block max-w-[1200px] space-y-6 pb-20">
+    <div className="mx-auto w-full max-w-7xl space-y-8 pb-10 duration-500 p-3 md:p-8" dir="rtl">
       {/* Filters Card */}
-      <Card className="border-border/40 rounded-2xl bg-white shadow-sm">
-        <CardContent className="p-6">
+      <Card className="border-border/40 rounded-2xl shadow-sm">
+        <CardContent>
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
             <div className="flex w-full shrink-0 flex-col gap-3 sm:flex-row md:w-auto">
-              <div className="relative">
-                <select
-                  value={statusTab}
-                  onChange={(e) => {
-                    setStatusTab(e.target.value)
+              <div className="w-full md:w-[200px] shadow-sm rounded-lg overflow-hidden border border-input focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all h-10 flex items-center">
+                <Combobox
+                  value={{ id: statusTab, name: statusTab }}
+                  onValueChange={(val: any) => {
                     setPage(1)
+                    if (!val) setStatusTab('all')
+                    else setStatusTab(val.id)
                   }}
-                  className="h-10 w-full appearance-none rounded-full border border-slate-200 bg-white px-4 py-2 pr-4 pl-10 text-sm transition-colors outline-none hover:bg-slate-50 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 sm:w-40"
+                  filter={null}
+                  itemToStringLabel={(item: any) => { 
+                    if (!item) return ''
+                    const map: any = {
+                      'all': 'جميع الحالات',
+                      'Published': 'نشطة',
+                      'Closed': 'غير نشطة (مغلقة)',
+                      'Expired': 'منتهية'
+                    }
+                    return map[item.id] || item.id
+                  }}
                 >
-                  <option value="all">جميع الحالات</option>
-                  <option value="Published">نشطة</option>
-                  <option value="Closed">غير نشطة (مغلقة)</option>
-                  <option value="Expired">منتهية</option>
-                </select>
-                <ChevronDownIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-slate-500" />
+                  <ComboboxInput
+                    placeholder="جميع الحالات"
+                    className=" w-full border-none focus:ring-0 px-3 text-sm h-full cursor-pointer"
+                    readOnly
+                  />
+                  <ComboboxContent>
+                    <ComboboxList>
+                      <ComboboxItem value={{ id: 'all', name: 'all' }}>جميع الحالات</ComboboxItem>
+                      <ComboboxItem value={{ id: 'Published', name: 'Published' }}>نشطة</ComboboxItem>
+                      <ComboboxItem value={{ id: 'Closed', name: 'Closed' }}>غير نشطة (مغلقة)</ComboboxItem>
+                      <ComboboxItem value={{ id: 'Expired', name: 'Expired' }}>منتهية</ComboboxItem>
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
               </div>
-              <div className="relative">
-                <select
-                  value={jobTypeFilter}
-                  onChange={(e) => {
-                    setJobTypeFilter(e.target.value)
+              <div className="w-full md:w-[200px] shadow-sm rounded-lg overflow-hidden  border border-input focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all h-10 flex items-center">
+                <Combobox
+                  value={{ id: jobTypeFilter, name: jobTypeFilter }}
+                  onValueChange={(val: any) => {
                     setPage(1)
+                    if (!val) setJobTypeFilter('all')
+                    else setJobTypeFilter(val.id)
                   }}
-                  className="h-10 w-full appearance-none rounded-full border border-slate-200 bg-white px-4 py-2 pr-4 pl-10 text-sm transition-colors outline-none hover:bg-slate-50 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 sm:w-40"
+                  filter={null}
+                  itemToStringLabel={(item: any) => {
+                    if (!item || item.id === 'all') return 'نوع الدوام'
+                    const match = jobTypes?.find(t => t.id.toString() === item.id)
+                    return match ? formatJobType(match.name) : 'نوع الدوام'
+                  }}
                 >
-                  <option value="all">نوع الدوام</option>
-                  {jobTypes?.map((type) => (
-                    <option key={type.id} value={type.id.toString()}>
-                      {formatJobType(type.name)}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDownIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-slate-500" />
+                  <ComboboxInput
+                    placeholder="نوع الدوام"
+                    className=" w-full border-none outline-none focus:ring-0 px-4 text-sm h-full cursor-pointer"
+                    readOnly
+                  />
+                  <ComboboxContent>
+                    <ComboboxList>
+                      <ComboboxItem value={{ id: 'all', name: 'all' }}>نوع الدوام</ComboboxItem>
+                      {jobTypes?.map((type) => (
+                        <ComboboxItem key={type.id} value={{ id: type.id.toString(), name: type.name }}>
+                          {formatJobType(type.name)}
+                        </ComboboxItem>
+                      ))}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
               </div>
             </div>
 
             <div className="relative w-full md:max-w-md md:flex-1 xl:max-w-xl">
-              <SearchIcon className="absolute top-1/2 right-4 size-4 -translate-y-1/2 text-slate-400" />
+              <SearchIcon className="absolute top-1/2 right-4 size-4 -translate-y-1/2 " />
               <Input
                 placeholder="البحث عن وظيفة..."
-                className="h-10 w-full rounded-full border-slate-200 bg-slate-50/50 pr-11 pl-4 shadow-none focus-visible:ring-blue-500"
+                className="pr-10 h-10 shadow-sm rounded-lg"
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value)
@@ -393,12 +428,12 @@ export default function ManageJobClient() {
             <div className="w-full shrink-0 md:w-auto">
               <Button
                 asChild
-                className="h-10 w-full rounded-xl bg-[#3b82f6] px-6 font-medium text-white shadow-sm hover:bg-blue-600 md:w-auto"
+                className="h-10 w-full rounded-xl bg-primary px-6 font-medium text-white shadow-sm hover:bg-primary/80 md:w-auto"
               >
-                <a href="/company/add-job">
+                <Link href="/company/add-job">
                   <PlusIcon className="ml-2 size-5" />
                   إضافة وظيفة جديدة
-                </a>
+                </Link>
               </Button>
             </div>
           </div>
@@ -406,38 +441,39 @@ export default function ManageJobClient() {
       </Card>
 
       {/* Jobs Table Card */}
-      <Card className="border-border/40 overflow-hidden rounded-2xl bg-white shadow-sm">
-        <CardHeader className="border-b border-slate-100 px-6 pt-6 pb-4">
-          <CardTitle className="text-xl font-bold text-slate-800">
-            قائمة الوظائف
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <Table className="table-fixed">
+      <Card className="border-border/40 shadow-sm overflow-hidden pt-2 pb-2">
+      
+        <div className="space-y-2">
+          <CardHeader className="border-b border-slate-100 dark:border-border pt-3 pb-2">
+            <CardTitle className="text-xl font-bold text-slate-800 dark:text-foreground">
+              قائمة الوظائف
+            </CardTitle>
+          </CardHeader>
+          
+          <div className="bg-white dark:bg-transparent">
+            <Table>
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow
-                    key={headerGroup.id}
-                    className="bg-[#f8fafc] text-slate-500"
-                  >
-                    {headerGroup.headers.map((header) => (
-                      <TableHead
-                        key={header.id}
-                        className="px-6 py-4 text-right"
-                        style={{
-                          width: header.getSize(),
-                          minWidth: header.getSize(),
-                        }}
-                      >
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext(),
-                            )}
-                      </TableHead>
-                    ))}
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => {
+                      return (
+                        <TableHead
+                          key={header.id}
+                          className="text-center bg-[#f8fafc] dark:bg-muted/50 dark:text-muted-foreground"
+                          style={{
+                            width: header.getSize(),
+                            minWidth: header.getSize(),
+                          }}
+                        >
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                        </TableHead>
+                      )
+                    })}
                   </TableRow>
                 ))}
               </TableHeader>
@@ -448,7 +484,7 @@ export default function ManageJobClient() {
                       colSpan={columns.length}
                       className="h-[300px] p-8 text-center"
                     >
-                      <div className="flex flex-col items-center justify-center text-slate-400">
+                      <div className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
                         <Loader2 className="mb-4 size-8 animate-spin text-blue-500" />
                         <p>جاري جلب بيانات الوظائف...</p>
                       </div>
@@ -460,13 +496,10 @@ export default function ManageJobClient() {
                       colSpan={columns.length}
                       className="h-[300px] p-8 text-center"
                     >
-                      <div className="flex flex-col items-center justify-center text-slate-400">
-                        <BriefcaseIcon className="mb-4 size-12 text-slate-300" />
-                        <h3 className="text-lg font-medium text-slate-700">
-                          لا توجد وظائف
-                        </h3>
-                        <p className="mt-1 text-sm">
-                          لم يتم العثور على أي نتائج مطابقة لبحثك.
+                      <div className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
+                        <BriefcaseIcon className="mb-4 h-12 w-12 text-slate-200 dark:text-slate-700" />
+                        <p className="text-lg font-medium text-slate-600 dark:text-slate-400">
+                          لا توجد وظائف متاحة
                         </p>
                       </div>
                     </TableCell>
@@ -475,12 +508,12 @@ export default function ManageJobClient() {
                   table.getRowModel().rows.map((row) => (
                     <TableRow
                       key={row.id}
-                      className="group transition-colors hover:bg-slate-50/50"
+                      className="group transition-colors hover:bg-slate-50/50 dark:hover:bg-muted/50"
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell
                           key={cell.id}
-                          className="px-6 py-4"
+                          className="text-center"
                           style={{
                             width: cell.column.getSize(),
                             minWidth: cell.column.getSize(),
@@ -498,7 +531,8 @@ export default function ManageJobClient() {
               </TableBody>
             </Table>
           </div>
-        </CardContent>
+          </div>
+        
       </Card>
 
       {/* Pagination */}

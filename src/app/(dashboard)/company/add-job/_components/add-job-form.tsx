@@ -132,10 +132,14 @@ export function AddJobForm() {
     Record<number, string>
   >({})
 
-  const [categorySearch, setCategorySearch] = React.useState('')
-  const [countrySearch, setCountrySearch] = React.useState('')
-  const [governateSearch, setGovernateSearch] = React.useState('')
-  const [currencySearch, setCurrencySearch] = React.useState('')
+  const [comboboxInputs, setComboboxInputs] = React.useState({
+    category: '',
+    country: '',
+    governate: '',
+    currency: '',
+    jobType: '',
+    locationType: '',
+  })
   const [aiPreviewContent, setAiPreviewContent] = React.useState<string | null>(null)
   const [isAiModalOpen, setIsAiModalOpen] = React.useState(false)
 
@@ -170,14 +174,14 @@ export function AddJobForm() {
     countries,
     isCategoriesLoading,
   } = useJobLookups({
-    categorySearch,
-    currencySearch,
-    countrySearch,
+    categorySearch: comboboxInputs.category,
+    currencySearch: comboboxInputs.currency,
+    countrySearch: comboboxInputs.country,
   })
 
   const { data: governates, isLoading: isGovernatesLoading } = useGovernates(
     formData.countryId ? Number(formData.countryId) : undefined,
-    governateSearch,
+    comboboxInputs.governate,
   )
 
   const { data: skillsOptions } = useSkillsSearch(debouncedSkillsSearch)
@@ -232,7 +236,7 @@ export function AddJobForm() {
       toast.error(error?.message || 'حدث خطأ أثناء الإضافة')
     }
   }
- 
+
   const handleEnhanceDescription = async () => {
     if (!formData.title || !formData.description) {
       toast.error('يرجى إدخال عنوان الوظيفة ووصف مبدئي للتحسين')
@@ -389,22 +393,30 @@ export function AddJobForm() {
                     categories?.find((cat) => cat.id === formData.categoryId) ||
                     null
                   }
-                  onValueChange={(val: any) =>
+                  inputValue={comboboxInputs.category}
+                  onValueChange={(val: any) => {
                     setFormData((prev) => ({
                       ...prev,
                       categoryId: val ? val.id : '',
                     }))
-                  }
+                    setComboboxInputs((prev) => ({
+                      ...prev,
+                      category: val ? val.name : '',
+                    }))
+                  }}
                   filter={null}
-                  onInputValueChange={(value: string, details: any) => {
-                    if (details?.reason === 'input-change')
-                      setCategorySearch(value)
+                  onInputValueChange={(value: string) => {
+                    setComboboxInputs((prev) => ({ ...prev, category: value }))
+                    if (value === '') {
+                      setFormData((prev) => ({ ...prev, categoryId: '' }))
+                    }
                   }}
                   itemToStringLabel={(item: any) => item?.name || ''}
                 >
                   <ComboboxInput
                     placeholder="اختر التصنيف..."
                     className="bg-background focus:ring-primary/20 transition-shadow"
+                    showClear
                   />
                   <ComboboxContent>
                     <ComboboxList>
@@ -498,13 +510,24 @@ export function AddJobForm() {
                   value={
                     jobTypes?.find((jt) => jt.id === formData.jobTypeId) || null
                   }
-                  onValueChange={(val: any) =>
+                  inputValue={comboboxInputs.jobType}
+                  onValueChange={(val: any) => {
                     setFormData((prev) => ({
                       ...prev,
                       jobTypeId: val ? val.id : '',
                     }))
-                  }
+                    setComboboxInputs((prev) => ({
+                      ...prev,
+                      jobType: val ? formatJobTypeName(val.name) : '',
+                    }))
+                  }}
                   filter={null}
+                  onInputValueChange={(value: string) => {
+                    setComboboxInputs((prev) => ({ ...prev, jobType: value }))
+                    if (value === '') {
+                      setFormData((prev) => ({ ...prev, jobTypeId: '' }))
+                    }
+                  }}
                   itemToStringLabel={(item: any) =>
                     item ? formatJobTypeName(item.name) : ''
                   }
@@ -512,6 +535,7 @@ export function AddJobForm() {
                   <ComboboxInput
                     placeholder="اختر نوع الدوام..."
                     className="bg-background focus:ring-primary/20 transition-shadow"
+                    showClear
                   />
                   <ComboboxContent>
                     <ComboboxList>
@@ -538,13 +562,24 @@ export function AddJobForm() {
                       (lt) => lt.id === formData.jobLocationTypeId,
                     ) || null
                   }
-                  onValueChange={(val: any) =>
+                  inputValue={comboboxInputs.locationType}
+                  onValueChange={(val: any) => {
                     setFormData((prev) => ({
                       ...prev,
                       jobLocationTypeId: val ? val.id : '',
                     }))
-                  }
+                    setComboboxInputs((prev) => ({
+                      ...prev,
+                      locationType: val ? formatLocationTypeName(val.name) : '',
+                    }))
+                  }}
                   filter={null}
+                  onInputValueChange={(value: string) => {
+                    setComboboxInputs((prev) => ({ ...prev, locationType: value }))
+                    if (value === '') {
+                      setFormData((prev) => ({ ...prev, jobLocationTypeId: '' }))
+                    }
+                  }}
                   itemToStringLabel={(item: any) =>
                     item ? formatLocationTypeName(item.name) : ''
                   }
@@ -552,6 +587,7 @@ export function AddJobForm() {
                   <ComboboxInput
                     placeholder="حضوري، عن بعد، إلخ..."
                     className="bg-background focus:ring-primary/20 transition-shadow"
+                    showClear
                   />
                   <ComboboxContent>
                     <ComboboxList>
@@ -576,23 +612,36 @@ export function AddJobForm() {
                   value={
                     countries?.find((c) => c.id === formData.countryId) || null
                   }
+                  inputValue={comboboxInputs.country}
                   onValueChange={(val: any) => {
                     setFormData((prev) => ({
                       ...prev,
                       countryId: val ? val.id : '',
                       governateId: '',
                     }))
+                    setComboboxInputs((prev) => ({
+                      ...prev,
+                      country: val ? val.name : '',
+                      governate: '',
+                    }))
                   }}
                   filter={null}
-                  onInputValueChange={(value: string, details: any) => {
-                    if (details?.reason === 'input-change')
-                      setCountrySearch(value)
+                  onInputValueChange={(value: string) => {
+                    setComboboxInputs((prev) => ({ ...prev, country: value }))
+                    if (value === '') {
+                      setFormData((prev) => ({
+                        ...prev,
+                        countryId: '',
+                        governateId: '',
+                      }))
+                    }
                   }}
                   itemToStringLabel={(item: any) => item?.name || ''}
                 >
                   <ComboboxInput
                     placeholder="ابحث عن الدولة..."
                     className="bg-background focus:ring-primary/20 transition-shadow"
+                    showClear
                   />
                   <ComboboxContent>
                     <ComboboxList>
@@ -618,16 +667,23 @@ export function AddJobForm() {
                     governates?.find((g) => g.id === formData.governateId) ||
                     null
                   }
-                  onValueChange={(val: any) =>
+                  inputValue={comboboxInputs.governate}
+                  onValueChange={(val: any) => {
                     setFormData((prev) => ({
                       ...prev,
                       governateId: val ? val.id : '',
                     }))
-                  }
+                    setComboboxInputs((prev) => ({
+                      ...prev,
+                      governate: val ? val.name : '',
+                    }))
+                  }}
                   filter={null}
-                  onInputValueChange={(value: string, details: any) => {
-                    if (details?.reason === 'input-change')
-                      setGovernateSearch(value)
+                  onInputValueChange={(value: string) => {
+                    setComboboxInputs((prev) => ({ ...prev, governate: value }))
+                    if (value === '') {
+                      setFormData((prev) => ({ ...prev, governateId: '' }))
+                    }
                   }}
                   itemToStringLabel={(item: any) => item?.name || ''}
                   disabled={!formData.countryId || isGovernatesLoading}
@@ -640,6 +696,7 @@ export function AddJobForm() {
                     }
                     className="bg-background focus:ring-primary/20 transition-shadow"
                     disabled={!formData.countryId || isGovernatesLoading}
+                    showClear
                   />
                   <ComboboxContent>
                     <ComboboxList>
@@ -687,16 +744,23 @@ export function AddJobForm() {
                     currencies?.find((c) => c.id === formData.currencyId) ||
                     null
                   }
-                  onValueChange={(val: any) =>
+                  inputValue={comboboxInputs.currency}
+                  onValueChange={(val: any) => {
                     setFormData((prev) => ({
                       ...prev,
                       currencyId: val ? val.id : '',
                     }))
-                  }
+                    setComboboxInputs((prev) => ({
+                      ...prev,
+                      currency: val ? val.name : '',
+                    }))
+                  }}
                   filter={null}
-                  onInputValueChange={(value: string, details: any) => {
-                    if (details?.reason === 'input-change')
-                      setCurrencySearch(value)
+                  onInputValueChange={(value: string) => {
+                    setComboboxInputs((prev) => ({ ...prev, currency: value }))
+                    if (value === '') {
+                      setFormData((prev) => ({ ...prev, currencyId: '' }))
+                    }
                   }}
                   itemToStringLabel={(item: any) =>
                     item ? `${item.name} (${item.code})` : ''
@@ -705,6 +769,7 @@ export function AddJobForm() {
                   <ComboboxInput
                     placeholder="العملة..."
                     className="bg-background focus:ring-primary/20 transition-shadow"
+                    showClear
                   />
                   <ComboboxContent>
                     <ComboboxList>
@@ -822,39 +887,39 @@ export function AddJobForm() {
                 {/* Selected Skills */}
                 {((formData.skillIds?.length || 0) > 0 ||
                   (formData.newSkills?.length || 0) > 0) && (
-                  <div className="flex flex-wrap gap-2 pb-2">
-                    {formData.skillIds.map((id) => (
-                      <span
-                        key={`exist-${id}`}
-                        className="bg-primary/10 text-primary ring-primary/20 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-semibold shadow-sm ring-1"
-                      >
-                        {getSkillName(id)}
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveSkill(id, '')}
-                          className="hover:bg-primary/20 hover:text-primary rounded-full p-0.5 transition-colors focus:outline-none"
+                    <div className="flex flex-wrap gap-2 pb-2">
+                      {formData.skillIds.map((id) => (
+                        <span
+                          key={`exist-${id}`}
+                          className="bg-primary/10 text-primary ring-primary/20 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-semibold shadow-sm ring-1"
                         >
-                          <XIcon className="size-3.5" />
-                        </button>
-                      </span>
-                    ))}
-                    {formData.newSkills.map((name) => (
-                      <span
-                        key={`new-${name}`}
-                        className="bg-primary text-primary-foreground inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-semibold shadow-sm"
-                      >
-                        {name}
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveSkill(null, name)}
-                          className="hover:bg-primary-foreground/20 rounded-full p-0.5 transition-colors focus:outline-none"
+                          {getSkillName(id)}
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveSkill(id, '')}
+                            className="hover:bg-primary/20 hover:text-primary rounded-full p-0.5 transition-colors focus:outline-none"
+                          >
+                            <XIcon className="size-3.5" />
+                          </button>
+                        </span>
+                      ))}
+                      {formData.newSkills.map((name) => (
+                        <span
+                          key={`new-${name}`}
+                          className="bg-primary text-primary-foreground inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-semibold shadow-sm"
                         >
-                          <XIcon className="size-3.5" />
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                )}
+                          {name}
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveSkill(null, name)}
+                            className="hover:bg-primary-foreground/20 rounded-full p-0.5 transition-colors focus:outline-none"
+                          >
+                            <XIcon className="size-3.5" />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
 
                 {/* Search Input */}
                 <div className="relative" ref={skillsContainerRef}>
@@ -896,19 +961,19 @@ export function AddJobForm() {
                               s.name.toLowerCase() ===
                               skillsSearch.toLowerCase(),
                           ) && (
-                            <li>
-                              <button
-                                type="button"
-                                className="bg-primary/5 text-primary hover:bg-primary/10 flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2.5 text-right text-sm font-bold transition-colors focus:outline-none"
-                                onClick={() =>
-                                  handleAddSkill(null, skillsSearch)
-                                }
-                              >
-                                <PlusIcon className="size-4" />
-                                إضافة &quot;{skillsSearch}&quot; كمهارة جديدة
-                              </button>
-                            </li>
-                          )}
+                              <li>
+                                <button
+                                  type="button"
+                                  className="bg-primary/5 text-primary hover:bg-primary/10 flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2.5 text-right text-sm font-bold transition-colors focus:outline-none"
+                                  onClick={() =>
+                                    handleAddSkill(null, skillsSearch)
+                                  }
+                                >
+                                  <PlusIcon className="size-4" />
+                                  إضافة &quot;{skillsSearch}&quot; كمهارة جديدة
+                                </button>
+                              </li>
+                            )}
                         </ul>
                       ) : (
                         <div className="p-1">
@@ -966,7 +1031,7 @@ export function AddJobForm() {
               </div>
             </div>
           </DialogHeader>
-          
+
           <div className="max-h-[60vh] overflow-y-auto p-6 text-right">
             <div className="bg-muted/30 rounded-xl border p-5">
               <div className="space-y-4 whitespace-pre-wrap text-sm leading-relaxed text-foreground">

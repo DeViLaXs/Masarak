@@ -10,92 +10,85 @@ export type InterviewStatisticsDto = {
   rescheduled: number
   cancelled: number
   noShow: number
+  missingInterview: number
 }
 
 export type InterviewListItemDto = {
   interviewId: number
-  applicationId: number
   candidateName: string
-  candidateEmail: string
   jobTitle: string
   interviewDate: string
-  interviewTypeName: string
-  location: string
-  statusId: number
-  statusName: string
-  notes: string | null
+  interviewType: string
+  interviewStatus: string
+  location: string | null
+  canCancel: boolean
+  canReschedule: boolean
+  canComplete: boolean
+  canMarkMissing: boolean
 }
 
-export type InterviewDetailDto = {
-  interviewId: number
-  applicationId: number
-  candidateName: string
-  candidateEmail: string
-  jobTitle: string
-  interviewDate: string
-  interviewTypeName: string
-  location: string
-  statusId: number
-  statusName: string
-  notes: string | null
+export type ScheduleInterviewDTO = {
+  interviewDate: string // ISO
+  notes?: string | null
+  interviewTypeId: number
+  meetingLink?: string | null
+  countryId?: number | null
+  governateId?: number | null
+  addressLine?: string | null
+}
+
+export type InterviewFiltersDto = {
+  statuses: { id: number; name: string }[]
+  jobs: { id: number; name: string }[]
 }
 
 // ============== Service ==============
 
 export const interviewService = {
-  /**
-   * Get interview statistics (counts per status)
-   */
   getStatistics: async (): Promise<InterviewStatisticsDto> => {
     const res = await api.get('/Interviews/statistics')
-    return res.data?.data
+    return res.data?.data || res.data
   },
 
-  /**
-   * Get paginated and filtered interview list
-   */
   getInterviews: async (params?: {
-    searchTerm?: string
-    statusId?: number
+    search?: string
+    interviewStatusId?: number
+    jobId?: number
     page?: number
     pageSize?: number
   }): Promise<PaginatedData<InterviewListItemDto>> => {
-    const res = await api.get('/Interviews', { params })
-    return res.data?.data
+    const cleanParams = Object.fromEntries(
+      Object.entries(params || {}).filter(([_, v]) => v !== undefined && v !== ''),
+    )
+    const res = await api.get('/Interviews/company', { params: cleanParams })
+    return res.data?.data || res.data
   },
 
-  /**
-   * Get a single interview
-   */
-  getInterviewById: async (id: number): Promise<InterviewDetailDto> => {
-    const res = await api.get(`/Interviews/${id}`)
-    return res.data?.data
+  getFilters: async (): Promise<InterviewFiltersDto> => {
+    const res = await api.get('/Interviews/company/filters')
+    return res.data?.data || res.data
   },
 
-  /**
-   * Update interview status
-   */
-  updateStatus: async (id: number, statusId: number): Promise<{ message: string }> => {
-    const res = await api.patch(`/Interviews/${id}/status`, { statusId })
-    return res.data?.data
-  },
-
-  /**
-   * Reschedule an interview
-   */
   reschedule: async (
     id: number,
-    data: { newDate: string; notes?: string },
+    data: ScheduleInterviewDTO,
   ): Promise<{ message: string }> => {
     const res = await api.post(`/Interviews/${id}/reschedule`, data)
-    return res.data?.data
+    return res.data?.data || res.data
   },
 
-  /**
-   * Get all interview statuses
-   */
-  getStatuses: async (): Promise<LookupItem[]> => {
-    const res = await api.get('/Interviews/statuses')
-    return res.data?.data || []
+  cancel: async (id: number): Promise<{ message: string }> => {
+    const res = await api.post(`/Interviews/${id}/cancel`)
+    return res.data?.data || res.data
+  },
+
+  missing: async (id: number): Promise<{ message: string }> => {
+    const res = await api.post(`/Interviews/${id}/missing`)
+    return res.data?.data || res.data
+  },
+
+  complete: async (id: number): Promise<{ message: string }> => {
+    const res = await api.post(`/Interviews/${id}/complete`)
+    return res.data?.data || res.data
   },
 }
