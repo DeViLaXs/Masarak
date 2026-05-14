@@ -14,31 +14,6 @@ export function useApplications(params: GetApplicationsParams) {
   })
 }
 
-export function useUpdateApplicationStatus() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: ({ id, status }: { id: number; status: number }) =>
-      applicationService.updateApplicationStatus(id, status),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: applicationKeys.all })
-    },
-  })
-}
-
-export function useShortlistCandidate() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: (id: number) => applicationService.shortlist(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: applicationKeys.all })
-      // Also invalidate interviews as a new entry will appear there
-      queryClient.invalidateQueries({ queryKey: ['interviews'] })
-    },
-  })
-}
-
 export function useRejectCandidate() {
   const queryClient = useQueryClient()
 
