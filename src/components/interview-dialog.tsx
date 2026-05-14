@@ -298,6 +298,7 @@ export function ScheduleRescheduleDialog({
                     <SelectContent dir="rtl" position="popper" className="min-w-0">
                       <SelectItem value="1">عن بعد</SelectItem>
                       <SelectItem value="2">حضوري</SelectItem>
+                      <SelectItem value="3">هاتفية</SelectItem>
                     </SelectContent>
                   </Select>
                 </Field>

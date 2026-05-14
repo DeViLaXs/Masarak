@@ -35,3 +35,18 @@ export function useHireCandidate() {
     },
   })
 }
+
+export function useScheduleInterview() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: any }) =>
+      applicationService.scheduleInterview(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: applicationKeys.all })
+      // Also invalidate interviews as a new entry will appear there
+      queryClient.invalidateQueries({ queryKey: ['interviews'] })
+    },
+  })
+}
+

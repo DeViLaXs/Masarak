@@ -122,12 +122,13 @@ export default function ApplicationsPage() {
                   if (item.name === 'جميع الحالات') return 'جميع الحالات'
                   const translations: Record<string, string> = {
                     'PendingReview': 'في قيد المراجعة',
-                    'UnderReview': 'قيد المراجعة',
                     'Shortlisted': 'في انتظار المقابلة',
-                    'Interviewing': 'في مرحلة المقابلة',
                     'Rejected': 'مرفوض',
                     'Hired': 'تم التوظيف',
-                    'Withdrawn': 'منسحب'
+                    'Withdrawn': 'منسحب',
+                    'Interview': 'مقابلة',
+                    'MissingInterview': 'لم يحضر المقابلة',
+                    'Interviewed': 'تمت المقابلة'
                   }
                   return translations[item.name] || item.name
                 }}
@@ -145,12 +146,13 @@ export default function ApplicationsPage() {
                     {filters?.statuses.map(s => {
                       const translations: Record<string, string> = {
                         'PendingReview': 'في قيد المراجعة',
-                        'UnderReview': 'قيد المراجعة',
                         'Shortlisted': 'في انتظار المقابلة',
-                        'Interviewing': 'في مرحلة المقابلة',
                         'Rejected': 'مرفوض',
                         'Hired': 'تم التوظيف',
-                        'Withdrawn': 'منسحب'
+                        'Withdrawn': 'منسحب',
+                        'Interview': 'مقابلة',
+                        'MissingInterview': 'لم يحضر المقابلة',
+                        'Interviewed': 'تمت المقابلة'
                       }
                       return (
                         <ComboboxItem key={s.id} value={s}>

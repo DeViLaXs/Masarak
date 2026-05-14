@@ -30,40 +30,12 @@ export function useInterviewsList(params: {
   return useQuery({
     queryKey: interviewKeys.list(params),
     queryFn: () => interviewService.getInterviews({
-      SearchTerm: params.searchTerm,
-      StatusId: params.statusId,
-      Page: params.page,
-      PageSize: params.pageSize,
+      search: params.searchTerm,
+      interviewStatusId: params.statusId,
+      page: params.page,
+      pageSize: params.pageSize,
     }),
     placeholderData: keepPreviousData,
-  })
-}
-
-export function useShortlistedCandidates(params?: {
-  searchTerm?: string
-  page?: number
-  pageSize?: number
-}) {
-  return useQuery({
-    queryKey: interviewKeys.shortlisted(params || {}),
-    queryFn: () => interviewService.getShortlistedCandidates({
-      SearchTerm: params?.searchTerm,
-      Page: params?.page,
-      PageSize: params?.pageSize,
-    }),
-    placeholderData: keepPreviousData,
-  })
-}
-
-export function useUpdateInterviewStatus() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: ({ id, statusId }: { id: number; statusId: number }) =>
-      interviewService.updateStatus(id, statusId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: interviewKeys.all })
-    },
   })
 }
 
@@ -71,23 +43,8 @@ export function useRescheduleInterview() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({
-      id,
-      newDate,
-      notes,
-    }: { id: number; newDate: string; notes: string }) =>
-      interviewService.reschedule(id, { newDate, notes }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: interviewKeys.all })
-    },
-  })
-}
-
-export function useScheduleInterview() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: (data: any) => interviewService.schedule(data),
+    mutationFn: ({ id, data }: { id: number; data: any }) =>
+      interviewService.reschedule(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: interviewKeys.all })
     },
@@ -122,8 +79,8 @@ export function useCompleteInterview() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: any }) =>
-      interviewService.complete(id, data),
+    mutationFn: (id: number) =>
+      interviewService.complete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: interviewKeys.all })
       queryClient.invalidateQueries({ queryKey: ['applications'] })
@@ -131,10 +88,3 @@ export function useCompleteInterview() {
   })
 }
 
-export function useInterviewStatuses() {
-  return useQuery({
-    queryKey: interviewKeys.statuses(),
-    queryFn: () => interviewService.getStatuses(),
-    staleTime: 60 * 60 * 1000,
-  })
-}

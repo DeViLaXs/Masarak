@@ -68,6 +68,7 @@ export function InterviewTable({
         const translations: Record<string, string> = {
           'Online': 'عن بُعد',
           'InPerson': 'حضورياً',
+          'Phone': 'هاتفية',
         };
         return <span className="text-foreground">{translations[type] || type}</span>;
       }
@@ -80,16 +81,19 @@ export function InterviewTable({
         const translations: Record<string, string> = {
           'Scheduled': 'مجدولة',
           'Completed': 'مكتملة',
-          'Canceled': 'ملغاة',
+          'Cancelled': 'ملغاة',
           'Rescheduled': 'معاد جدولتها',
-          'No Show': 'لم يحضر'
+          'NoShow': 'لم يحضر',
+          'Confirmed': 'مؤكدة',
+          'MissingInterview': 'لم يحضر',
+          'Withdrawn': 'انسحب',
         };
         const displayStatus = translations[status] || status;
 
         let badgeColor = ""
-        if (status === 'Scheduled' || status === 'Rescheduled') badgeColor = "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+        if (status === 'Scheduled' || status === 'Rescheduled' || status === 'Confirmed') badgeColor = "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
         if (status === 'Completed') badgeColor = "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-        if (status === 'Canceled' || status === 'No Show') badgeColor = "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+        if (status === 'Cancelled' || status === 'NoShow' || status === 'MissingInterview' || status === 'Withdrawn') badgeColor = "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
 
         return <Badge variant="secondary" className={`px-3 py-1 font-medium ${badgeColor}`}>{displayStatus}</Badge>
       }

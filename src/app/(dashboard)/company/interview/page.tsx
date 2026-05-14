@@ -133,9 +133,12 @@ export default function InterviewsPage() {
                   const translations: Record<string, string> = {
                     'Scheduled': 'مجدولة',
                     'Completed': 'مكتملة',
-                    'Canceled': 'ملغاة',
+                    'Cancelled': 'ملغاة',
                     'Rescheduled': 'معاد جدولتها',
-                    'No Show': 'لم يحضر'
+                    'NoShow': 'لم يحضر',
+                    'Confirmed': 'مؤكدة',
+                    'MissingInterview': 'لم يحضر',
+                    'Withdrawn': 'منسحب'
                   };
                   return translations[item.name] || item.name
                 }}
@@ -154,9 +157,12 @@ export default function InterviewsPage() {
                       const translations: Record<string, string> = {
                         'Scheduled': 'مجدولة',
                         'Completed': 'مكتملة',
-                        'Canceled': 'ملغاة',
+                        'Cancelled': 'ملغاة',
                         'Rescheduled': 'معاد جدولتها',
-                        'No Show': 'لم يحضر'
+                        'NoShow': 'لم يحضر',
+                        'Confirmed': 'مؤكدة',
+                        'MissingInterview': 'لم يحضر',
+                        'Withdrawn': 'منسحب'
                       };
                       return (
                         <ComboboxItem key={s.id} value={s}>

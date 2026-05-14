@@ -95,21 +95,21 @@ export function JobOrderTable({
         const status = row.original.applicationStatus;
         const translations: Record<string, string> = {
           'PendingReview': 'في قيد الانتظار',
-          'Under Review': 'قيد المراجعة',
           'Shortlisted': 'في انتظار المقابلة',
-          'Interviewing': 'في مرحلة المقابلة',
           'Rejected': 'مرفوض',
           'Hired': 'تم التوظيف',
           'Withdrawn': 'انسحب',
-
+          'Interview': 'مقابلة',
+          'MissingInterview': 'لم يحضر المقابلة',
+          'Interviewed': 'تمت المقابلة',
         };
         const displayStatus = translations[status] || status;
 
         let badgeColor = ""
-        if (status === 'PendingReview' || status === 'Under Review') badgeColor = "bg-yellow-100 text-yellow-800 hover:bg-yellow-100/80 dark:bg-yellow-900 dark:text-yellow-200"
-        if (status === 'Shortlisted' || status === 'Interviewing') badgeColor = "bg-blue-100 text-blue-800 hover:bg-blue-100/80 dark:bg-blue-900 dark:text-blue-200"
-        if (status === 'Hired' || status === 'Accepted') badgeColor = "bg-green-100 text-green-800 hover:bg-green-100/80 dark:bg-green-900 dark:text-green-200"
-        if (status === 'Rejected' || status === 'Withdrawn') badgeColor = "bg-red-100 text-red-800 hover:bg-red-100/80 dark:bg-red-900 dark:text-red-200"
+        if (status === 'PendingReview') badgeColor = "bg-yellow-100 text-yellow-800 hover:bg-yellow-100/80 dark:bg-yellow-900 dark:text-yellow-200"
+        if (status === 'Shortlisted' || status === 'Interview' || status === 'Interviewed') badgeColor = "bg-blue-100 text-blue-800 hover:bg-blue-100/80 dark:bg-blue-900 dark:text-blue-200"
+        if (status === 'Hired') badgeColor = "bg-green-100 text-green-800 hover:bg-green-100/80 dark:bg-green-900 dark:text-green-200"
+        if (status === 'Rejected' || status === 'Withdrawn' || status === 'MissingInterview') badgeColor = "bg-red-100 text-red-800 hover:bg-red-100/80 dark:bg-red-900 dark:text-red-200"
 
         return <Badge variant="secondary" className={`px-3 py-1 font-medium ${badgeColor}`}>{displayStatus}</Badge>
       }
