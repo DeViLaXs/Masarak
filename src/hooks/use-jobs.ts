@@ -145,11 +145,16 @@ export function useJobLookups(params?: {
     select: (data) => {
       if (!params?.currencySearch) return data
       const search = params.currencySearch.toLowerCase()
-      return data.filter(
-        (item) =>
-          item.name.toLowerCase().includes(search) ||
-          item.code.toLowerCase().includes(search),
-      )
+      return data.filter((item) => {
+        const name = item.name.toLowerCase()
+        const code = item.code.toLowerCase()
+        const label = `${name} (${code})`.toLowerCase()
+        return (
+          name.includes(search) ||
+          code.includes(search) ||
+          label.includes(search)
+        )
+      })
     },
     staleTime: 60 * 60 * 1000,
   })

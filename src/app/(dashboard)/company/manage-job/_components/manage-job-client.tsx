@@ -166,15 +166,10 @@ export default function ManageJobClient() {
         header: () => <div className="font-medium">عنوان الوظيفة</div>,
         cell: ({ row }) => (
           <div className="max-w-[250px]">
-            <div className="mb-1 truncate text-base font-bold text-slate-900">
+            <div className="mb-1 truncate text-base text-foreground">
               {row.original.title}
             </div>
-            <div
-              className="truncate text-xs text-slate-500"
-              title={row.original.description}
-            >
-              {row.original.description}
-            </div>
+            
           </div>
         ),
       },

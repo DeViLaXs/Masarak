@@ -752,7 +752,7 @@ export function AddJobForm() {
                     }))
                     setComboboxInputs((prev) => ({
                       ...prev,
-                      currency: val ? val.name : '',
+                      currency: val ? `${val.name} (${val.code})` : '',
                     }))
                   }}
                   filter={null}
@@ -774,7 +774,7 @@ export function AddJobForm() {
                   <ComboboxContent>
                     <ComboboxList>
                       {currencies && currencies.length === 0 && (
-                        <div className="text-muted-foreground py-2 text-center text-sm">
+                        <div className=" text-muted-foreground py-2 text-center text-sm">
                           لا يوجد نتائج
                         </div>
                       )}
