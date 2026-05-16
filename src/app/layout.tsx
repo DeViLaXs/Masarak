@@ -3,7 +3,9 @@ import { Cairo } from 'next/font/google'
 import './globals.css'
 import { ThemeProvider } from '@/components/theme-provider'
 import ReactQueryProvider from '@/lib/providers'
-import { Toaster } from 'sonner'
+// import { Toaster } from 'sonner'
+import { GooeyToaster } from "@/components/ui/goey-toaster"
+
 
 
 const cairo = Cairo({
@@ -37,7 +39,11 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             {children}
-            <Toaster position='top-center'/>
+            <GooeyToaster
+              position='top-center'
+              dir="rtl"
+            />
+            {/* <Toaster position='top-center'/> */}
           </ThemeProvider>
         </ReactQueryProvider>
       </body>

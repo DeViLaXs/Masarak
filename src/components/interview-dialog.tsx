@@ -7,14 +7,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-  DialogDescription,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Field, FieldLabel } from '@/components/ui/field'
-import { toast } from 'sonner'
-import { Loader2, CalendarIcon, Clock, MapPin, AlignRight, Video, X } from 'lucide-react'
+import { Switch, SwitchGroup, Label } from '@heroui/react';
+// import { toast } from 'sonner'
+import { gooeyToast } from "@/components/ui/goey-toaster"
+import { Loader2, CalendarIcon, MapPin, AlignRight, X, Eye, EyeOff, EyeClosed } from 'lucide-react'
 import { jobService, CountryItem, LookupItem } from '@/services/job-service'
 import { applicationService } from '@/services/application-service'
 import { interviewService, ScheduleInterviewDTO } from '@/services/interview-service'
@@ -30,6 +31,33 @@ import {
 import { format } from 'date-fns'
 import { ar } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
+import {
+  Combobox,
+  ComboboxInput,
+  ComboboxContent,
+  ComboboxList,
+  ComboboxItem,
+} from '@/components/ui/combobox'
+
+function getErrorMessage(error: unknown) {
+  if (
+    typeof error === 'object' &&
+    error !== null &&
+    'response' in error &&
+    typeof error.response === 'object' &&
+    error.response !== null &&
+    'data' in error.response &&
+    typeof error.response.data === 'object' &&
+    error.response.data !== null &&
+    'errors' in error.response.data &&
+    Array.isArray(error.response.data.errors) &&
+    typeof error.response.data.errors[0] === 'string'
+  ) {
+    return error.response.data.errors[0]
+  }
+
+  return 'An error occurred'
+}
 
 export type ScheduleRescheduleDialogProps = {
   open: boolean
@@ -54,6 +82,12 @@ export function ScheduleRescheduleDialog({
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
   const [countries, setCountries] = useState<CountryItem[]>([])
   const [governates, setGovernates] = useState<LookupItem[]>([])
+  const [comboboxInputs, setComboboxInputs] = useState({
+    country: '',
+    governate: '',
+  })
+  const dialogFormRef = React.useRef<HTMLFormElement | null>(null)
+
 
   const [formData, setFormData] = useState<ScheduleInterviewDTO>({
     interviewDate: '',
@@ -63,7 +97,9 @@ export function ScheduleRescheduleDialog({
     countryId: null,
     governateId: null,
     addressLine: '',
+    addressId: null,
   })
+  const [showNotes, setShowNotes] = useState(false)
 
   // Format date for datetime-local input
   const formatForInput = (isoString?: string) => {
@@ -85,7 +121,9 @@ export function ScheduleRescheduleDialog({
           countryId: initialData.countryId || null,
           governateId: initialData.governateId || null,
           addressLine: initialData.addressLine || '',
+          addressId: initialData.addressId || null,
         })
+        setShowNotes(!!initialData.notes)
       } else {
         setFormData({
           interviewDate: '',
@@ -95,13 +133,18 @@ export function ScheduleRescheduleDialog({
           countryId: null,
           governateId: null,
           addressLine: '',
+          addressId: null,
         })
+        setShowNotes(false)
       }
 
       // Fetch countries
       jobService.getCountries().then(setCountries).catch(() => { })
+    } else {
+      setComboboxInputs({ country: '', governate: '' })
     }
   }, [open, initialData])
+
 
   useEffect(() => {
     if (formData.countryId) {
@@ -111,6 +154,28 @@ export function ScheduleRescheduleDialog({
     }
   }, [formData.countryId])
 
+  useEffect(() => {
+    if (formData.interviewTypeId !== 2) {
+      setShowNotes(false)
+    }
+  }, [formData.interviewTypeId])
+
+  // Sync combobox inputs with labels when data is loaded
+  useEffect(() => {
+    if (formData.countryId && countries.length > 0) {
+      const c = countries.find(x => x.id === formData.countryId)
+      if (c) setComboboxInputs(prev => ({ ...prev, country: c.name }))
+    }
+  }, [formData.countryId, countries])
+
+  useEffect(() => {
+    if (formData.governateId && governates.length > 0) {
+      const g = governates.find(x => x.id === formData.governateId)
+      if (g) setComboboxInputs(prev => ({ ...prev, governate: g.name }))
+    }
+  }, [formData.governateId, governates])
+
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
@@ -119,28 +184,64 @@ export function ScheduleRescheduleDialog({
       // Send the local time string directly to avoid timezone subtraction bugs
       const localIso = formData.interviewDate.length === 16 ? `${formData.interviewDate}:00` : formData.interviewDate;
 
+      const selectedDate = new Date(localIso);
+      const now = new Date();
+      now.setSeconds(0, 0);
+
+      if (selectedDate < now) {
+        gooeyToast.error('لا يمكن تحديد موعد مقابلة في الماضي')
+        setIsLoading(false)
+        return
+      }
+
+      // Field Validations
+      if (formData.interviewTypeId === 1 && !formData.meetingLink?.trim()) {
+        gooeyToast.error('يرجى إدخال رابط الاجتماع')
+        setIsLoading(false)
+        return
+      }
+
+      if (formData.interviewTypeId === 2) {
+        if (!formData.countryId) {
+          gooeyToast.error('يرجى اختيار الدولة')
+          setIsLoading(false)
+          return
+        }
+        if (!formData.governateId) {
+          gooeyToast.error('يرجى اختيار المحافظة')
+          setIsLoading(false)
+          return
+        }
+        if (!formData.addressLine?.trim()) {
+          gooeyToast.error('يرجى إدخال العنوان التفصيلي')
+          setIsLoading(false)
+          return
+        }
+      }
+
       const payload: ScheduleInterviewDTO = {
         interviewDate: localIso,
         interviewTypeId: formData.interviewTypeId,
-        notes: formData.notes,
+        notes: (formData.interviewTypeId === 1 || (formData.interviewTypeId === 2 && showNotes)) ? formData.notes : null,
         meetingLink: formData.interviewTypeId === 1 ? formData.meetingLink : null,
         countryId: formData.interviewTypeId === 2 ? formData.countryId : null,
         governateId: formData.interviewTypeId === 2 ? formData.governateId : null,
         addressLine: formData.interviewTypeId === 2 ? formData.addressLine : null,
+        addressId: formData.interviewTypeId === 2 ? formData.addressId : null,
       }
 
       if (isReschedule && interviewId) {
         await interviewService.reschedule(interviewId, payload)
-        toast.success('Interview rescheduled successfully')
+        gooeyToast.success('تم تعديل الموعد بنجاح')
       } else if (applicationId) {
         await applicationService.scheduleInterview(applicationId, payload)
-        toast.success('Interview scheduled successfully')
+        gooeyToast.success('تم تحديد الموعد بنجاح')
       }
 
       onSuccess()
       onOpenChange(false)
-    } catch (error: any) {
-      toast.error(error?.response?.data?.errors?.[0] || 'An error occurred')
+    } catch (error) {
+      gooeyToast.error(getErrorMessage(error))
     } finally {
       setIsLoading(false)
     }
@@ -177,8 +278,6 @@ export function ScheduleRescheduleDialog({
     setFormData({ ...formData, interviewDate: `${datePart}T${timeStr}` })
   }
 
-  const selectClassName = "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/30"
-
   const timePart = formData.interviewDate ? formData.interviewDate.split('T')[1]?.slice(0, 5) : '10:00'
   const currentHour24 = parseInt(timePart.split(':')[0] || '10', 10)
   const currentMinute = timePart.split(':')[1] || '00'
@@ -188,7 +287,7 @@ export function ScheduleRescheduleDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent id="interview-dialog" showCloseButton={false} className="sm:max-w-[550px] max-h-[90vh] overflow-y-auto p-0 gap-0 scrollbar-hide" dir="rtl">
-        <form onSubmit={handleSubmit}>
+        <form ref={dialogFormRef} onSubmit={handleSubmit}>
           <div className="px-6 pt-4 pb-4 border-b border-border/50 bg-muted/10 flex items-start justify-between">
             <DialogHeader className=" flex-1">
               <DialogTitle className="text-xl text-start text-primary">{isReschedule ? 'إعادة جدولة المقابلة' : 'تحديد موعد مقابلة'}</DialogTitle>
@@ -237,6 +336,7 @@ export function ScheduleRescheduleDialog({
                         mode="single"
                         selected={formData.interviewDate ? new Date(formData.interviewDate) : undefined}
                         onSelect={handleDateSelect}
+                        disabled={{ before: new Date(new Date().setHours(0, 0, 0, 0)) }}
                         initialFocus
                         dir="rtl"
                       />
@@ -283,12 +383,12 @@ export function ScheduleRescheduleDialog({
             </div>
 
             {/* Location & Details Section */}
-            <div className="space-y-4 rounded-xl border border-border/60 bg-muted/20 p-5 shadow-sm">
+            <div className="space-y-4 rounded-xl border border-border/60 bg-muted/20 pt-5 px-5 pb-4 shadow-sm">
               <div className="flex items-center gap-2 mb-5">
                 {formData.interviewTypeId === 1 ? <MapPin className="h-5 w-5 text-primary/80" /> : <MapPin className="h-5 w-5 text-primary/80" />}
                 <h3 className="font-semibold text-foreground">المكان والنوع</h3>
               </div>
-              <div className="flex gap-5">
+              <div className="flex gap-5 mb-2">
                 <Field className="flex-1">
                   <FieldLabel className="text-right w-full block text-muted-foreground">نوع المقابلة</FieldLabel>
                   <Select value={String(formData.interviewTypeId)} onValueChange={(v) => setFormData({ ...formData, interviewTypeId: Number(v) })} dir="rtl">
@@ -308,8 +408,8 @@ export function ScheduleRescheduleDialog({
                     <FieldLabel className="text-right w-full block text-muted-foreground">رابط الاجتماع</FieldLabel>
                     <Input
                       type="url"
-                      required
-                      placeholder="https://meet.google.com/..."
+
+                      placeholder="ex: https://meet.google.com/..."
                       className="h-10 text-left border-input/60 shadow-sm"
                       dir="ltr"
                       value={formData.meetingLink || ''}
@@ -323,38 +423,97 @@ export function ScheduleRescheduleDialog({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
                   <Field>
                     <FieldLabel className="text-right w-full block text-muted-foreground">الدولة</FieldLabel>
-                    <Select value={formData.countryId ? String(formData.countryId) : undefined} onValueChange={(v) => setFormData({ ...formData, countryId: Number(v), governateId: null })} dir="rtl">
-                      <SelectTrigger className="h-10 text-right bg-background border-input/60 shadow-sm hover:bg-accent/50 transition-all" dir="rtl">
-                        <SelectValue placeholder="اختر الدولة" />
-                      </SelectTrigger>
-                      <SelectContent dir="rtl">
-                        {countries.map(c => (
-                          <SelectItem key={c.id} value={String(c.id)}>{c.name}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Combobox
+                      value={countries.find(c => c.id === formData.countryId) || null}
+                      inputValue={comboboxInputs.country}
+                      onValueChange={(val: CountryItem | null) => {
+                        setFormData({
+                          ...formData,
+                          countryId: val ? val.id : null,
+                          governateId: null
+                        })
+                        setComboboxInputs(prev => ({
+                          ...prev,
+                          country: val ? val.name : '',
+                          governate: ''
+                        }))
+                      }}
+                      onInputValueChange={(v) => {
+                        setComboboxInputs(prev => ({ ...prev, country: v }))
+                        if (!v) {
+                          setFormData({ ...formData, countryId: null, governateId: null })
+                        }
+                      }}
+                      itemToStringLabel={(item: CountryItem | null) => item?.name || ''}
+                    >
+                      <ComboboxInput
+                        placeholder="اختر الدولة..."
+                        className="h-10 text-right bg-background border-input/60 shadow-sm hover:bg-accent/50 transition-all"
+                        showClear
+                      />
+                      <ComboboxContent
+                        dir="rtl"
+                        className="overflow-hidden"
+                        portalContainer={dialogFormRef}
+                      >
+                        <ComboboxList className="max-h-60 overflow-y-auto">
+                          {countries
+                            .filter(c => c.name.toLowerCase().includes(comboboxInputs.country.toLowerCase()))
+                            .map(c => (
+                              <ComboboxItem key={c.id} value={c}>{c.name}</ComboboxItem>
+                            ))
+                          }
+                        </ComboboxList>
+                      </ComboboxContent>
+                    </Combobox>
                   </Field>
 
                   <Field>
                     <FieldLabel className="text-right w-full block text-muted-foreground">المحافظة</FieldLabel>
-                    <Select disabled={!formData.countryId || governates.length === 0} value={formData.governateId ? String(formData.governateId) : undefined} onValueChange={(v) => setFormData({ ...formData, governateId: Number(v) })} dir="rtl">
-                      <SelectTrigger className="h-10 text-right bg-background border-input/60 shadow-sm hover:bg-accent/50 transition-all" dir="rtl">
-                        <SelectValue placeholder="اختر المحافظة" />
-                      </SelectTrigger>
-                      <SelectContent dir="rtl">
-                        {governates.map(g => (
-                          <SelectItem key={g.id} value={String(g.id)}>{g.name}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Combobox
+                      disabled={!formData.countryId || governates.length === 0}
+                      value={governates.find(g => g.id === formData.governateId) || null}
+                      inputValue={comboboxInputs.governate}
+                      onValueChange={(val: LookupItem | null) => {
+                        setFormData({ ...formData, governateId: val ? val.id : null })
+                        setComboboxInputs(prev => ({ ...prev, governate: val ? val.name : '' }))
+                      }}
+                      onInputValueChange={(v) => {
+                        setComboboxInputs(prev => ({ ...prev, governate: v }))
+                        if (!v) setFormData({ ...formData, governateId: null })
+                      }}
+                      itemToStringLabel={(item: LookupItem | null) => item?.name || ''}
+                    >
+                      <ComboboxInput
+                        placeholder={!formData.countryId ? "يرجى اختيار الدولة أولاً" : "اختر المحافظة..."}
+                        className="h-10 text-right bg-background border-input/60 shadow-sm hover:bg-accent/50 transition-all"
+                        disabled={!formData.countryId || governates.length === 0}
+                        showClear
+                      />
+                      <ComboboxContent
+                        dir="rtl"
+                        className="overflow-hidden"
+                        portalContainer={dialogFormRef}
+                      >
+                        <ComboboxList className="max-h-60 overflow-y-auto">
+                          {governates
+                            .filter(g => g.name.toLowerCase().includes(comboboxInputs.governate.toLowerCase()))
+                            .map(g => (
+                              <ComboboxItem key={g.id} value={g}>{g.name}</ComboboxItem>
+                            ))
+                          }
+                        </ComboboxList>
+                      </ComboboxContent>
+                    </Combobox>
                   </Field>
 
+
                   <Field className="md:col-span-2">
-                    <FieldLabel className="text-right w-full block text-muted-foreground">العنوان التفصيلي</FieldLabel>
+                    <FieldLabel className=" text-right w-full block text-muted-foreground">العنوان التفصيلي</FieldLabel>
                     <Input
-                      required
+
                       placeholder="الشارع، المبنى..."
-                      className="h-10 text-right border-input/60 shadow-sm"
+                      className="bg-background h-10 text-right border-input/60 shadow-sm"
                       value={formData.addressLine || ''}
                       onChange={(e) => setFormData({ ...formData, addressLine: e.target.value })}
                     />
@@ -364,24 +523,64 @@ export function ScheduleRescheduleDialog({
             </div>
 
             {/* Notes Section */}
-            <div className="space-y-3 rounded-xl border border-border/60 bg-muted/20 p-5 shadow-sm">
-              <div className="flex items-center gap-2 mb-1">
-                <AlignRight className="h-5 w-5 text-primary/80" />
-                <h3 className="font-semibold text-foreground">ملاحظات إضافية</h3>
-              </div>
-              <Field>
-                <div className="text-left text-xs text-muted-foreground ">
-                  {formData.notes?.length || 0}/200
+            {(formData.interviewTypeId === 1 || formData.interviewTypeId === 2) && (
+              <div className="space-y-3 rounded-xl border border-border/60 bg-muted/20 p-5 shadow-sm">
+                <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center gap-2">
+                    <AlignRight className="h-5 w-5 text-primary/80" />
+                    <h3 className="font-semibold text-foreground">ملاحظات إضافية</h3>
+                  </div>
+                  {formData.interviewTypeId === 2 && (
+                    // <Switch
+                    //   checked={showNotes}
+                    //   onCheckedChange={setShowNotes}
+                    // />
+                    <Switch isSelected={showNotes} onChange={setShowNotes}>
+                      {({ isSelected }) => (
+                        <Switch.Control
+                        dir='ltr'
+                          className={cn(
+                            "h-[22px] w-[49px] pr-0.5 transition-all duration-200",
+                            isSelected ? "bg-primary " : "bg-gray-400"
+                          )}
+                        >
+                          <Switch.Thumb
+                            className={cn(
+                              "size-[18px] w-[27px] bg-white shadow-sm transition-all duration-400 flex items-center justify-center",
+                              
+                            )}
+                          >
+                            <Switch.Icon>
+                              {isSelected ? (
+                                <Eye className="size-4 text-primary opacity-100 transition-all duration-600" />
+                              ) : (
+                                <EyeClosed className="size-4 text-black opacity-100 transition-all duration-600" />
+                              )}
+                            </Switch.Icon>
+                          </Switch.Thumb>
+                        </Switch.Control>
+                      )}
+                    </Switch>
+                  )}
                 </div>
-                <Textarea
-                  placeholder="أي تعليمات أو ملاحظات للمرشح..."
-                  className="text-right min-h-[100px] border-input/60 shadow-sm resize-none"
-                  value={formData.notes || ''}
-                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                  maxLength={200}
-                />
-              </Field>
-            </div>
+                {(formData.interviewTypeId === 1 || (formData.interviewTypeId === 2 && showNotes)) && (
+                  <div className="animate-in fade-in slide-in-from-top-2 duration-200">
+                    <Field>
+                      <div className="text-left text-xs text-muted-foreground ">
+                        {formData.notes?.length || 0}/200
+                      </div>
+                      <Textarea
+                        placeholder="أي تعليمات أو ملاحظات للمرشح..."
+                        className="text-right min-h-[100px] border-input/60 shadow-sm resize-none"
+                        value={formData.notes || ''}
+                        onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                        maxLength={200}
+                      />
+                    </Field>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <DialogFooter className="px-6 pb-2 border-t border-border/50 bg-muted/5 flex-row-reverse sm:justify-start gap-2">

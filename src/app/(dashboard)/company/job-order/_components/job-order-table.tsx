@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { useRouter } from 'next/navigation'
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { ApplicationListItemDto } from '@/services/application-service'
 import {
@@ -15,7 +16,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { FileText, Loader2, CircleX, CalendarDays, UserCheck } from 'lucide-react'
+import { FileText, Loader2, CircleX, CalendarDays, UserCheck, Clock, CheckCircle2, UserX, UserX2 } from 'lucide-react'
 
 interface JobOrderTableProps {
   data: ApplicationListItemDto[]
@@ -38,16 +39,17 @@ export function JobOrderTable({
   handleHire,
   handleSchedule
 }: JobOrderTableProps) {
+  const router = useRouter()
   const columns: ColumnDef<ApplicationListItemDto>[] = [
     {
       accessorKey: 'fullName',
       header: 'الاسم',
       cell: ({ row }) => (
-        <div className="flex flex-row gap-2 items-center pr-4 ">
+        <div className="flex flex-row gap-3 items-center pr-4 ">
           {row.original.profilePhoto ? (
-            <img src={row.original.profilePhoto} alt="Profile" className="w-10 h-10 rounded-full object-cover shadow-sm border" />
+            <img src={row.original.profilePhoto} alt="Profile" className="w-8 h-8 rounded-full object-cover shadow-sm border" />
           ) : (
-            <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-semibold shadow-sm border border-primary/20">
+            <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-semibold shadow-sm border border-primary/20">
               {row.original.fullName.charAt(0).toUpperCase()}
             </div>
           )}
@@ -70,12 +72,25 @@ export function JobOrderTable({
       header: 'نسبة المطابقة',
       cell: ({ row }) => {
         const match = row.original.matchingPercentage
-        return match !== null ? (
-          <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20">
+        if (match === null) {
+          return <span className="text-muted-foreground">غير متاح</span>
+        }
+
+        let badgeColor = ""
+        if (match >= 0 && match <= 24) {
+          badgeColor = "bg-red-100 text-red-800 hover:bg-red-100/80 dark:bg-red-900 dark:text-red-200"
+        } else if (match >= 25 && match <= 49) {
+          badgeColor = "bg-orange-100 text-orange-800 hover:bg-orange-100/80 dark:bg-orange-900 dark:text-orange-200"
+        } else if (match >= 50 && match <= 74) {
+          badgeColor = "bg-blue-100 text-blue-800 hover:bg-blue-100/80 dark:bg-blue-900 dark:text-blue-200"
+        } else if (match >= 75 && match <= 100) {
+          badgeColor = "bg-green-100 text-green-800 hover:bg-green-100/80 dark:bg-green-900 dark:text-green-200"
+        }
+
+        return (
+          <Badge variant="secondary" className={`px-2.5 py-0.5 font-medium ${badgeColor}`}>
             {match}%
           </Badge>
-        ) : (
-          <span className="text-muted-foreground">غير متاح</span>
         )
       }
     },
@@ -106,12 +121,28 @@ export function JobOrderTable({
         const displayStatus = translations[status] || status;
 
         let badgeColor = ""
-        if (status === 'PendingReview') badgeColor = "bg-yellow-100 text-yellow-800 hover:bg-yellow-100/80 dark:bg-yellow-900 dark:text-yellow-200"
-        if (status === 'Shortlisted' || status === 'Interview' || status === 'Interviewed') badgeColor = "bg-blue-100 text-blue-800 hover:bg-blue-100/80 dark:bg-blue-900 dark:text-blue-200"
-        if (status === 'Hired') badgeColor = "bg-green-100 text-green-800 hover:bg-green-100/80 dark:bg-green-900 dark:text-green-200"
-        if (status === 'Rejected' || status === 'Withdrawn' || status === 'MissingInterview') badgeColor = "bg-red-100 text-red-800 hover:bg-red-100/80 dark:bg-red-900 dark:text-red-200"
+        let Icon = Clock;
 
-        return <Badge variant="secondary" className={`px-3 py-1 font-medium ${badgeColor}`}>{displayStatus}</Badge>
+        if (status === 'PendingReview') {
+          badgeColor = "bg-yellow-100 text-yellow-800 hover:bg-yellow-100/80 dark:bg-yellow-900 dark:text-yellow-200"
+          Icon = Clock
+        } else if (status === 'Shortlisted' || status === 'Interview' || status === 'Interviewed') {
+          badgeColor = "bg-blue-100 text-blue-800 hover:bg-blue-100/80 dark:bg-blue-900 dark:text-blue-200"
+          Icon = status === 'Interview' ? CalendarDays : status === 'Interviewed' ? CheckCircle2 : UserCheck
+        } else if (status === 'Hired') {
+          badgeColor = "bg-green-100 text-green-800 hover:bg-green-100/80 dark:bg-green-900 dark:text-green-200"
+          Icon = CheckCircle2
+        } else if (status === 'Rejected' || status === 'Withdrawn' || status === 'MissingInterview') {
+          badgeColor = "bg-red-100 text-red-800 hover:bg-red-100/80 dark:bg-red-900 dark:text-red-200"
+          Icon = status === 'MissingInterview' ? UserX : status === 'Withdrawn' ? UserX2 : CircleX
+        }
+
+        return (
+          <Badge variant="secondary" className={`px-3 py-1 font-medium flex items-center gap-1.5 w-fit mx-auto ${badgeColor}`}>
+            <Icon size={14} className="shrink-0" />
+            <span>{displayStatus}</span>
+          </Badge>
+        )
       }
     },
     {
@@ -121,7 +152,7 @@ export function JobOrderTable({
         const url = row.original.cvDownloadUrl
         return url ? (
           <TooltipProvider>
-            <Tooltip>
+            <Tooltip delayDuration={700} disableHoverableContent={true}>
               <TooltipTrigger asChild>
                 <Button variant="ghost" size="icon" className="hover:bg-primary/10 hover:text-primary transition-colors" asChild>
                   <a href={url} target="_blank" rel="noreferrer" download>
@@ -129,7 +160,7 @@ export function JobOrderTable({
                   </a>
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="top" className="text-xs">تحميل السيرة الذاتية</TooltipContent>
+              <TooltipContent side="top" className="text-[10px]">تحميل السيرة الذاتية</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         ) : null
@@ -143,7 +174,7 @@ export function JobOrderTable({
         return (
           <TooltipProvider>
             <div className="flex gap-2 items-center justify-center">
-              <Tooltip>
+              <Tooltip delayDuration={700} disableHoverableContent={true}>
                 <TooltipTrigger asChild>
                   <div>
                     <Button disabled={!app.canReject} variant="ghost" size="icon" onClick={() => handleReject(app.applicationId)} className="h-8 w-8 rounded-full text-red-600 hover:bg-red-100 hover:text-red-700 disabled:bg-transparent disabled:opacity-30 disabled:cursor-not-allowed">
@@ -154,7 +185,7 @@ export function JobOrderTable({
                 <TooltipContent side="top" className="text-xs">رفض</TooltipContent>
               </Tooltip>
 
-              <Tooltip>
+              <Tooltip delayDuration={700} disableHoverableContent={true}>
                 <TooltipTrigger asChild>
                   <div>
                     <Button disabled={!app.canSchedule} variant="ghost" size="icon" onClick={() => handleSchedule(app.applicationId)} className="h-8 w-8 rounded-full text-blue-600 hover:bg-blue-100 hover:text-blue-700 disabled:bg-transparent disabled:opacity-30 disabled:cursor-not-allowed">
@@ -165,7 +196,7 @@ export function JobOrderTable({
                 <TooltipContent side="top" className="text-xs">تحديد مقابلة</TooltipContent>
               </Tooltip>
 
-              <Tooltip>
+              <Tooltip delayDuration={700} disableHoverableContent={true}>
                 <TooltipTrigger asChild>
                   <div>
                     <Button disabled={!app.canHire} variant="ghost" size="icon" onClick={() => handleHire(app.applicationId)} className="h-8 w-8 rounded-full text-green-600 hover:bg-green-100 hover:text-green-700 disabled:bg-transparent disabled:opacity-30 disabled:cursor-not-allowed">
@@ -209,8 +240,8 @@ export function JobOrderTable({
                   <TableRow key={headerGroup.id}>
                     {headerGroup.headers.map((header) => {
                       return (
-                        <TableHead 
-                          key={header.id} 
+                        <TableHead
+                          key={header.id}
                           className="text-center bg-[#f8fafc] dark:bg-muted/50 dark:text-muted-foreground"
                           style={{ minWidth: header.column.id === 'actions' ? '160px' : undefined }}
                         >
@@ -232,10 +263,19 @@ export function JobOrderTable({
                     <TableRow
                       key={row.id}
                       data-state={row.getIsSelected() && "selected"}
-                      className="hover:bg-slate-50/80 dark:hover:bg-muted/50 transition-colors"
+                      className="hover:bg-slate-50/80 dark:hover:bg-muted/50 transition-colors cursor-pointer"
+                      onClick={() => router.push(`/company/job-order/${row.original.applicationId}`)}
                     >
                       {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id} className="text-center">
+                        <TableCell 
+                          key={cell.id} 
+                          className="text-center"
+                          onClick={(e) => {
+                            if (cell.column.id === 'actions' || cell.column.id === 'cv') {
+                              e.stopPropagation()
+                            }
+                          }}
+                        >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </TableCell>
                       ))}

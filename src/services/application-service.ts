@@ -77,4 +77,12 @@ export const applicationService = {
     const res = await api.post(`/Applications/${id}/schedule-interview`, data)
     return res.data?.data || res.data
   },
+
+  /**
+   * Get application by ID.
+   */
+  getApplicationById: async (id: number): Promise<ApplicationListItemDto> => {
+    const res = await api.get(`/Applications/${id}`)
+    return res.data?.data || res.data
+  },
 }

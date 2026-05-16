@@ -232,9 +232,10 @@ export default function InterviewsPage() {
             interviewDate: intv.interviewDate,
             interviewTypeId: typeId,
             meetingLink: typeId === 1 ? intv.location : '',
-            countryId: null,
-            governateId: null,
-            addressLine: typeId === 2 ? intv.location : '',
+            countryId: intv.countryId || null,
+            governateId: intv.governateId || null,
+            addressLine: intv.addressLine || '',
+            addressId: intv.addressId || null,
             notes: '',
           })
           setDialogOpen(true)

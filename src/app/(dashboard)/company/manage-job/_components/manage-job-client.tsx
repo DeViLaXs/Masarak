@@ -360,7 +360,7 @@ export default function ManageJobClient() {
                 >
                   <ComboboxInput
                     placeholder="جميع الحالات"
-                    className=" w-full border-none focus:ring-0 px-3 text-sm h-full cursor-pointer"
+                    className="bg-background w-full border-none focus:ring-0 px-3 text-sm h-full cursor-pointer"
                     readOnly
                   />
                   <ComboboxContent>
@@ -390,7 +390,7 @@ export default function ManageJobClient() {
                 >
                   <ComboboxInput
                     placeholder="نوع الدوام"
-                    className=" w-full border-none outline-none focus:ring-0 px-4 text-sm h-full cursor-pointer"
+                    className="bg-background w-full border-none outline-none focus:ring-0 px-4 text-sm h-full cursor-pointer"
                     readOnly
                   />
                   <ComboboxContent>
@@ -411,7 +411,7 @@ export default function ManageJobClient() {
               <SearchIcon className="absolute top-1/2 right-4 size-4 -translate-y-1/2 " />
               <Input
                 placeholder="البحث عن وظيفة..."
-                className="pr-10 h-10 shadow-sm rounded-lg"
+                className="pr-10 h-10 shadow-sm rounded-lg bg-background"
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value)

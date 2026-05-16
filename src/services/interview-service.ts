@@ -21,10 +21,18 @@ export type InterviewListItemDto = {
   interviewType: string
   interviewStatus: string
   location: string | null
+  countryId?: number | null
+  governateId?: number | null
+  addressLine?: string | null
+  addressId?: number | null
   canCancel: boolean
   canReschedule: boolean
   canComplete: boolean
   canMarkMissing: boolean
+  email?: string
+  matchingPercentage?: number | null
+  cvDownloadUrl?: string | null
+  notes?: string | null
 }
 
 export type ScheduleInterviewDTO = {
@@ -35,6 +43,7 @@ export type ScheduleInterviewDTO = {
   countryId?: number | null
   governateId?: number | null
   addressLine?: string | null
+  addressId?: number | null
 }
 
 export type InterviewFiltersDto = {
@@ -89,6 +98,11 @@ export const interviewService = {
 
   complete: async (id: number): Promise<{ message: string }> => {
     const res = await api.post(`/Interviews/${id}/complete`)
+    return res.data?.data || res.data
+  },
+
+  getInterviewById: async (id: number): Promise<InterviewListItemDto> => {
+    const res = await api.get(`/Interviews/${id}`)
     return res.data?.data || res.data
   },
 }

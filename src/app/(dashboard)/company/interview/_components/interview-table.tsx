@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { useRouter } from 'next/navigation'
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { InterviewListItemDto } from '@/services/interview-service'
 import {
@@ -15,7 +16,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { CalendarDays, CircleCheck, CircleX, FileText, Loader2, UserX, UserX2, X } from 'lucide-react'
+import { CalendarDays, CircleCheck, CircleX, FileText, Loader2, UserX, UserX2, X, Clock, RotateCcw, CheckCircle2, AlertCircle, MapPin, Video, Phone, ExternalLink, Eye } from 'lucide-react'
 
 interface InterviewTableProps {
   data: InterviewListItemDto[]
@@ -40,6 +41,7 @@ export function InterviewTable({
   handleMissing,
   handleReschedule
 }: InterviewTableProps) {
+  const router = useRouter()
   const columns: ColumnDef<InterviewListItemDto>[] = [
     {
       accessorKey: 'candidateName',
@@ -56,7 +58,7 @@ export function InterviewTable({
       header: 'تاريخ ووقت المقابلة',
       cell: ({ row }) => (
         <span >
-          {new Date(row.original.interviewDate).toLocaleString('en-US', { dateStyle: "short", timeStyle: "short", })}
+          {new Date(row.original.interviewDate).toLocaleString('en-US', { dateStyle: "medium", timeStyle: "short", })}
         </span>
       ),
     },
@@ -91,11 +93,28 @@ export function InterviewTable({
         const displayStatus = translations[status] || status;
 
         let badgeColor = ""
-        if (status === 'Scheduled' || status === 'Rescheduled' || status === 'Confirmed') badgeColor = "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
-        if (status === 'Completed') badgeColor = "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-        if (status === 'Cancelled' || status === 'NoShow' || status === 'MissingInterview' || status === 'Withdrawn') badgeColor = "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+        let Icon = Clock;
 
-        return <Badge variant="secondary" className={`px-3 py-1 font-medium ${badgeColor}`}>{displayStatus}</Badge>
+        if (status === 'Scheduled' || status === 'Confirmed') {
+          badgeColor = "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+          Icon = status === 'Confirmed' ? CheckCircle2 : Clock
+        } else if (status === 'Rescheduled') {
+          badgeColor = "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+          Icon = RotateCcw
+        } else if (status === 'Completed') {
+          badgeColor = "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+          Icon = CheckCircle2
+        } else if (status === 'Cancelled' || status === 'NoShow' || status === 'MissingInterview' || status === 'Withdrawn') {
+          badgeColor = "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+          Icon = (status === 'NoShow' || status === 'MissingInterview') ? UserX : status === 'Withdrawn' ? UserX2 : CircleX
+        }
+
+        return (
+          <Badge variant="secondary" className={`px-3 py-1 font-medium flex items-center gap-1.5 w-fit mx-auto ${badgeColor}`}>
+            <Icon size={14} className="shrink-0" />
+            <span>{displayStatus}</span>
+          </Badge>
+        )
       }
     },
     {
@@ -105,9 +124,19 @@ export function InterviewTable({
         const loc = row.original.location
         if (!loc) return <span className="text-muted-foreground">غير متاح</span>
         if (loc.startsWith('http')) {
-          return <a href={loc} target="_blank" rel="noreferrer" className="text-primary hover:underline">رابط الاجتماع</a>
+          return (
+            <a href={loc} target="_blank" rel="noreferrer" className="text-primary hover:underline flex items-center justify-center gap-1.5">
+              <Video size={14} />
+              <span>رابط الاجتماع</span>
+            </a>
+          )
         }
-        return <span className="truncate max-w-[200px] block" title={loc}>{loc}</span>
+        return (
+          <div className="flex items-center justify-center gap-1.5 text-foreground mx-auto w-fit">
+            <MapPin size={14} className="text-muted-foreground shrink-0" />
+            <span className="truncate max-w-[200px] block">{loc}</span>
+          </div>
+        )
       }
     },
     {
@@ -118,84 +147,59 @@ export function InterviewTable({
         return (
           <TooltipProvider>
             <div className="flex items-center justify-center gap-2 ">
-
-              {/* <Tooltip>
-                {intv.canComplete&& (
+              <Tooltip disableHoverableContent={true} delayDuration={700}>
                 <TooltipTrigger asChild>
-                  <CircleCheck size={23} onClick={() => handleComplete(intv.interviewId)} className="rounded-full w-7 h-7 p-1 text-green-500 hover:bg-green-100 hover:text-green-800 transition duration-200 cursor-pointer" />
+                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full text-indigo-600 hover:bg-indigo-50 hover:dark:bg-indigo-950/40 hover:text-indigo-700 transition-colors" asChild>
+                    <a href={`/company/interview/${intv.interviewId}`}>
+                      <Eye size={18} />
+                    </a>
+                  </Button>
                 </TooltipTrigger>
-                )}
-                <TooltipContent side="top" className="text-[12px]">مكتمل</TooltipContent>
+                <TooltipContent side="top" className="text-xs">تفاصيل المقابلة</TooltipContent>
               </Tooltip>
 
-              <Tooltip>
-                {intv.canCancel&& (
-                <TooltipTrigger asChild>
-                  <CircleX size={23} onClick={() => handleCancel(intv.interviewId)} className="rounded-full w-7 h-7 p-1 text-red-500 hover:bg-red-100 hover:text-red-800 transition duration-200 cursor-pointer" />
-                </TooltipTrigger>
-                )}
-                <TooltipContent side="top" className="text-[10px]">إلغاء</TooltipContent>
-              </Tooltip>
-
-              <Tooltip>
-                {intv.canMarkMissing&& (
-                <TooltipTrigger asChild>
-                  <UserX size={23} onClick={() => handleMissing(intv.interviewId)} className="rounded-full w-7 h-7 p-1 text-red-500 hover:bg-red-100 hover:text-red-800 transition duration-200 cursor-pointer" />
-                </TooltipTrigger>
-                )}
-                <TooltipContent side="top" className="text-[9px]">لم يحضر</TooltipContent>
-              </Tooltip>
-
-              <Tooltip>
-                {intv.canReschedule&& (
-                <TooltipTrigger asChild>
-                  <CalendarDays size={23} onClick={() => handleReschedule(intv)} className="rounded-full w-7 h-7 p-1 text-blue-500 hover:bg-blue-100 hover:text-blue-800 transition duration-200 cursor-pointer" />
-                </TooltipTrigger>
-                )}
-                <TooltipContent side="top" className="text-[9px]">إعادة جدولة</TooltipContent>
-              </Tooltip> */}
-              <Tooltip>
+              <Tooltip disableHoverableContent={true} delayDuration={700}>
                 <TooltipTrigger asChild>
                   <div>
-                    <Button disabled={!intv.canComplete} variant="ghost" size="icon" className="h-8 w-8 rounded-full text-green-600 hover:bg-green-100 hover:text-green-700 disabled:bg-transparent disabled:opacity-30 disabled:cursor-not-allowed" onClick={() => handleComplete(intv.interviewId)}>
+                    <Button disabled={!intv.canComplete} variant="ghost" size="icon" className="h-8 w-8 rounded-full text-green-600 hover:bg-green-100 hover:text-green-700 hover:dark:bg-green-700/30 disabled:bg-transparent disabled:opacity-30 disabled:cursor-not-allowed" onClick={() => handleComplete(intv.interviewId)}>
                       <CircleCheck size={18} />
                     </Button>
                   </div>
                 </TooltipTrigger>
-                <TooltipContent side="top" className="text-[10px]">مكتمل</TooltipContent>
+                <TooltipContent side="top" className="text-xs">مكتمل</TooltipContent>
               </Tooltip>
 
-              <Tooltip>
+              <Tooltip disableHoverableContent={true} delayDuration={700}>
                 <TooltipTrigger asChild>
                   <div>
-                    <Button disabled={!intv.canCancel} variant="ghost" size="icon" className="h-8 w-8 rounded-full text-red-600 hover:bg-red-100 hover:text-red-700 disabled:bg-transparent disabled:opacity-30 disabled:cursor-not-allowed" onClick={() => handleCancel(intv.interviewId)}>
+                    <Button disabled={!intv.canCancel} variant="ghost" size="icon" className="h-8 w-8 rounded-full text-red-600 hover:bg-red-100 hover:dark:bg-red-800/30 hover:text-red-700 disabled:bg-transparent disabled:opacity-30 disabled:cursor-not-allowed" onClick={() => handleCancel(intv.interviewId)}>
                       <CircleX size={18} />
                     </Button>
                   </div>
                 </TooltipTrigger>
-                <TooltipContent side="top" className="text-[10px]">إلغاء</TooltipContent>
+                <TooltipContent side="top" className="text-xs">إلغاء</TooltipContent>
               </Tooltip>
 
-              <Tooltip>
+              <Tooltip disableHoverableContent={true} delayDuration={700}>
                 <TooltipTrigger asChild>
                   <div>
-                    <Button disabled={!intv.canMarkMissing} variant="ghost" size="icon" className="h-8 w-8 rounded-full text-orange-600 hover:bg-orange-100 hover:text-orange-700 disabled:bg-transparent disabled:opacity-30 disabled:cursor-not-allowed" onClick={() => handleMissing(intv.interviewId)}>
+                    <Button disabled={!intv.canMarkMissing} variant="ghost" size="icon" className="h-8 w-8 rounded-full text-orange-600 hover:bg-orange-100 hover:dark:bg-orange-800/30 hover:text-orange-700 disabled:bg-transparent disabled:opacity-30 disabled:cursor-not-allowed" onClick={() => handleMissing(intv.interviewId)}>
                       <UserX size={18} />
                     </Button>
                   </div>
                 </TooltipTrigger>
-                <TooltipContent side="top" className="text-[10px]">لم يحضر</TooltipContent>
+                <TooltipContent side="top" className="text-xs">لم يحضر</TooltipContent>
               </Tooltip>
 
-              <Tooltip>
+              <Tooltip disableHoverableContent={true} delayDuration={700}>
                 <TooltipTrigger asChild>
                   <div>
-                    <Button disabled={!intv.canReschedule} variant="ghost" size="icon" className="h-8 w-8 rounded-full text-blue-600 hover:bg-blue-100 hover:text-blue-700 disabled:bg-transparent disabled:opacity-30 disabled:cursor-not-allowed" onClick={() => handleReschedule(intv)}>
+                    <Button disabled={!intv.canReschedule} variant="ghost" size="icon" className="h-8 w-8 rounded-full text-blue-600 hover:bg-blue-100 hover:dark:bg-blue-800/30 hover:text-blue-700 disabled:bg-transparent disabled:opacity-30 disabled:cursor-not-allowed" onClick={() => handleReschedule(intv)}>
                       <CalendarDays size={18} />
                     </Button>
                   </div>
                 </TooltipTrigger>
-                <TooltipContent side="top" className="text-[10px]">إعادة جدولة</TooltipContent>
+                <TooltipContent side="top" className="text-xs">إعادة جدولة</TooltipContent>
               </Tooltip>
 
             </div>
@@ -255,10 +259,19 @@ export function InterviewTable({
                     <TableRow
                       key={row.id}
                       data-state={row.getIsSelected() && "selected"}
-                      className="hover:bg-slate-50/80 dark:hover:bg-muted/50 transition-colors"
+                      className="hover:bg-slate-50/80 dark:hover:bg-muted/50 transition-colors cursor-pointer"
+                      onClick={() => router.push(`/company/interview/${row.original.interviewId}`)}
                     >
                       {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id} className="text-center">
+                        <TableCell 
+                          key={cell.id} 
+                          className="text-center"
+                          onClick={(e) => {
+                            if (cell.column.id === 'actions' || cell.column.id === 'location') {
+                              e.stopPropagation()
+                            }
+                          }}
+                        >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </TableCell>
                       ))}

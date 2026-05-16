@@ -340,6 +340,10 @@ Retrieves a paginated list of all interviews for the company's jobs.
       "interviewType": "InPerson",
       "interviewStatus": "Confirmed",
       "location": "Yemen, Aden, 123 Main Street",
+      "countryId": 1,
+      "governateId": 1,
+      "addressLine": "123 Main Street",
+      "addressId": 45,
       "canCancel": false,
       "canReschedule": false,
       "canComplete": true,
@@ -363,6 +367,7 @@ Retrieves a paginated list of all interviews for the company's jobs.
 | Interview Type | `interviewType` | "Online", "InPerson", or "Phone" |
 | Interview Status | `interviewStatus` | Status badge |
 | Location | `location` | If InPerson → `"Country, Governate, Address"`. If Online → meeting link (clickable). If null → "N/A" |
+| Address Data | `countryId`, `governateId`, `addressLine`, `addressId` | Hidden fields used to pre-fill the Reschedule dialog form for InPerson interviews |
 | Actions | `canCancel`, `canReschedule`, `canComplete`, `canMarkMissing` | Show/hide buttons |
 
 ---
@@ -443,9 +448,14 @@ Same shape as [Schedule Interview](#15-schedule-interview) request body.
   "meetingLink": null,
   "countryId": 1,
   "governateId": 3,
-  "addressLine": "456 New Street"
+  "addressLine": "456 New Street",
+  "addressId": 45
 }
 ```
+
+#### Request Fields
+Same as [Schedule Interview](#15-schedule-interview) with the addition of:
+- `addressId` (int, ❌): The ID of the existing address record to update (if InPerson).
 
 #### Side Effects
 - Interview details updated
@@ -584,6 +594,8 @@ If interviewTypeId === 2 (InPerson):
 If interviewTypeId === 3 (Phone):
   → Hide Meeting Link, Country, Governate, Address Line
   → (Optional: show meeting link for phone number)
+
+**Note for Reschedule:** When opening the Reschedule dialog, use the hidden fields (`addressId`, `countryId`, `governateId`, `addressLine`) from the interviews list response to pre-populate the form. Send `addressId` back in the POST request to update the existing record.
 ```
 
 **Governate depends on Country:** When the user selects a country, fetch governates for that country via `GET /api/Jobs/governates/{countryId}`.

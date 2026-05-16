@@ -10,6 +10,7 @@ import { ScheduleRescheduleDialog } from '@/components/interview-dialog'
 import { Combobox, ComboboxInput, ComboboxContent, ComboboxList, ComboboxItem } from '@/components/ui/combobox'
 import { JobOrderTable } from './_components/job-order-table'
 
+
 export default function ApplicationsPage() {
   const [data, setData] = useState<ApplicationListItemDto[]>([])
   const [loading, setLoading] = useState(true)
@@ -98,7 +99,7 @@ export default function ApplicationsPage() {
               <Search className="absolute right-3 top-2.5 h-5 w-5 text-muted-foreground" />
               <Input
                 placeholder="ابحث بالاسم أو الوظيفة..."
-                className="pr-10 h-10 shadow-sm rounded-lg"
+                className="bg-background pr-10 h-10 shadow-sm rounded-lg"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -135,7 +136,7 @@ export default function ApplicationsPage() {
               >
                 <ComboboxInput
                   placeholder="جميع الحالات"
-                  className=" w-full border-none focus:ring-0 px-3 text-sm h-full cursor-pointer "
+                  className="bg-background w-full border-none focus:ring-0 px-3 text-sm h-full cursor-pointer "
                   readOnly
                 />
                 <ComboboxContent>
@@ -182,7 +183,7 @@ export default function ApplicationsPage() {
               >
                 <ComboboxInput
                   placeholder="جميع الوظائف"
-                  className="bg-transparent w-full border-none focus:ring-0 px-3 text-sm h-full cursor-pointer"
+                  className="bg-background w-full border-none focus:ring-0 px-3 text-sm h-full cursor-pointer"
                   readOnly
                 />
                 <ComboboxContent>

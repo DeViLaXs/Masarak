@@ -1,11 +1,169 @@
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
 @import 'tailwindcss';
+@import "@heroui/styles"; 
 
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
+
+
+/* ── Goey-toast reactive theme ──
+   Mirrors the library's dark toast rules against app light mode so toast
+   colors stay inverted relative to the current color mode. */
+
+/* Blob background fill (overrides inline style) */
+.dark .goey-blobSvg path {
+  fill: #ffffff !important;
+}
+:root:not(.dark) .goey-blobSvg path {
+  fill: #1a1a1a !important;
+}
+/* :root:not(.dark) .goey-blobSvg {
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3)) drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+} */
+
+/* Title colors */
+:root:not(.dark) .goey-titleDefault {
+  color: #ccc;
+}
+:root:not(.dark) .goey-titleSuccess {
+  color: #66bb6a;
+}
+:root:not(.dark) .goey-titleError {
+  color: #ef5350;
+}
+:root:not(.dark) .goey-titleWarning {
+  color: #ffb300;
+}
+:root:not(.dark) .goey-titleInfo {
+  color: #42a5f5;
+}
+:root:not(.dark) .goey-titleLoading {
+  color: #ccc;
+}
+
+/* Description */
+:root:not(.dark) .goey-description {
+  color: #e0e0e0;
+}
+
+/* Action buttons */
+:root:not(.dark) .goey-actionDefault {
+  background: #3a3a3a;
+  color: #ccc;
+}
+:root:not(.dark) .goey-actionDefault:hover {
+  background: #444;
+}
+:root:not(.dark) .goey-actionDefault:active {
+  background: #4e4e4e;
+}
+:root:not(.dark) .goey-actionSuccess {
+  background: #1b5e20;
+  color: #66bb6a;
+}
+:root:not(.dark) .goey-actionSuccess:hover {
+  background: #2e7d32;
+}
+:root:not(.dark) .goey-actionSuccess:active {
+  background: #388e3c;
+}
+:root:not(.dark) .goey-actionError {
+  background: #b71c1c;
+  color: #ef5350;
+}
+:root:not(.dark) .goey-actionError:hover {
+  background: #c62828;
+}
+:root:not(.dark) .goey-actionError:active {
+  background: #d32f2f;
+}
+:root:not(.dark) .goey-actionWarning {
+  background: #4a3800;
+  color: #ffb300;
+}
+:root:not(.dark) .goey-actionWarning:hover {
+  background: #5c4600;
+}
+:root:not(.dark) .goey-actionWarning:active {
+  background: #6e5400;
+}
+:root:not(.dark) .goey-actionInfo {
+  background: #0d47a1;
+  color: #42a5f5;
+}
+:root:not(.dark) .goey-actionInfo:hover {
+  background: #1565c0;
+}
+:root:not(.dark) .goey-actionInfo:active {
+  background: #1976d2;
+}
+
+/* Progress bar */
+:root:not(.dark) .goey-progressWrapper {
+  background: rgba(255, 255, 255, 0.1);
+}
+:root:not(.dark) .goey-progressDefault {
+  background: #888;
+}
+:root:not(.dark) .goey-progressSuccess {
+  background: #66bb6a;
+}
+:root:not(.dark) .goey-progressError {
+  background: #ef5350;
+}
+:root:not(.dark) .goey-progressWarning {
+  background: #ffb300;
+}
+:root:not(.dark) .goey-progressInfo {
+  background: #42a5f5;
+}
+
+/* Gooey toast RTL layout */
+[dir='rtl'] .gooey-wrapper {
+  direction: rtl;
+  font-family: var(--font-cairo), 'Cairo', sans-serif;
+  
+}
+
+[dir='rtl'] .gooey-content {
+  text-align: right;
+}
+
+/* [dir='rtl'] .gooey-header {
+  display: flex;
+  width: 100%;
+  direction: rtl;
+  text-align: right;
+} */
+
+[dir='rtl'] .gooey-title {
+  text-align: right;
+  padding: 5px 5px 5px 5px;
+}
+
+[dir='rtl'] .gooey-header > .gooey-timestamp {
+  margin-left: 0;
+  margin-right: auto;
+  padding-left: 0;
+  padding-right: 6px;
+  display: none;
+  
+}
+
+[dir='rtl'] .gooey-description {
+  direction: rtl;
+  text-align: right !important;
+  font-weight: bold;
+}
+
+[dir='rtl'] .gooey-actionButton {
+  font-family: inherit;
+  text-align: center;
+}
+
 
 @custom-variant dark (&:is(.dark *));
 
