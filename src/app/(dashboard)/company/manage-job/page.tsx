@@ -11,8 +11,9 @@ import { useDebounce } from 'use-debounce'
 import {
     SearchIcon,
     PlusIcon,
+    X,
 } from 'lucide-react'
-import { toast } from 'sonner'
+import { gooeyToast } from "@/components/ui/goey-toaster"
 
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -35,8 +36,8 @@ const containerVariants = {
 
 const itemVariants = {
     hidden: { opacity: 0, y: 15 },
-    show: { 
-        opacity: 1, 
+    show: {
+        opacity: 1,
         y: 0,
         transition: {
             type: "spring",
@@ -53,6 +54,7 @@ export default function ManageJobPage() {
     const [statusTab, setStatusTab] = useState('all')
     const [jobTypeFilter, setJobTypeFilter] = useState('all')
     const [page, setPage] = useState(1)
+    const [sorting, setSorting] = useState<any[]>([])
 
     // Fetch lookups
     const { jobTypes } = useJobLookups()
@@ -83,8 +85,16 @@ export default function ManageJobPage() {
             { id, status: newStatus },
             {
                 onSuccess: () => {
+                    if (newStatus === 'Published') {
+                        gooeyToast.success('تم تنشيط الوظيفة بنجاح')
+                    } else {
+                        gooeyToast.success('تم إغلاق الوظيفة بنجاح')
+                    }
                     refetch()
                 },
+                onError: () => {
+                    gooeyToast.error('حدث خطأ أثناء تحديث حالة الوظيفة')
+                }
             },
         )
     }
@@ -98,12 +108,18 @@ export default function ManageJobPage() {
                         { id, status: 'Published' },
                         {
                             onSuccess: () => {
-                                toast.success('تم إعادة الجدولة وتنشيط الوظيفة بنجاح')
+                                gooeyToast.success('تم تعديل الموعد بنجاح')
                                 refetch()
                             },
+                            onError: () => {
+                                gooeyToast.error('حدث خطأ أثناء تنشيط الوظيفة بعد الجدولة')
+                            }
                         },
                     )
                 },
+                onError: () => {
+                    gooeyToast.error('حدث خطأ أثناء إعادة جدولة الوظيفة')
+                }
             },
         )
     }
@@ -194,17 +210,25 @@ export default function ManageJobPage() {
                                 </div>
                             </div>
 
-                            <div className="relative w-full md:max-w-md md:flex-1 xl:max-w-xl">
-                                <SearchIcon className="absolute top-1/2 right-4 size-4 -translate-y-1/2 " />
-                                <Input
-                                    placeholder="البحث عن وظيفة..."
-                                    className="pr-10 h-10 shadow-sm rounded-lg bg-background"
-                                    value={searchQuery}
-                                    onChange={(e) => {
-                                        setSearchQuery(e.target.value)
-                                        setPage(1)
-                                    }}
-                                />
+                            <div className="flex items-center gap-2 w-36 md:max-w-md md:flex-1 xl:max-w-xl">
+                                <div className="relative flex-1">
+                                    <SearchIcon className="absolute top-1/2 right-4 size-4 -translate-y-1/2 " />
+                                    <Input
+                                        placeholder="البحث عن وظيفة..."
+                                        className="pr-10 h-10 shadow-sm rounded-lg bg-background"
+                                        value={searchQuery}
+                                        onChange={(e) => {
+                                            setSearchQuery(e.target.value)
+                                            setPage(1)
+                                        }}
+                                    />
+                                </div>
+                                {sorting.length > 0 && (
+                                    <Button variant="outline" size="sm" onClick={() => setSorting([])} className="text-xs text-red-600 hover:text-red-500 hover:bg-red-50 hover:border-red-500 whitespace-nowrap h-10 px-2 shrink-0">
+                                        <X className="w-3 h-3 ml-1" />
+                                        مسح الفرز
+                                    </Button>
+                                )}
                             </div>
 
                             <div className="w-full shrink-0 md:w-auto">
@@ -235,6 +259,8 @@ export default function ManageJobPage() {
                     isUpdatingJob={isUpdatingJob}
                     handleStatusChange={handleStatusChange}
                     handleReschedule={handleReschedule}
+                    sorting={sorting}
+                    setSorting={setSorting}
                 />
             </motion.div>
         </motion.div>

@@ -16,7 +16,7 @@ import { useState, useEffect } from 'react'
 import { RegisterSubAdminDto } from '@/services/auth-service'
 import { useAuth } from '@/auth/use-auth'
 import { motion } from 'framer-motion'
-import { toast } from 'sonner'
+import { gooeyToast as toast } from "@/components/ui/goey-toaster"
 import { z } from 'zod'
 import { CheckCircle2, Circle } from 'lucide-react'
 

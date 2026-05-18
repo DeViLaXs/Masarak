@@ -5,6 +5,8 @@ import {
     type ColumnDef,
     flexRender,
     getCoreRowModel,
+    getSortedRowModel,
+    SortingState,
     useReactTable,
 } from '@tanstack/react-table'
 import { format } from 'date-fns'
@@ -12,6 +14,14 @@ import {
     UsersIcon,
     BriefcaseIcon,
     Loader2,
+    ArrowUpDown,
+    ChevronUp,
+    ChevronDown,
+    CalendarIcon,
+    CalendarDays,
+    Edit,
+    CircleX,
+    CheckCircle
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -29,6 +39,8 @@ import {
 } from '@/components/ui/table'
 import type { JobListItemDto } from '@/services/job-service'
 import { Card } from '@/components/ui/card'
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip'
+import Link from 'next/link'
 
 // --- Arabic Translation Helpers ---
 
@@ -84,6 +96,8 @@ interface ManageJobTableProps {
     isUpdatingJob: boolean
     handleStatusChange: (id: number, newStatus: 'Published' | 'Closed') => void
     handleReschedule: (id: number, newDate: Date) => void
+    sorting: SortingState
+    setSorting: React.Dispatch<React.SetStateAction<SortingState>>
 }
 
 export function ManageJobTable({
@@ -96,6 +110,8 @@ export function ManageJobTable({
     isUpdatingJob,
     handleStatusChange,
     handleReschedule,
+    sorting,
+    setSorting,
 }: ManageJobTableProps) {
 
     // --- Column Definitions ---
@@ -197,63 +213,89 @@ export function ManageJobTable({
                 cell: ({ row }) => {
                     const job = row.original
                     return (
-                        <div className="flex items-center justify-center gap-3 text-sm font-semibold opacity-80 transition-opacity group-hover:opacity-100">
-                            <a
-                                href={`/company/manage-job/${job.id}`}
-                                className="text-[#3b82f6] transition-colors hover:text-blue-700 hover:underline"
-                            >
-                                تعديل
-                            </a>
+                        <TooltipProvider>
+                            <div className="flex items-center justify-center gap-2">
+                                <Tooltip delayDuration={700} disableHoverableContent={true}>
+                                    <TooltipTrigger asChild>
+                                        <Button variant="ghost" size="icon" asChild className="h-8 w-8 rounded-full text-orange-400 hover:bg-orange-100 hover:text-orange-600 cursor-default">
+                                            <Link href={`/company/manage-job/${job.id}`}>
+                                                <Edit size={18} />
+                                            </Link>
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="top" className="text-xs">تعديل</TooltipContent>
+                                </Tooltip>
 
-                            {job.status === 'Published' && (
-                                <button
-                                    disabled={isUpdating || isUpdatingJob}
-                                    onClick={() => handleStatusChange(job.id, 'Closed')}
-                                    className="text-amber-500 transition-colors hover:text-amber-600 hover:underline disabled:opacity-50"
-                                >
-                                    إغلاق
-                                </button>
-                            )}
+                                {job.status === 'Published' && (
+                                    <Tooltip delayDuration={700} disableHoverableContent={true}>
+                                        <TooltipTrigger asChild>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                disabled={isUpdating || isUpdatingJob}
+                                                onClick={() => handleStatusChange(job.id, 'Closed')}
+                                                className="h-8 w-8 rounded-full text-red-500 hover:bg-red-100 hover:text-red-600 disabled:opacity-50"
+                                            >
+                                                <CircleX size={18} />
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="top" className="text-xs">إغلاق</TooltipContent>
+                                    </Tooltip>
+                                )}
 
-                            {job.status === 'Closed' && (
-                                <button
-                                    disabled={isUpdating || isUpdatingJob}
-                                    onClick={() => handleStatusChange(job.id, 'Published')}
-                                    className="text-emerald-500 transition-colors hover:text-emerald-600 hover:underline disabled:opacity-50"
-                                >
-                                    تنشيط
-                                </button>
-                            )}
+                                {job.status === 'Closed' && (
+                                    <Tooltip delayDuration={700} disableHoverableContent={true}>
+                                        <TooltipTrigger asChild>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                disabled={isUpdating || isUpdatingJob}
+                                                onClick={() => handleStatusChange(job.id, 'Published')}
+                                                className="h-8 w-8 rounded-full text-emerald-500 hover:bg-emerald-100 hover:text-emerald-600 disabled:opacity-50"
+                                            >
+                                                <CheckCircle size={18} />
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="top" className="text-xs">تنشيط</TooltipContent>
+                                    </Tooltip>
+                                )}
 
-                            {job.status === 'Expired' && (
-                                <Popover>
-                                    <PopoverTrigger asChild>
-                                        <button
-                                            disabled={isUpdating || isUpdatingJob}
-                                            className="flex items-center gap-1 text-emerald-500 transition-colors hover:text-emerald-600 hover:underline disabled:opacity-50"
-                                        >
-                                            إعادة جدولة
-                                            {isUpdatingJob && (
-                                                <Loader2 className="size-3 animate-spin" />
-                                            )}
-                                        </button>
-                                    </PopoverTrigger>
-                                    <PopoverContent align="end" className="w-auto p-0">
-                                        <Calendar
-                                            mode="single"
-                                            selected={new Date(job.expirationDate)}
-                                            onSelect={(date) => {
-                                                if (date) {
-                                                    handleReschedule(job.id, date)
-                                                }
-                                            }}
-                                            disabled={(date) => date < new Date()}
-                                            initialFocus
-                                        />
-                                    </PopoverContent>
-                                </Popover>
-                            )}
-                        </div>
+                                {job.status === 'Expired' && (
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <div>
+                                                <Tooltip delayDuration={700} disableHoverableContent={true}>
+                                                    <TooltipTrigger asChild>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            disabled={isUpdating || isUpdatingJob}
+                                                            className="h-8 w-8 rounded-full text-blue-500 hover:bg-blue-100 hover:text-blue-600 disabled:opacity-50"
+                                                        >
+                                                            {isUpdatingJob ? <Loader2 className="size-4 animate-spin" /> : <CalendarDays size={18} />}
+                                                        </Button>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent side="top" className="text-xs">إعادة جدولة</TooltipContent>
+                                                </Tooltip>
+                                            </div>
+                                        </PopoverTrigger>
+                                        <PopoverContent align="end" className="w-auto p-0">
+                                            <Calendar
+                                                mode="single"
+                                                selected={new Date(job.expirationDate)}
+                                                onSelect={(date) => {
+                                                    if (date) {
+                                                        handleReschedule(job.id, date)
+                                                    }
+                                                }}
+                                                disabled={(date) => date < new Date()}
+                                                initialFocus
+                                            />
+                                        </PopoverContent>
+                                    </Popover>
+                                )}
+                            </div>
+                        </TooltipProvider>
                     )
                 },
                 enableSorting: false,
@@ -268,8 +310,15 @@ export function ManageJobTable({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
+        onSortingChange: setSorting,
+        getSortedRowModel: getSortedRowModel(),
+        enableMultiSort: true,
+        maxMultiSortColCount: columns.length,
         manualPagination: true,
         pageCount: totalPages,
+        state: {
+            sorting,
+        },
     })
 
     return (
@@ -294,9 +343,33 @@ export function ManageJobTable({
                                             >
                                                 {header.isPlaceholder
                                                     ? null
-                                                    : flexRender(
-                                                        header.column.columnDef.header,
-                                                        header.getContext()
+                                                    : header.column.getCanSort() ? (
+                                                        <div
+                                                            className="flex items-center justify-center gap-1 cursor-pointer select-none hover:text-primary transition-colors group"
+                                                            onClick={(e) => {
+                                                                header.column.toggleSorting(undefined, true)
+                                                            }}
+                                                        >
+                                                            {flexRender(header.column.columnDef.header, header.getContext())}
+                                                            <div className="flex items-center">
+                                                                {{
+                                                                    asc: <ChevronDown className="h-4 w-4 text-blue-600 bg-blue-100 rounded-sm" />,
+                                                                    desc: <ChevronUp className="h-4 w-4 text-blue-600 bg-blue-100 rounded-sm" />,
+                                                                }[header.column.getIsSorted() as string] ?? (
+                                                                    <ArrowUpDown className="h-4 w-4 opacity-30 group-hover:opacity-50" />
+                                                                )}
+                                                                {header.column.getIsSorted() && sorting.length > 1 && (
+                                                                    <span className="text-[10px] font-bold bg-primary/10 text-primary w-3.5 h-3.5 rounded-full flex items-center justify-center ml-0.5">
+                                                                        {header.column.getSortIndex() + 1}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    ) : (
+                                                        flexRender(
+                                                            header.column.columnDef.header,
+                                                            header.getContext()
+                                                        )
                                                     )}
                                             </TableHead>
                                         )

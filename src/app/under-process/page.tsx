@@ -13,7 +13,7 @@ import { authService } from '@/services/auth-service'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { toast } from 'sonner'
+import { gooeyToast as toast } from "@/components/ui/goey-toaster"
 import { ContactSupportDialog } from '@/components/contact-support-dialog'
 
 export default function UnderProcessPage() {

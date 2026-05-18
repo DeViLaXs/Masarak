@@ -18,7 +18,7 @@ import type { LoginDto } from '@/services/auth-service'
 import Image from 'next/image'
 import { PasswordInput } from '@/components/ui/password-input'
 import { motion } from 'framer-motion'
-import { toast } from 'sonner'
+import { gooeyToast as toast } from "@/components/ui/goey-toaster"
 import { useRouter } from 'next/navigation'
 
 export function LoginForm({

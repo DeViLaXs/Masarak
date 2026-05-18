@@ -5,9 +5,10 @@ import { useQueryClient } from '@tanstack/react-query'
 import { applicationKeys, useApplications, useApplicationFilters, useRejectCandidate, useHireCandidate } from '@/hooks/use-applications'
 import { useDebounce } from 'use-debounce'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { toast } from 'sonner'
-import { Search } from 'lucide-react'
+import { gooeyToast as toast } from "@/components/ui/goey-toaster"
+import { Search, X } from 'lucide-react'
 import { ScheduleRescheduleDialog } from '@/components/interview-dialog'
 import { Combobox, ComboboxInput, ComboboxContent, ComboboxList, ComboboxItem } from '@/components/ui/combobox'
 import { JobOrderTable } from './_components/job-order-table'
@@ -55,6 +56,9 @@ export default function ApplicationsPage() {
   // Dialog state
   const [dialogOpen, setDialogOpen] = useState(false)
   const [selectedAppId, setSelectedAppId] = useState<number | undefined>()
+
+  // Sorting state
+  const [sorting, setSorting] = useState<any[]>([])
 
   // Queries
   const { data: filtersData } = useApplicationFilters()
@@ -214,6 +218,13 @@ export default function ApplicationsPage() {
                 </ComboboxContent>
               </Combobox>
             </div>
+
+            {sorting.length > 0 && (
+              <Button variant="outline" size="sm" onClick={() => setSorting([])} className="text-xs text-red-600 hover:text-red-500 hover:bg-red-50 hover:border-red-500 whitespace-nowrap h-10 px-2 shrink-0">
+                <X className="w-3 h-3 ml-1" />
+                مسح الفرز
+              </Button>
+            )}
           </div>
         </div>
       </Card>
@@ -228,6 +239,8 @@ export default function ApplicationsPage() {
           page={page}
           totalPages={totalPages}
           setPage={setPage}
+          sorting={sorting}
+          setSorting={setSorting}
           handleReject={handleReject}
           handleHire={handleHire}
           handleSchedule={(id) => {

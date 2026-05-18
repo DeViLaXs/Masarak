@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { useRouter } from 'next/navigation'
-import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { ColumnDef, flexRender, getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table'
 import { InterviewListItemDto } from '@/services/interview-service'
 import {
   Table,
@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { CalendarDays, CircleCheck, CircleX, FileText, Loader2, UserX, UserX2, X, Clock, RotateCcw, CheckCircle2, AlertCircle, MapPin, Video, Phone, ExternalLink, Eye } from 'lucide-react'
+import { CalendarDays, CircleCheck, CircleX, FileText, Loader2, UserX, UserX2, X, Clock, RotateCcw, CheckCircle2, AlertCircle, MapPin, Video, Phone, ExternalLink, Eye, ArrowUpDown, ChevronUp, ChevronDown } from 'lucide-react'
 
 interface InterviewTableProps {
   data: InterviewListItemDto[]
@@ -28,6 +28,8 @@ interface InterviewTableProps {
   handleComplete: (id: number) => void
   handleMissing: (id: number) => void
   handleReschedule: (intv: InterviewListItemDto) => void
+  sorting: SortingState
+  setSorting: React.Dispatch<React.SetStateAction<SortingState>>
 }
 
 export function InterviewTable({
@@ -39,7 +41,9 @@ export function InterviewTable({
   handleCancel,
   handleComplete,
   handleMissing,
-  handleReschedule
+  handleReschedule,
+  sorting,
+  setSorting
 }: InterviewTableProps) {
   const router = useRouter()
   const columns: ColumnDef<InterviewListItemDto>[] = [
@@ -202,16 +206,19 @@ export function InterviewTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    enableMultiSort: true,
+    maxMultiSortColCount: columns.length,
+    state: {
+      sorting,
+    },
   })
 
   return (
     <Card className="border-border/50 shadow-sm overflow-hidden pt-2 pb-2">
       <div className="space-y-2">
-        <div className='pb-2'>
-
-        </div>
-
-        <div className="bg-white dark:bg-transparent max-h-[460px] overflow-y-auto relative w-full overflow-x-auto">
+        <div className="bg-white dark:bg-transparent max-h-[460px] overflow-y-auto relative w-full overflow-x-auto mt-2">
           <table className="w-full caption-bottom text-sm">
             <TableHeader className="sticky top-0 z-10 bg-slate-50 dark:bg-muted shadow-sm">
               {table.getHeaderGroups().map((headerGroup) => (
@@ -225,9 +232,34 @@ export function InterviewTable({
                       >
                         {header.isPlaceholder
                           ? null
-                          : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
+                          : header.column.id !== 'actions' ? (
+                            <div
+                              className="flex items-center justify-center gap-1 cursor-pointer select-none hover:text-primary transition-colors group"
+                              onClick={(e) => {
+                                // Default to multi-sort if they click, so it's super easy
+                                header.column.toggleSorting(undefined, true)
+                              }}
+                            >
+                              {flexRender(header.column.columnDef.header, header.getContext())}
+                              <div className="flex items-center">
+                                {{
+                                  asc: <ChevronDown className="h-4 w-4 text-blue-600 bg-blue-100 rounded-sm" />,
+                                  desc: <ChevronUp className="h-4 w-4 text-blue-600 bg-blue-100 rounded-sm" />,
+                                }[header.column.getIsSorted() as string] ?? (
+                                  <ArrowUpDown className="h-4 w-4 opacity-30 group-hover:opacity-50" />
+                                )}
+                                {header.column.getIsSorted() && sorting.length > 1 && (
+                                  <span className="text-[10px] font-bold bg-primary/10 text-primary w-3.5 h-3.5 rounded-full flex items-center justify-center ml-0.5">
+                                    {header.column.getSortIndex() + 1}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          ) : (
+                            flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )
                           )}
                       </TableHead>
                     )

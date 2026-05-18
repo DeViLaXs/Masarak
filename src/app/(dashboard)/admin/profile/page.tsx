@@ -27,7 +27,7 @@ import { Field, FieldLabel, FieldGroup } from '@/components/ui/field'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { useUser } from '@/hooks/use-users'
-import { toast } from 'sonner'
+import { gooeyToast as toast } from "@/components/ui/goey-toaster"
 import { useRouter } from 'next/navigation'
 import { DeleteAlert } from '@/components/delete-alert'
 import { PasswordInput } from '@/components/ui/password-input'

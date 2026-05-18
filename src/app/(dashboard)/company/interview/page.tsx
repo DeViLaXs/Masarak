@@ -5,9 +5,10 @@ import { useQueryClient } from '@tanstack/react-query'
 import { interviewKeys, useInterviewsList, useInterviewFilters, useCancelInterview, useCompleteInterview, useMissingInterview } from '@/hooks/use-interviews'
 import { useDebounce } from 'use-debounce'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { toast } from 'sonner'
-import { Search } from 'lucide-react'
+import { gooeyToast as toast } from "@/components/ui/goey-toaster"
+import { Search, X } from 'lucide-react'
 import { ScheduleRescheduleDialog } from '@/components/interview-dialog'
 import { Combobox, ComboboxInput, ComboboxContent, ComboboxList, ComboboxItem } from '@/components/ui/combobox'
 import { InterviewTable } from './_components/interview-table'
@@ -56,6 +57,9 @@ export default function InterviewsPage() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [selectedInterviewId, setSelectedInterviewId] = useState<number | undefined>()
   const [selectedInterviewData, setSelectedInterviewData] = useState<any>(null)
+
+  // Sorting state
+  const [sorting, setSorting] = useState<any[]>([])
 
   // Queries
   const { data: filtersData } = useInterviewFilters()
@@ -225,6 +229,13 @@ export default function InterviewsPage() {
                 </ComboboxContent>
               </Combobox>
             </div>
+
+            {sorting.length > 0 && (
+              <Button variant="outline" size="sm" onClick={() => setSorting([])} className="text-xs text-red-600 hover:text-red-500 hover:bg-red-50 hover:border-red-500 whitespace-nowrap h-10 px-2 shrink-0">
+                <X className="w-3 h-3 ml-1" />
+                مسح الفرز
+              </Button>
+            )}
           </div>
         </div>
       </Card>
@@ -237,6 +248,8 @@ export default function InterviewsPage() {
           page={page}
           totalPages={totalPages}
           setPage={setPage}
+          sorting={sorting}
+          setSorting={setSorting}
           handleCancel={handleCancel}
           handleComplete={handleComplete}
           handleMissing={handleMissing}

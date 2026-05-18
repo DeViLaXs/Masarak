@@ -5,7 +5,7 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { useAuth } from '@/auth/use-auth'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { toast } from 'sonner'
+import { gooeyToast as toast } from "@/components/ui/goey-toaster"
 import { cn } from '@/lib/utils'
 
 export default function CheckEmail() {

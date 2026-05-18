@@ -11,7 +11,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { authKeys } from '@/auth/query-keys'
 import { authService } from '@/services/auth-service'
 import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
+import { gooeyToast as toast } from "@/components/ui/goey-toaster"
 import { ContactSupportDialog } from '@/components/contact-support-dialog'
 
 export default function BlockedPage() {

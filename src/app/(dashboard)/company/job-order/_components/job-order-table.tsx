@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { useRouter } from 'next/navigation'
-import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { ColumnDef, flexRender, getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from '@tanstack/react-table'
 import { ApplicationListItemDto } from '@/services/application-service'
 import {
   Table,
@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { FileText, Loader2, CircleX, CalendarDays, UserCheck, Clock, CheckCircle2, UserX, UserX2 } from 'lucide-react'
+import { FileText, Loader2, CircleX, CalendarDays, UserCheck, Clock, CheckCircle2, UserX, UserX2, ArrowUpDown, ChevronUp, ChevronDown } from 'lucide-react'
 
 interface JobOrderTableProps {
   data: ApplicationListItemDto[]
@@ -27,6 +27,8 @@ interface JobOrderTableProps {
   handleReject: (id: number) => void
   handleHire: (id: number) => void
   handleSchedule: (id: number) => void
+  sorting: SortingState
+  setSorting: React.Dispatch<React.SetStateAction<SortingState>>
 }
 
 export function JobOrderTable({
@@ -37,7 +39,9 @@ export function JobOrderTable({
   setPage,
   handleReject,
   handleHire,
-  handleSchedule
+  handleSchedule,
+  sorting,
+  setSorting
 }: JobOrderTableProps) {
   const router = useRouter()
   const columns: ColumnDef<ApplicationListItemDto>[] = [
@@ -217,6 +221,13 @@ export function JobOrderTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    enableMultiSort: true,
+    maxMultiSortColCount: columns.length,
+    state: {
+      sorting,
+    },
   })
 
   return (
@@ -238,9 +249,33 @@ export function JobOrderTable({
                       >
                         {header.isPlaceholder
                           ? null
-                          : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
+                          : header.column.id !== 'actions' && header.column.id !== 'cv' ? (
+                            <div
+                              className="flex items-center justify-center gap-1 cursor-pointer select-none hover:text-primary transition-colors group"
+                              onClick={(e) => {
+                                header.column.toggleSorting(undefined, true)
+                              }}
+                            >
+                              {flexRender(header.column.columnDef.header, header.getContext())}
+                              <div className="flex items-center">
+                                {{
+                                  asc: <ChevronDown className="h-4 w-4 text-blue-600 bg-blue-100 rounded-sm " />,
+                                  desc: <ChevronUp className="h-4 w-4 text-blue-600 bg-blue-100 rounded-sm" />,
+                                }[header.column.getIsSorted() as string] ?? (
+                                  <ArrowUpDown className="h-4 w-4 opacity-30 group-hover:opacity-50" />
+                                )}
+                                {header.column.getIsSorted() && sorting.length > 1 && (
+                                  <span className="text-[10px] font-bold bg-primary/10 text-primary w-3.5 h-3.5 rounded-full flex items-center justify-center ml-0.5">
+                                    {header.column.getSortIndex() + 1}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          ) : (
+                            flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )
                           )}
                       </TableHead>
                     )

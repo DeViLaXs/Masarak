@@ -19,7 +19,7 @@ import { VerifyOtpDto } from '@/services/auth-service'
 import { useAuth } from '@/auth/use-auth'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { toast } from 'sonner'
+import { gooeyToast as toast } from "@/components/ui/goey-toaster"
 
 export function OTPForm({ className, ...props }: React.ComponentProps<'div'>) {
   const searchParams = useSearchParams()

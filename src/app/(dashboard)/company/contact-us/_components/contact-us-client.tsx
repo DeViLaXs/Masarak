@@ -5,7 +5,7 @@ import { useSubmitFeedback } from '@/hooks/use-feedback'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Field, FieldLabel, FieldDescription } from '@/components/ui/field'
-import { toast } from 'sonner'
+import { gooeyToast as toast } from "@/components/ui/goey-toaster"
 import {
   LightbulbIcon,
   AlertCircleIcon,

@@ -13,7 +13,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { useSubmitFeedback, useFeedbackTypes } from '@/hooks/use-feedback'
-import { toast } from 'sonner'
+import { gooeyToast as toast } from "@/components/ui/goey-toaster"
 import { Loader2, Headset } from 'lucide-react'
 
 export function ContactSupportDialog() {
