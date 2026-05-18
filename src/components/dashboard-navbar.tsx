@@ -12,7 +12,7 @@ import { useTheme } from 'next-themes'
 import { SidebarTrigger } from './ui/sidebar'
 import { usePathname } from 'next/navigation'
 import { routeTitles } from '@/lib/route-titles'
-import { AnimatedThemeToggler } from './ui/animated-theme-toggler'
+import { AnimatedThemeToggler } from '@/components/ui/animated-theme-toggler'
 
 export default function DashboardNavBar() {
   const pathname = usePathname()
@@ -23,9 +23,9 @@ export default function DashboardNavBar() {
     <div className="sticky top-0 z-50 bg-sidebar flex items-center justify-between border-b-2 p-5">
       <div className="flex items-center gap-15">
         <SidebarTrigger className="-ms-1" />
-        <h1 className="text-xl font-bold">{title}</h1>
+        <h1 className="text-xl font-bold text-sky-500">{title}</h1>
       </div>
-      <AnimatedThemeToggler className="pl-5" />
+      <AnimatedThemeToggler duration={700} className="pl-5" />
     </div>
   )
 }

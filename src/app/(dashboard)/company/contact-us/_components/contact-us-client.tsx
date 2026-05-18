@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/card'
+import { motion } from 'framer-motion'
 
 export default function ContactUsClient() {
   const { mutateAsync: submitFeedback, isPending } = useSubmitFeedback()
@@ -52,7 +53,12 @@ export default function ContactUsClient() {
 
   if (isSuccess) {
     return (
-      <div className="animate-in fade-in zoom-in-95 mx-auto flex w-full max-w-2xl flex-col items-center justify-center space-y-6 py-20 duration-500">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ type: 'spring', stiffness: 100, damping: 15 }}
+        className="mx-auto flex w-full max-w-2xl flex-col items-center justify-center space-y-6 py-20"
+      >
         <div className="flex size-24 items-center justify-center rounded-full bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400">
           <CheckCircle2 className="size-12" />
         </div>
@@ -73,12 +79,17 @@ export default function ContactUsClient() {
         >
           إرسال رسالة أخرى
         </Button>
-      </div>
+      </motion.div>
     )
   }
 
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-4 mx-auto w-full max-w-3xl space-y-8 pb-10 duration-500">
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: 'spring', stiffness: 100, damping: 15 }}
+      className="mx-auto w-full max-w-3xl space-y-8 pb-10"
+    >
       {/* Header Banner */}
       <div className="relative overflow-hidden rounded-2xl border border-primary/10 bg-gradient-to-l from-primary/10 via-background to-background p-8 text-right shadow-sm dark:from-primary/5">
         <div className="relative z-10 flex flex-col gap-3">
@@ -240,6 +251,6 @@ export default function ContactUsClient() {
           </CardContent>
         </Card>
       </form>
-    </div>
+    </motion.div>
   )
 }

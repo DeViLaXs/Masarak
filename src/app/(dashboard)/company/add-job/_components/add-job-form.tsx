@@ -32,6 +32,7 @@ import {
   SaveIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { motion } from 'framer-motion'
 
 import {
   Card,
@@ -317,7 +318,12 @@ export function AddJobForm() {
   }
 
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-4 mx-auto w-full max-w-4xl space-y-8 pb-10 duration-500">
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: 'spring', stiffness: 100, damping: 15 }}
+      className="mx-auto w-full max-w-4xl space-y-8 pb-10"
+    >
       {/* Header Banner */}
       <div className="border-primary/10 from-primary/10 via-background to-background dark:from-primary/5 relative overflow-hidden rounded-2xl border bg-gradient-to-l p-8 text-right shadow-sm">
         <div className="relative z-10 flex flex-col gap-3">
@@ -1076,6 +1082,6 @@ export function AddJobForm() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </motion.div>
   )
 }

@@ -1,7 +1,9 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import { applicationService, ApplicationListItemDto, ApplicationFiltersDto } from '@/services/application-service'
+import React, { useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { applicationKeys, useApplications, useApplicationFilters, useRejectCandidate, useHireCandidate } from '@/hooks/use-applications'
+import { useDebounce } from 'use-debounce'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
 import { toast } from 'sonner'
@@ -9,66 +11,73 @@ import { Search } from 'lucide-react'
 import { ScheduleRescheduleDialog } from '@/components/interview-dialog'
 import { Combobox, ComboboxInput, ComboboxContent, ComboboxList, ComboboxItem } from '@/components/ui/combobox'
 import { JobOrderTable } from './_components/job-order-table'
+import { motion } from 'framer-motion'
 
+const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.08,
+            delayChildren: 0.05,
+        }
+    }
+} as const
+
+const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    show: { 
+        opacity: 1, 
+        y: 0,
+        transition: {
+            type: "spring",
+            stiffness: 100,
+            damping: 15
+        }
+    }
+} as const
 
 export default function ApplicationsPage() {
-  const [data, setData] = useState<ApplicationListItemDto[]>([])
-  const [loading, setLoading] = useState(true)
-  const [filters, setFilters] = useState<ApplicationFiltersDto | null>(null)
+  const queryClient = useQueryClient()
 
-  // Query state
-  const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
-  const [search, setSearch] = useState('')
+  // State for search
+  const [searchQuery, setSearchQuery] = useState('')
+  const [debouncedSearch] = useDebounce(searchQuery, 500)
+
+  // Filters state
   const [applicationStatusId, setApplicationStatusId] = useState<number | undefined>()
   const [jobId, setJobId] = useState<number | undefined>()
-  const [totalPages, setTotalPages] = useState(1)
+
+  // Pagination state
+  const [page, setPage] = useState(1)
+  const pageSize = 10
 
   // Dialog state
   const [dialogOpen, setDialogOpen] = useState(false)
   const [selectedAppId, setSelectedAppId] = useState<number | undefined>()
 
-  const fetchData = async () => {
-    setLoading(true)
-    try {
-      const res = await applicationService.getApplications({
-        page,
-        pageSize,
-        search,
-        applicationStatusId,
-        jobId,
-      })
-      setData(res.items || [])
-      setTotalPages(res.totalPages || 1)
-    } catch (err) {
-      toast.error('فشل في تحميل الطلبات')
-    } finally {
-      setLoading(false)
-    }
-  }
+  // Queries
+  const { data: filtersData } = useApplicationFilters()
+  const { data: listData, isPending: loading } = useApplications({
+    search: debouncedSearch || undefined,
+    applicationStatusId,
+    page,
+    pageSize,
+    jobId,
+  })
 
-  const fetchFilters = async () => {
-    try {
-      const res = await applicationService.getFilters()
-      setFilters(res)
-    } catch (err) {
-      // ignore
-    }
-  }
+  // Mutations
+  const { mutateAsync: rejectCandidate } = useRejectCandidate()
+  const { mutateAsync: hireCandidate } = useHireCandidate()
 
-  useEffect(() => {
-    fetchFilters()
-  }, [])
-
-  useEffect(() => {
-    fetchData()
-  }, [page, pageSize, search, applicationStatusId, jobId])
+  const data = listData?.items || []
+  const totalPages = listData?.totalPages || 1
+  const filters = filtersData || null
 
   const handleReject = async (id: number) => {
     try {
-      await applicationService.reject(id)
+      await rejectCandidate(id)
       toast.success('تم رفض الطلب بنجاح')
-      fetchData()
     } catch (err: any) {
       toast.error(err?.response?.data?.errors?.[0] || 'فشل في رفض الطلب')
     }
@@ -76,23 +85,25 @@ export default function ApplicationsPage() {
 
   const handleHire = async (id: number) => {
     try {
-      await applicationService.hire(id)
+      await hireCandidate(id)
       toast.success('تم توظيف المرشح بنجاح')
-      fetchData()
     } catch (err: any) {
       toast.error(err?.response?.data?.errors?.[0] || 'فشل في توظيف المرشح')
     }
   }
 
-
-
   return (
-    <div className=" mx-auto w-full max-w-7xl space-y-8 pb-10 duration-500 p-3 md:p-8" dir="rtl">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+      className="mx-auto w-full max-w-7xl space-y-4 px-6"
+      dir="rtl"
+    >
 
       {/* Header Banner */}
-      
-
-      <Card className="border-border/50 overflow-hidden shadow-sm transition-all hover:shadow-md p-5">
+      <motion.div variants={itemVariants}>
+        <Card className="border-border/50 shadow-sm transition-all hover:shadow-md p-5 mb-3">
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
           <div className="flex flex-1 flex-col md:flex-row w-full gap-4 items-center">
             <div className="relative w-full md:w-80">
@@ -100,8 +111,11 @@ export default function ApplicationsPage() {
               <Input
                 placeholder="ابحث بالاسم أو الوظيفة..."
                 className="bg-background pr-10 h-10 shadow-sm rounded-lg"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value)
+                  setPage(1)
+                }}
               />
             </div>
 
@@ -203,30 +217,37 @@ export default function ApplicationsPage() {
           </div>
         </div>
       </Card>
+      </motion.div>
 
-      <JobOrderTable
-        data={data}
-        loading={loading}
-        page={page}
-        totalPages={totalPages}
-        setPage={setPage}
-        handleReject={handleReject}
-        handleHire={handleHire}
-        handleSchedule={(id) => {
-          setSelectedAppId(id)
-          setDialogOpen(true)
-        }}
-      />
+      {/* Jobs Table Card */}
+      
+      <motion.div variants={itemVariants}>
+        <JobOrderTable
+          data={data}
+          loading={loading}
+          page={page}
+          totalPages={totalPages}
+          setPage={setPage}
+          handleReject={handleReject}
+          handleHire={handleHire}
+          handleSchedule={(id) => {
+            setSelectedAppId(id)
+            setDialogOpen(true)
+          }}
+        />
+      </motion.div>
 
       {dialogOpen && (
         <ScheduleRescheduleDialog
           open={dialogOpen}
           onOpenChange={setDialogOpen}
           applicationId={selectedAppId}
-          onSuccess={fetchData}
+          onSuccess={() => {
+            queryClient.invalidateQueries({ queryKey: applicationKeys.all })
+            queryClient.invalidateQueries({ queryKey: ['interviews'] })
+          }}
         />
       )}
-    </div>
+    </motion.div>
   )
 }
-

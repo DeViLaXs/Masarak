@@ -134,7 +134,7 @@ export function InterviewTable({
         return (
           <div className="flex items-center justify-center gap-1.5 text-foreground mx-auto w-fit">
             <MapPin size={14} className="text-muted-foreground shrink-0" />
-            <span className="truncate max-w-[200px] block">{loc}</span>
+            <span className="truncate max-w-[200px] block">{loc.slice(0, 15) + "..."}</span>
           </div>
         )
       }
@@ -147,17 +147,6 @@ export function InterviewTable({
         return (
           <TooltipProvider>
             <div className="flex items-center justify-center gap-2 ">
-              <Tooltip disableHoverableContent={true} delayDuration={700}>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full text-indigo-600 hover:bg-indigo-50 hover:dark:bg-indigo-950/40 hover:text-indigo-700 transition-colors" asChild>
-                    <a href={`/company/interview/${intv.interviewId}`}>
-                      <Eye size={18} />
-                    </a>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="top" className="text-xs">تفاصيل المقابلة</TooltipContent>
-              </Tooltip>
-
               <Tooltip disableHoverableContent={true} delayDuration={700}>
                 <TooltipTrigger asChild>
                   <div>
@@ -217,105 +206,109 @@ export function InterviewTable({
 
   return (
     <Card className="border-border/50 shadow-sm overflow-hidden pt-2 pb-2">
-      {loading ? (
-        <div className="flex justify-center items-center min-h-[300px]">
-          <Loader2 className="w-10 h-10 animate-spin text-primary" />
-        </div>
-      ) : (
-        <div className="space-y-2">
-          <CardHeader className="border-b border-slate-100 dark:border-border pt-3 pb-2">
-            <CardTitle className="text-xl font-bold text-slate-800 dark:text-foreground">
-              جدول المقابلات
-            </CardTitle>
-          </CardHeader>
+      <div className="space-y-2">
+        <div className='pb-2'>
 
-          <div className="bg-white dark:bg-transparent">
-            <Table>
-              <TableHeader>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => {
-                      return (
-                        <TableHead 
-                          key={header.id} 
-                          className="text-center bg-[#f8fafc] dark:bg-muted/50 dark:text-muted-foreground"
-                          style={{ minWidth: header.column.id === 'actions' ? '180px' : undefined }}
-                        >
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                        </TableHead>
-                      )
-                    })}
+        </div>
+
+        <div className="bg-white dark:bg-transparent max-h-[460px] overflow-y-auto relative w-full overflow-x-auto">
+          <table className="w-full caption-bottom text-sm">
+            <TableHeader className="sticky top-0 z-10 bg-slate-50 dark:bg-muted shadow-sm">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead
+                        key={header.id}
+                        className="text-center bg-[#f8fafc] dark:bg-muted dark:text-muted-foreground sticky top-0 z-10"
+                        style={{ minWidth: header.column.id === 'actions' ? '180px' : undefined }}
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                      </TableHead>
+                    )
+                  })}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {loading ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-[300px] p-8 text-center"
+                  >
+                    <div className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
+                      <Loader2 className="mb-4 size-8 animate-spin text-primary" />
+                      <p>جاري جلب بيانات المقابلات...</p>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                    className="hover:bg-slate-50/80 dark:hover:bg-muted/50 transition-colors cursor-pointer"
+                    onClick={() => router.push(`/company/interview/${row.original.interviewId}`)}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell
+                        key={cell.id}
+                        className="text-center"
+                        onClick={(e) => {
+                          if (cell.column.id === 'actions' || cell.column.id === 'location') {
+                            e.stopPropagation()
+                          }
+                        }}
+                      >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    ))}
                   </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow
-                      key={row.id}
-                      data-state={row.getIsSelected() && "selected"}
-                      className="hover:bg-slate-50/80 dark:hover:bg-muted/50 transition-colors cursor-pointer"
-                      onClick={() => router.push(`/company/interview/${row.original.interviewId}`)}
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell 
-                          key={cell.id} 
-                          className="text-center"
-                          onClick={(e) => {
-                            if (cell.column.id === 'actions' || cell.column.id === 'location') {
-                              e.stopPropagation()
-                            }
-                          }}
-                        >
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={columns.length} className="h-24 text-center">
-                      <div className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
-                        <FileText className="mb-4 h-12 w-12 text-slate-200 dark:text-slate-700" />
-                        <p className="text-lg font-medium text-slate-600 dark:text-slate-400">
-                          لا توجد مقابلات
-                        </p>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-          <div className="flex items-center justify-end px-6 pt-2 border-t">
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="shadow-sm"
-                onClick={() => setPage(p => Math.max(1, p - 1))}
-                disabled={page <= 1}
-              >
-                السابق
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="shadow-sm"
-                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                disabled={page >= totalPages}
-              >
-                التالي
-              </Button>
-            </div>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className="h-24 text-center">
+                    <div className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
+                      <FileText className="mb-4 h-12 w-12 text-slate-200 dark:text-slate-700" />
+                      <p className="text-lg font-medium text-slate-600 dark:text-slate-400">
+                        لا توجد مقابلات
+                      </p>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </table>
+        </div>
+        <div className="flex items-center justify-end px-6 pt-2 border-t">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="shadow-sm"
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={page <= 1 || loading}
+            >
+              السابق
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="shadow-sm"
+              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              disabled={page >= totalPages || loading}
+            >
+              التالي
+            </Button>
           </div>
         </div>
-      )}
+      </div>
     </Card>
   )
 }

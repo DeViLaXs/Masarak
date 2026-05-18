@@ -1,74 +1,85 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import { interviewService, InterviewListItemDto, InterviewFiltersDto } from '@/services/interview-service'
+import React, { useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { interviewKeys, useInterviewsList, useInterviewFilters, useCancelInterview, useCompleteInterview, useMissingInterview } from '@/hooks/use-interviews'
+import { useDebounce } from 'use-debounce'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
 import { toast } from 'sonner'
-import { Loader2, Search, CalendarRange } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { ScheduleRescheduleDialog } from '@/components/interview-dialog'
 import { Combobox, ComboboxInput, ComboboxContent, ComboboxList, ComboboxItem } from '@/components/ui/combobox'
 import { InterviewTable } from './_components/interview-table'
+import { motion } from 'framer-motion'
+
+const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.08,
+            delayChildren: 0.05,
+        }
+    }
+} as const
+
+const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    show: { 
+        opacity: 1, 
+        y: 0,
+        transition: {
+            type: "spring",
+            stiffness: 100,
+            damping: 15
+        }
+    }
+} as const
 
 export default function InterviewsPage() {
-  const [data, setData] = useState<InterviewListItemDto[]>([])
-  const [loading, setLoading] = useState(true)
-  const [filters, setFilters] = useState<InterviewFiltersDto | null>(null)
+  const queryClient = useQueryClient()
 
-  // Query state
-  const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
-  const [search, setSearch] = useState('')
+  // State for search
+  const [searchQuery, setSearchQuery] = useState('')
+  const [debouncedSearch] = useDebounce(searchQuery, 500)
+
+  // Filters state
   const [interviewStatusId, setInterviewStatusId] = useState<number | undefined>()
   const [jobId, setJobId] = useState<number | undefined>()
-  const [totalPages, setTotalPages] = useState(1)
+
+  // Pagination state
+  const [page, setPage] = useState(1)
+  const pageSize = 10
 
   // Dialog state
   const [dialogOpen, setDialogOpen] = useState(false)
   const [selectedInterviewId, setSelectedInterviewId] = useState<number | undefined>()
   const [selectedInterviewData, setSelectedInterviewData] = useState<any>(null)
 
-  const fetchData = async () => {
-    setLoading(true)
-    try {
-      const res = await interviewService.getInterviews({
-        page,
-        pageSize,
-        search,
-        interviewStatusId,
-        jobId,
-      })
-      setData(res.items || [])
-      setTotalPages(res.totalPages || 1)
-    } catch (err) {
-      toast.error('فشل في تحميل المقابلات')
-    } finally {
-      setLoading(false)
-    }
-  }
+  // Queries
+  const { data: filtersData } = useInterviewFilters()
+  const { data: listData, isPending: loading } = useInterviewsList({
+    searchTerm: debouncedSearch || undefined,
+    statusId: interviewStatusId,
+    page,
+    pageSize,
+    jobId,
+  })
 
-  const fetchFilters = async () => {
-    try {
-      const res = await interviewService.getFilters()
-      setFilters(res)
-    } catch (err) {
-      // ignore
-    }
-  }
+  // Mutations
+  const { mutateAsync: cancelInterview } = useCancelInterview()
+  const { mutateAsync: completeInterview } = useCompleteInterview()
+  const { mutateAsync: missingInterview } = useMissingInterview()
 
-  useEffect(() => {
-    fetchFilters()
-  }, [])
-
-  useEffect(() => {
-    fetchData()
-  }, [page, pageSize, search, interviewStatusId, jobId])
+  const data = listData?.items || []
+  const totalPages = listData?.totalPages || 1
+  const filters = filtersData || null
 
   const handleCancel = async (id: number) => {
     try {
-      await interviewService.cancel(id)
+      await cancelInterview(id)
       toast.success('تم إلغاء المقابلة بنجاح')
-      fetchData()
     } catch (err: any) {
       toast.error(err?.response?.data?.errors?.[0] || 'فشل في إلغاء المقابلة')
     }
@@ -76,9 +87,8 @@ export default function InterviewsPage() {
 
   const handleComplete = async (id: number) => {
     try {
-      await interviewService.complete(id)
+      await completeInterview(id)
       toast.success('تم تعيين المقابلة كمكتملة')
-      fetchData()
     } catch (err: any) {
       toast.error(err?.response?.data?.errors?.[0] || 'فشل في إكمال المقابلة')
     }
@@ -86,22 +96,25 @@ export default function InterviewsPage() {
 
   const handleMissing = async (id: number) => {
     try {
-      await interviewService.missing(id)
+      await missingInterview(id)
       toast.success('تم تسجيل المرشح كغائب')
-      fetchData()
     } catch (err: any) {
       toast.error(err?.response?.data?.errors?.[0] || 'فشل في تسجيل الغياب')
     }
   }
 
-
-
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-4 mx-auto w-full max-w-7xl space-y-8 pb-10 duration-500 p-6 md:p-8" dir="rtl">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+      className="mx-auto w-full max-w-7xl space-y-4 px-6"
+      dir="rtl"
+    >
 
       {/* Header Banner */}
-     
-      <Card className="border-border/50 overflow-hidden shadow-sm transition-all hover:shadow-md p-5">
+      <motion.div variants={itemVariants}>
+        <Card className="border-border/50 sticky top-22 mb-3 shadow-sm transition-all hover:shadow-md p-5">
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
           <div className="flex flex-1 flex-col md:flex-row w-full gap-4 items-center">
             <div className="relative w-full md:w-80">
@@ -109,8 +122,11 @@ export default function InterviewsPage() {
               <Input
                 placeholder="ابحث بالاسم أو الوظيفة..."
                 className="pr-10 h-10 shadow-sm rounded-lg"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value)
+                  setPage(1)
+                }}
               />
             </div>
 
@@ -212,35 +228,38 @@ export default function InterviewsPage() {
           </div>
         </div>
       </Card>
+      </motion.div>
 
-      <InterviewTable
-        data={data}
-        loading={loading}
-        page={page}
-        totalPages={totalPages}
-        setPage={setPage}
-        handleCancel={handleCancel}
-        handleComplete={handleComplete}
-        handleMissing={handleMissing}
-        handleReschedule={(intv) => {
-          setSelectedInterviewId(intv.interviewId)
-          let typeId = 1
-          if (intv.interviewType === 'InPerson') typeId = 2
-          else if (intv.interviewType === 'Phone') typeId = 3
+      <motion.div variants={itemVariants}>
+        <InterviewTable
+          data={data}
+          loading={loading}
+          page={page}
+          totalPages={totalPages}
+          setPage={setPage}
+          handleCancel={handleCancel}
+          handleComplete={handleComplete}
+          handleMissing={handleMissing}
+          handleReschedule={(intv) => {
+            setSelectedInterviewId(intv.interviewId)
+            let typeId = 1
+            if (intv.interviewType === 'InPerson') typeId = 2
+            else if (intv.interviewType === 'Phone') typeId = 3
 
-          setSelectedInterviewData({
-            interviewDate: intv.interviewDate,
-            interviewTypeId: typeId,
-            meetingLink: typeId === 1 ? intv.location : '',
-            countryId: intv.countryId || null,
-            governateId: intv.governateId || null,
-            addressLine: intv.addressLine || '',
-            addressId: intv.addressId || null,
-            notes: '',
-          })
-          setDialogOpen(true)
-        }}
-      />
+            setSelectedInterviewData({
+              interviewDate: intv.interviewDate,
+              interviewTypeId: typeId,
+              meetingLink: typeId === 1 ? intv.location : '',
+              countryId: intv.countryId || null,
+              governateId: intv.governateId || null,
+              addressLine: intv.addressLine || '',
+              addressId: intv.addressId || null,
+              notes: '',
+            })
+            setDialogOpen(true)
+          }}
+        />
+      </motion.div>
 
       {dialogOpen && (
         <ScheduleRescheduleDialog
@@ -248,9 +267,11 @@ export default function InterviewsPage() {
           onOpenChange={setDialogOpen}
           interviewId={selectedInterviewId}
           initialData={selectedInterviewData}
-          onSuccess={fetchData}
+          onSuccess={() => {
+            queryClient.invalidateQueries({ queryKey: interviewKeys.all })
+          }}
         />
       )}
-    </div>
+    </motion.div>
   )
 }

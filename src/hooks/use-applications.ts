@@ -6,6 +6,14 @@ export const applicationKeys = {
   list: (params: GetApplicationsParams) => [...applicationKeys.all, 'list', params] as const,
 }
 
+export function useApplicationFilters() {
+  return useQuery({
+    queryKey: [...applicationKeys.all, 'filters'] as const,
+    queryFn: () => applicationService.getFilters(),
+    staleTime: 5 * 60 * 1000,
+  })
+}
+
 export function useApplications(params: GetApplicationsParams) {
   return useQuery({
     queryKey: applicationKeys.list(params),

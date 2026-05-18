@@ -21,11 +21,20 @@ export function useInterviewStats() {
   })
 }
 
+export function useInterviewFilters() {
+  return useQuery({
+    queryKey: [...interviewKeys.all, 'filters'] as const,
+    queryFn: () => interviewService.getFilters(),
+    staleTime: 5 * 60 * 1000,
+  })
+}
+
 export function useInterviewsList(params: {
   searchTerm?: string
   statusId?: number
   page?: number
   pageSize?: number
+  jobId?: number
 }) {
   return useQuery({
     queryKey: interviewKeys.list(params),
@@ -34,6 +43,7 @@ export function useInterviewsList(params: {
       interviewStatusId: params.statusId,
       page: params.page,
       pageSize: params.pageSize,
+      jobId: params.jobId,
     }),
     placeholderData: keepPreviousData,
   })

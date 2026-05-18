@@ -538,23 +538,23 @@ export function ScheduleRescheduleDialog({
                     <Switch isSelected={showNotes} onChange={setShowNotes}>
                       {({ isSelected }) => (
                         <Switch.Control
-                        dir='ltr'
+                          dir="ltr"
                           className={cn(
-                            "h-[22px] w-[49px] pr-0.5 transition-all duration-200",
-                            isSelected ? "bg-primary " : "bg-gray-400"
+                            "h-6 w-11 rounded-full p-0.5 transition-colors duration-200 cursor-pointer flex items-center relative",
+                            isSelected ? "bg-primary" : "bg-zinc-300 dark:bg-zinc-600"
                           )}
                         >
                           <Switch.Thumb
                             className={cn(
-                              "size-[18px] w-[27px] bg-white shadow-sm transition-all duration-400 flex items-center justify-center",
-                              
+                              "size-5 rounded-full bg-white shadow-md transition-transform duration-200 flex items-center justify-center",
+                              isSelected ? "translate-x-5" : "translate-x-0"
                             )}
                           >
                             <Switch.Icon>
                               {isSelected ? (
-                                <Eye className="size-4 text-primary opacity-100 transition-all duration-600" />
+                                <Eye className="size-3.5 text-primary transition-colors duration-200" />
                               ) : (
-                                <EyeClosed className="size-4 text-black opacity-100 transition-all duration-600" />
+                                <EyeClosed className="size-3.5 text-zinc-500 transition-colors duration-200" />
                               )}
                             </Switch.Icon>
                           </Switch.Thumb>

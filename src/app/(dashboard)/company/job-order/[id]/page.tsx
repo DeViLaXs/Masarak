@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import { useQueryClient } from '@tanstack/react-query'
 import { 
   Calendar, 
   ArrowRight, 
@@ -29,11 +30,13 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { gooeyToast } from '@/components/ui/goey-toaster'
 import { ScheduleRescheduleDialog } from '@/components/interview-dialog'
 import { cn } from '@/lib/utils'
+import { motion } from 'framer-motion'
 
 export default function ApplicationDetailPage() {
   const params = useParams()
   const router = useRouter()
   const id = Number(params.id)
+  const queryClient = useQueryClient()
 
   const [application, setApplication] = useState<ApplicationListItemDto | null>(null)
   const [loading, setLoading] = useState(true)
@@ -83,6 +86,11 @@ export default function ApplicationDetailPage() {
         await applicationService.hire(application.applicationId)
         gooeyToast.success("تم توظيف المرشح بنجاح")
       }
+      
+      // Invalidate query client cache for both applications and interviews lists
+      queryClient.invalidateQueries({ queryKey: ['applications'] })
+      queryClient.invalidateQueries({ queryKey: ['interviews'] })
+      
       fetchApplication()
     } catch (err: any) {
       gooeyToast.error(err?.message || "فشلت العملية")
@@ -172,7 +180,12 @@ export default function ApplicationDetailPage() {
   const StatusIcon = statusInfo.Icon
 
   return (
-    <div className="mx-auto w-full max-w-4xl space-y-6 pb-12 text-right dir-rtl animate-in fade-in slide-in-from-bottom-4 duration-300">
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: 'spring', stiffness: 100, damping: 15 }}
+      className="mx-auto w-full max-w-4xl space-y-6 pb-12 text-right dir-rtl"
+    >
       
       {/* Header Banner Section */}
       <div className="border-border/40 from-primary/10 via-background to-background dark:from-primary/5 relative overflow-hidden rounded-2xl border bg-gradient-to-l p-6 shadow-sm">
@@ -357,10 +370,15 @@ export default function ApplicationDetailPage() {
         applicationId={application.applicationId}
         onSuccess={() => {
           setDialogOpen(false)
+          
+          // Invalidate query client cache so list views reflect scheduling updates
+          queryClient.invalidateQueries({ queryKey: ['applications'] })
+          queryClient.invalidateQueries({ queryKey: ['interviews'] })
+          
           fetchApplication()
         }}
       />
 
-    </div>
+    </motion.div>
   )
 }
