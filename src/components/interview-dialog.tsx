@@ -101,13 +101,18 @@ export function ScheduleRescheduleDialog({
   })
   const [showNotes, setShowNotes] = useState(false)
 
-  // Format date for datetime-local input
+  // Format a UTC ISO string from backend into a local datetime string for the picker (e.g. "2026-05-10T10:00")
   const formatForInput = (isoString?: string) => {
     if (!isoString) return ''
     const date = new Date(isoString)
     if (isNaN(date.getTime())) return ''
-    const offset = date.getTimezoneOffset() * 60000
-    return new Date(date.getTime() - offset).toISOString().slice(0, 16)
+    // Convert UTC → local by formatting each local component
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    const hours = String(date.getHours()).padStart(2, '0')
+    const minutes = String(date.getMinutes()).padStart(2, '0')
+    return `${year}-${month}-${day}T${hours}:${minutes}`
   }
 
   useEffect(() => {
@@ -181,10 +186,9 @@ export function ScheduleRescheduleDialog({
     setIsLoading(true)
 
     try {
-      // Send the local time string directly to avoid timezone subtraction bugs
-      const localIso = formData.interviewDate.length === 16 ? `${formData.interviewDate}:00` : formData.interviewDate;
-
-      const selectedDate = new Date(localIso);
+      // formData.interviewDate is a local datetime string (e.g. "2026-05-10T10:00")
+      // Parse it as local time and validate against now (also local)
+      const selectedDate = new Date(formData.interviewDate);
       const now = new Date();
       now.setSeconds(0, 0);
 
@@ -219,8 +223,12 @@ export function ScheduleRescheduleDialog({
         }
       }
 
+      // STEP 1: Convert local datetime → UTC ISO string before sending to backend
+      // new Date("2026-05-10T10:00") is parsed as LOCAL time, .toISOString() gives UTC
+      const utcDate = selectedDate.toISOString(); // e.g. "2026-05-10T07:00:00.000Z" for Yemen UTC+3
+
       const payload: ScheduleInterviewDTO = {
-        interviewDate: localIso,
+        interviewDate: utcDate,
         interviewTypeId: formData.interviewTypeId,
         notes: (formData.interviewTypeId === 1 || (formData.interviewTypeId === 2 && showNotes)) ? formData.notes : null,
         meetingLink: formData.interviewTypeId === 1 ? formData.meetingLink : null,
