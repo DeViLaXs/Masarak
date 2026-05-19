@@ -38,13 +38,23 @@ export function useInterviewsList(params: {
 }) {
   return useQuery({
     queryKey: interviewKeys.list(params),
-    queryFn: () => interviewService.getInterviews({
-      search: params.searchTerm,
-      interviewStatusId: params.statusId,
-      page: params.page,
-      pageSize: params.pageSize,
-      jobId: params.jobId,
-    }),
+    queryFn: () => {
+      // Generate the client's local datetime (no Z suffix) so the backend
+      // can correctly compute canCancel / canReschedule / canComplete / canMarkMissing
+      const now = new Date()
+      const CurrentDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+        .toISOString()
+        .slice(0, 19)
+
+      return interviewService.getInterviews({
+        search: params.searchTerm,
+        interviewStatusId: params.statusId,
+        page: params.page,
+        pageSize: params.pageSize,
+        jobId: params.jobId,
+        CurrentDate,
+      })
+    },
     placeholderData: keepPreviousData,
   })
 }
