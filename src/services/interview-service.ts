@@ -15,7 +15,6 @@ export type InterviewStatisticsDto = {
 
 export type InterviewListItemDto = {
   interviewId: number
-  applicationId: number
   candidateName: string
   jobTitle: string
   interviewDate: string
@@ -66,10 +65,11 @@ export const interviewService = {
     jobId?: number
     page?: number
     pageSize?: number
-    CurrentDate?: string
   }): Promise<PaginatedData<InterviewListItemDto>> => {
     const cleanParams = Object.fromEntries(
-      Object.entries(params || {}).filter(([_, v]) => v !== undefined && v !== ''),
+      Object.entries(params || {}).filter(
+        ([_, v]) => v !== undefined && v !== '',
+      ),
     )
     const res = await api.get('/Interviews/company', { params: cleanParams })
     return res.data?.data || res.data

@@ -11,7 +11,8 @@ export const interviewKeys = {
   list: (params: any) => [...interviewKeys.all, 'list', params] as const,
   stats: () => [...interviewKeys.all, 'stats'] as const,
   statuses: () => [...interviewKeys.all, 'statuses'] as const,
-  shortlisted: (params: any) => [...interviewKeys.all, 'shortlisted', params] as const,
+  shortlisted: (params: any) =>
+    [...interviewKeys.all, 'shortlisted', params] as const,
 }
 
 export function useInterviewStats() {
@@ -38,23 +39,14 @@ export function useInterviewsList(params: {
 }) {
   return useQuery({
     queryKey: interviewKeys.list(params),
-    queryFn: () => {
-      // Generate the client's local datetime (no Z suffix) so the backend
-      // can correctly compute canCancel / canReschedule / canComplete / canMarkMissing
-      const now = new Date()
-      const CurrentDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
-        .toISOString()
-        .slice(0, 19)
-
-      return interviewService.getInterviews({
+    queryFn: () =>
+      interviewService.getInterviews({
         search: params.searchTerm,
         interviewStatusId: params.statusId,
         page: params.page,
         pageSize: params.pageSize,
         jobId: params.jobId,
-        CurrentDate,
-      })
-    },
+      }),
     placeholderData: keepPreviousData,
   })
 }
@@ -99,12 +91,10 @@ export function useCompleteInterview() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (id: number) =>
-      interviewService.complete(id),
+    mutationFn: (id: number) => interviewService.complete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: interviewKeys.all })
       queryClient.invalidateQueries({ queryKey: ['applications'] })
     },
   })
 }
-
