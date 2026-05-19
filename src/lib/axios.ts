@@ -6,7 +6,9 @@ const api = axios.create({
   headers: {
     ClientType: 'web',
     Accept: 'application/json',
+    Timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
   },
+
 })
 
 // Response interceptor to handle backend error structure
