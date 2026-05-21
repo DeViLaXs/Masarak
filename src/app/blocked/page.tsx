@@ -69,7 +69,10 @@ export default function BlockedPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 font-['Cairo'] dark:bg-slate-950">
-      <NavBar />
+      {/* Sticky Navbar */}
+      <div className="sticky top-0 z-50 w-full px-4 pt-4 sm:px-8 lg:px-16">
+        <NavBar />
+      </div>
 
       <main className="relative flex flex-1 items-center justify-center p-6">
         {/* Background Decorative Elements */}

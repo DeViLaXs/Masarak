@@ -16,9 +16,11 @@
 .dark .goey-blobSvg path {
   fill: #ffffff !important;
 }
+
 :root:not(.dark) .goey-blobSvg path {
   fill: #1a1a1a !important;
 }
+
 /* :root:not(.dark) .goey-blobSvg {
   filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3)) drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
 } */
@@ -27,18 +29,23 @@
 :root:not(.dark) .goey-titleDefault {
   color: #ccc;
 }
+
 :root:not(.dark) .goey-titleSuccess {
   color: #66bb6a;
 }
+
 :root:not(.dark) .goey-titleError {
   color: #ef5350;
 }
+
 :root:not(.dark) .goey-titleWarning {
   color: #ffb300;
 }
+
 :root:not(.dark) .goey-titleInfo {
   color: #42a5f5;
 }
+
 :root:not(.dark) .goey-titleLoading {
   color: #ccc;
 }
@@ -53,49 +60,63 @@
   background: #3a3a3a;
   color: #ccc;
 }
+
 :root:not(.dark) .goey-actionDefault:hover {
   background: #444;
 }
+
 :root:not(.dark) .goey-actionDefault:active {
   background: #4e4e4e;
 }
+
 :root:not(.dark) .goey-actionSuccess {
   background: #1b5e20;
   color: #66bb6a;
 }
+
 :root:not(.dark) .goey-actionSuccess:hover {
   background: #2e7d32;
 }
+
 :root:not(.dark) .goey-actionSuccess:active {
   background: #388e3c;
 }
+
 :root:not(.dark) .goey-actionError {
   background: #b71c1c;
   color: #ef5350;
 }
+
 :root:not(.dark) .goey-actionError:hover {
   background: #c62828;
 }
+
 :root:not(.dark) .goey-actionError:active {
   background: #d32f2f;
 }
+
 :root:not(.dark) .goey-actionWarning {
   background: #4a3800;
   color: #ffb300;
 }
+
 :root:not(.dark) .goey-actionWarning:hover {
   background: #5c4600;
 }
+
 :root:not(.dark) .goey-actionWarning:active {
   background: #6e5400;
 }
+
 :root:not(.dark) .goey-actionInfo {
   background: #0d47a1;
   color: #42a5f5;
 }
+
 :root:not(.dark) .goey-actionInfo:hover {
   background: #1565c0;
 }
+
 :root:not(.dark) .goey-actionInfo:active {
   background: #1976d2;
 }
@@ -104,18 +125,23 @@
 :root:not(.dark) .goey-progressWrapper {
   background: rgba(255, 255, 255, 0.1);
 }
+
 :root:not(.dark) .goey-progressDefault {
   background: #888;
 }
+
 :root:not(.dark) .goey-progressSuccess {
   background: #66bb6a;
 }
+
 :root:not(.dark) .goey-progressError {
   background: #ef5350;
 }
+
 :root:not(.dark) .goey-progressWarning {
   background: #ffb300;
 }
+
 :root:not(.dark) .goey-progressInfo {
   background: #42a5f5;
 }
@@ -143,7 +169,7 @@
   padding: 5px 5px 5px 5px;
 }
 
-[dir='rtl'] .gooey-header > .gooey-timestamp {
+[dir='rtl'] .gooey-header>.gooey-timestamp {
   margin-left: 0;
   margin-right: auto;
   padding-left: 0;
@@ -166,6 +192,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @custom-variant dark (&:is(.dark *));
+
 :root {
   --background: rgb(247, 248, 248);
   --foreground: rgb(15, 20, 25);
@@ -354,6 +381,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
     letter-spacing: var(--tracking-normal);
@@ -408,12 +436,39 @@ input::-webkit-credentials-auto-fill-button {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
 .scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}
-::view-transition-old(root), ::view-transition-new(root) {
-    animation: none;
-    mix-blend-mode: normal;
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
+.dot-float {
+  animation: masarak-dot-float 7s ease-in-out infinite;
+}
+
+@keyframes masarak-dot-float {
+
+  0%,
+  100% {
+    transform: translateY(0px) scale(1);
+  }
+
+  25% {
+    transform: translateY(-2px) scale(1.05);
+  }
+
+  50% {
+    transform: translateY(-4px) scale(1);
+  }
+
+  75% {
+    transform: translateY(-2px) scale(0.98);
+  }
+}
+
+::view-transition-old(root), ::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}

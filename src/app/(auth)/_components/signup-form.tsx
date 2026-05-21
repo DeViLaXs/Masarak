@@ -2,30 +2,22 @@
 
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-  FieldSeparator,
-} from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/ui/password-input'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-
 import { useState } from 'react'
 import { RegisterDto } from '@/services/auth-service'
 import { useAuth } from '@/auth/use-auth'
 import { motion } from 'framer-motion'
-import { Toaster } from '@/components/ui/sonner'
 import { gooeyToast as toast } from "@/components/ui/goey-toaster"
 import { z } from 'zod'
-import { CheckCircle2, Circle } from 'lucide-react'
+import { CheckCircle2, Circle, Upload, Rocket } from 'lucide-react'
+import { AnimatedThemeToggler } from '@/components/ui/animated-theme-toggler'
+import AuthNavBar from './auth-navbar'
 
-// 1. Simple Validation Schema
+// 1. Validation Schema
 const signupSchema = z
   .object({
     name: z.string().min(2, 'اسم الشركة مطلوب'),
@@ -114,7 +106,6 @@ export function SignupForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
-    // 4. Validate using Zod
     const result = signupSchema.safeParse(registerForm)
 
     if (!result.success) {
@@ -129,7 +120,6 @@ export function SignupForm({
       return
     }
 
-    // 5. Submit if valid
     register(registerForm, {
       onSuccess: () => {
         sessionStorage.setItem('otp_allowed', '1')
@@ -138,260 +128,281 @@ export function SignupForm({
       },
     })
   }
-  return (
-    <div className={cn('flex flex-col gap-6', className)} {...props}>
-      <Card className="overflow-hidden p-0">
-        <CardContent className="grid p-0 md:grid-cols-2">
-          <motion.form
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="p-6 md:p-8"
-            onSubmit={handleSubmit}
-          >
-            <FieldGroup>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1, duration: 0.5 }}
-                className="flex flex-col items-center gap-2 text-center"
-              >
-                <Image
-                  src="/Masarak-logo.png"
-                  className="hidden dark:block"
-                  alt="Logo"
-                  width={30}
-                  height={30}
-                />
 
-                <Image
-                  src="/Masarak-logo-dark.png"
-                  className="block dark:hidden"
-                  alt="Logo"
-                  width={30}
-                  height={30}
-                />
-                <h1 className="text-2xl font-bold">إنشاء حساب جديد</h1>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
-              >
-                <Field>
-                  <FieldLabel htmlFor="name">اسم الشركة</FieldLabel>
+  return (
+    <div className="fixed inset-0 z-50 dark:bg-card flex flex-col md:flex-row overflow-hidden w-full h-full" {...props}>
+
+      {/* Left Column: Register Form */}
+      <div
+        dir="rtl"
+        className="w-full md:w-[55%] h-full flex flex-col px-6 md:px-8 overflow-hidden"
+      >
+        {/* Top Header */}
+        <AuthNavBar />
+
+        {/* Center Form Container Wrapper */}
+        <div className="flex-1 w-full flex flex-col justify-center items-center">
+
+          <motion.form
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            onSubmit={handleSubmit}
+            className="flex flex-col gap-4 w-full max-w-lg mx-auto "
+          >
+
+            {/* Title Header */}
+            <div className="flex flex-col gap-1.5 text-right mb-1">
+              <h1 className="text-3xl font-extrabold text-black dark:text-white mb-2 leading-tight ">إنشاء حساب جديد</h1>
+            </div>
+
+            {/* Form Fields */}
+            <div className="flex flex-col gap-3.5">
+
+              {/* Company Name & Logo Side-by-side */}
+              <div className="grid grid-cols-2 gap-4">
+
+
+                {/* Company Name (Right in RTL grid) */}
+                <div className="flex flex-col gap-1.5 text-right">
+                  <label htmlFor="name" className="text-sm font-semibold text-slate-700 dark:text-slate-300">اسم الشركة</label>
                   <Input
                     id="name"
                     type="text"
+                    className="h-11 px-5 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-transparent text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-primary focus-visible:ring-primary focus-visible:ring-offset-0"
+                    value={registerForm.name}
                     onChange={(e) => handleFieldChange('name', e.target.value)}
                   />
                   {errors.name && (
-                    <span className="pr-1 text-xs text-red-500">
-                      {errors.name}
-                    </span>
+                    <span className="text-xs text-red-500 pr-2">{errors.name}</span>
                   )}
-                </Field>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.5 }}
-              >
-                <Field>
-                  <FieldLabel htmlFor="email">البريد الإلكتروني</FieldLabel>
-                  <Input
-                    id="email"
-                    type="email"
-                    onChange={(e) => handleFieldChange('email', e.target.value)}
-                  />
-                  {(errors.email || registerError) && (
-                    <span className="pr-1 text-xs text-red-500">
-                      {errors.email || registerError?.message}
+                </div>
+
+                {/* Company Logo Upload (Left in RTL grid) */}
+                <div className="flex flex-col gap-1.5 text-right">
+                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">شعار الشركة</label>
+                  <label
+                    htmlFor="logo"
+                    className="flex items-center justify-between h-11 px-5 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-full cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                  >
+                    <span className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-[120px]">
+                      {registerForm.logoUrl ? (registerForm.logoUrl as File).name : 'اضغط لرفع الشعار'}
                     </span>
-                  )}
-                </Field>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.5 }}
-              >
-                <Field>
-                  <Field className="grid grid-cols-2 gap-4">
-                    <Field>
-                      <FieldLabel htmlFor="phone">رقم الهاتف</FieldLabel>
-                      <Input
-                        id="phone"
-                        type="text"
-                        onChange={(e) =>
-                          handleFieldChange('phoneNumber', e.target.value)
-                        }
-                      />
-                    </Field>
-                    <Field>
-                      <FieldLabel htmlFor="industry">مجال العمل</FieldLabel>
-                      <Input
-                        id="industry"
-                        type="text"
-                        onChange={(e) =>
-                          handleFieldChange('industry', e.target.value)
-                        }
-                      />
-                    </Field>
-                  </Field>
-                  {errors.industry && (
-                    <span className="pr-1 text-xs text-red-500">
-                      {errors.industry}
-                    </span>
-                  )}
-                  {errors.phoneNumber && (
-                    <span className="pr-1 text-xs text-red-500">
-                      {errors.phoneNumber}
-                    </span>
-                  )}
-                </Field>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5, duration: 0.5 }}
-              >
-                <Field>
-                  <FieldLabel htmlFor="logo">شعار الشركة</FieldLabel>
-                  <Input
+                    <Upload className="h-4 w-4 text-slate-400 shrink-0" />
+                  </label>
+                  <input
                     id="logo"
                     type="file"
                     accept=".jpeg,.png,.webp"
-                    onChange={(e) =>
-                      handleFieldChange('logoUrl', e.target.files?.[0] || null)
-                    }
+                    className="hidden"
+                    onChange={(e) => handleFieldChange('logoUrl', e.target.files?.[0] || null)}
                   />
                   {errors.logoUrl && (
-                    <span className="pr-1 text-xs text-red-500">
-                      {errors.logoUrl}
-                    </span>
+                    <span className="text-xs text-red-500 pr-2">{errors.logoUrl}</span>
                   )}
-                  <FieldDescription className="text-xs text-black/60 dark:text-white/60">
-                    يجب ان تكون الصورة اقل من 1 ميجابايت ومن نوع jpeg, png, webp
-                  </FieldDescription>
-                </Field>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6, duration: 0.5 }}
-              >
-                <Field>
-                  <Field className="grid grid-cols-2 gap-4">
-                    <Field>
-                      <FieldLabel htmlFor="password">كلمة المرور</FieldLabel>
-                      <PasswordInput
-                        id="password"
-                        onChange={(e) =>
-                          handleFieldChange('password', e.target.value)
-                        }
-                      />
-                    </Field>
-                    <Field>
-                      <FieldLabel htmlFor="confirm-password">
-                        تأكيد كلمة المرور
-                      </FieldLabel>
-                      <PasswordInput
-                        id="confirm-password"
-                        onChange={(e) =>
-                          handleFieldChange(
-                            'passwordConfirmation',
-                            e.target.value,
-                          )
-                        }
-                      />
-                    </Field>
-                  </Field>
-                  {/* <FieldDescription  className="text-xs text-black/60 dark:text-white/60">
-                    يجب ان تحتوي كلمة المرور على حرف كبير و رقم ورمز خاص
-                  </FieldDescription> */}
-                  {errors.password && (
-                    <span className="pr-1 text-xs text-red-500">
-                      {errors.password}
-                    </span>
-                  )}
-                  {errors.passwordConfirmation && (
-                    <span className="pr-1 text-xs text-red-500">
-                      {errors.passwordConfirmation}
-                    </span>
-                  )}
-                  <div className="mt-3 space-y-2 px-1">
-                    {passwordRequirements.map((req, index) => {
-                      const isMet = req.check(registerForm.password || '')
-                      return (
-                        <div
-                          key={index}
-                          className={cn(
-                            'flex items-center gap-2 text-[11px] transition-colors',
-                            isMet
-                              ? 'text-green-600 dark:text-green-400'
-                              : 'text-muted-foreground',
-                          )}
-                        >
-                          {isMet ? (
-                            <CheckCircle2 className="h-3.5 w-3.5" />
-                          ) : (
-                            <Circle className="h-3.5 w-3.5" />
-                          )}
-                          <span>{req.label}</span>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </Field>
-              </motion.div>
+                </div>
+              </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7, duration: 0.5 }}
-              >
-                <Field>
-                  <Button
-                    type="submit"
-                    disabled={isRegistering}
-                    className="w-full"
-                  >
-                    {isRegistering ? 'جاري الإنشاء...' : 'إنشاء حساب'}
-                  </Button>
-                </Field>
-                <FieldDescription className="pt-4 text-center">
-                  لديك حساب بالفعل؟ <Link href="/login">تسجيل الدخول</Link>
-                </FieldDescription>
-              </motion.div>
-            </FieldGroup>
-          </motion.form>
-          <div className="relative hidden md:block">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{
-                duration: 0.4,
-                scale: { type: 'spring', visualDuration: 0.4, bounce: 0.5 },
-              }}
+              {/* Email Address */}
+              <div className="flex flex-col gap-1.5 text-right">
+                <label htmlFor="email" className="text-sm font-semibold text-slate-700 dark:text-slate-300">البريد الإلكتروني</label>
+                <Input
+                  id="email"
+                  type="email"
+                  className="h-11 px-5 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-transparent text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-primary focus-visible:ring-primary focus-visible:ring-offset-0"
+                  value={registerForm.email}
+                  onChange={(e) => handleFieldChange('email', e.target.value)}
+                />
+                {(errors.email || registerError) && (
+                  <span className="text-xs text-red-500 pr-2">
+                    {errors.email || registerError?.message}
+                  </span>
+                )}
+              </div>
+
+              {/* Phone & Industry Side-by-side */}
+              <div className="grid grid-cols-2 gap-4">
+                {/* Phone Number - Left in RTL */}
+                <div className="flex flex-col gap-1.5 text-right">
+                  <label htmlFor="phone" className="text-sm font-semibold text-slate-700 dark:text-slate-300">رقم الهاتف</label>
+                  <Input
+                    id="phone"
+                    type="text"
+                    placeholder="05xxxxxxxx"
+                    className="h-11 px-5 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-transparent text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-primary focus-visible:ring-primary focus-visible:ring-offset-0"
+                    value={registerForm.phoneNumber}
+                    onChange={(e) => handleFieldChange('phoneNumber', e.target.value)}
+                  />
+                  {errors.phoneNumber && (
+                    <span className="text-xs text-red-500 pr-2">{errors.phoneNumber}</span>
+                  )}
+                </div>
+
+                {/* Work Field - Right in RTL */}
+                <div className="flex flex-col gap-1.5 text-right">
+                  <label htmlFor="industry" className="text-sm font-semibold text-slate-700 dark:text-slate-300">مجال العمل</label>
+                  <Input
+                    id="industry"
+                    type="text"
+                    className="h-11 px-5 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-transparent text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-primary focus-visible:ring-primary focus-visible:ring-offset-0"
+                    value={registerForm.industry}
+                    onChange={(e) => handleFieldChange('industry', e.target.value)}
+                  />
+                  {errors.industry && (
+                    <span className="text-xs text-red-500 pr-2">{errors.industry}</span>
+                  )}
+                </div>
+              </div>
+
+
+              {/* Password & Confirmation Side-by-side */}
+              <div className="grid grid-cols-2 gap-4">
+                {/* Confirm Password - Left in RTL */}
+                <div className="flex flex-col gap-1.5 text-right relative">
+                  <label htmlFor="confirm-password" className="text-sm font-semibold text-slate-700 dark:text-slate-300">تأكيد كلمة المرور</label>
+                  <PasswordInput
+                    id="confirm-password"
+                    className="h-11 pl-12 pr-5 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-transparent text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-primary focus-visible:ring-primary focus-visible:ring-offset-0"
+                    value={registerForm.passwordConfirmation}
+                    onChange={(e) => handleFieldChange('passwordConfirmation', e.target.value)}
+                  />
+                  {errors.passwordConfirmation && (
+                    <span className="text-xs text-red-500 pr-2">{errors.passwordConfirmation}</span>
+                  )}
+                </div>
+
+                {/* Password - Right in RTL */}
+                <div className="flex flex-col gap-1.5 text-right relative">
+                  <label htmlFor="password" className="text-sm font-semibold text-slate-700 dark:text-slate-300">كلمة المرور</label>
+                  <PasswordInput
+                    id="password"
+                    className="h-11 pl-12 pr-5 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-transparent text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-primary focus-visible:ring-primary focus-visible:ring-offset-0"
+                    value={registerForm.password}
+                    onChange={(e) => handleFieldChange('password', e.target.value)}
+                  />
+                  {errors.password && (
+                    <span className="text-xs text-red-500 pr-2">{errors.password}</span>
+                  )}
+                </div>
+              </div>
+
+              {/* Password Requirements Checklist (2x2 grid) */}
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 mt-1 px-1 text-right">
+                {passwordRequirements.map((req, index) => {
+                  const isMet = req.check(registerForm.password || '')
+                  return (
+                    <div
+                      key={index}
+                      className={cn(
+                        'flex items-center justify-start gap-1.5 text-xs transition-colors',
+                        isMet ? 'text-green-600 dark:text-green-400' : 'text-slate-400 dark:text-slate-500'
+                      )}
+                    >
+                      {isMet ? (
+                        <CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0" />
+                      ) : (
+                        <Circle className="h-3.5 w-3.5 text-slate-300 dark:text-slate-600 shrink-0" />
+                      )}
+                      <span>{req.label}</span>
+                    </div>
+                  )
+                })}
+              </div>
+
+            </div>
+
+            {/* Submit Button */}
+            <Button
+              type="submit"
+              disabled={isRegistering}
+              className="rounded-full h-12 mt-2 bg-[#00a2ff] hover:bg-[#008fe6] text-white text-base font-bold shadow-lg shadow-[#00a2ff]/20 transition-all duration-300"
             >
-              <Image
-                src="/auth-background.jpg"
-                alt="Image"
-                fill
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-            </motion.div>
-            <div className="absolute inset-0 bg-black/30 backdrop-blur-xs"></div>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-              className="absolute bottom-0 left-25 hidden -translate-x-1/2 -translate-y-1/2 dark:block"
-            ></motion.div>
-          </div>
-        </CardContent>
-      </Card>
+              {isRegistering ? 'جاري الإنشاء...' : 'إنشاء حساب'}
+            </Button>
+
+            {/* Central Footer link */}
+            <div className="text-sm text-slate-500 dark:text-slate-400 text-center mt-1">
+              لديك حساب بالفعل؟ <Link href="/login" className="text-primary font-bold hover:underline">تسجيل الدخول</Link>
+            </div>
+          </motion.form>
+        </div>
+      </div>
+        {/* Right Column: Branding Panel */}
+            <div className="hidden md:flex md:w-[45%] h-full flex-col justify-center items-center text-center p-12 text-white relative overflow-hidden bg-linear-to-br from-[#027fc7] to-[#013856]">
+      
+              {/* Content Container */}
+              <div className="flex flex-col items-center max-w-sm z-10 gap-2">
+                <motion.form
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4 }}
+                  onSubmit={handleSubmit}
+                  className="flex flex-col items-center max-w-sm z-10 gap-2"
+                >
+                {/* Logo Text */}
+                <div className="text-3xl font-black tracking-wide text-white mb-2 font-['Cairo']">
+                  Masarak | مسارك
+                </div>
+      
+                <h2 className="text-2xl font-black text-white leading-tight mb-2 font-['Cairo']">
+                  خطوتك القادمة تبدأ من هنا
+                </h2>
+      
+                <p className="text-sm font-semibold text-white/80 leading-relaxed max-w-xs mb-8 font-['Cairo']">
+                  انضم إلى آلاف الشركات التي تشكل مستقبلها من خلال منصة مسارك المتكاملة للتوظيف.
+                </p>
+      
+                {/* Squares Container */}
+                <div className="flex items-center justify-center gap-6 mt-2">
+                  {/* Left Square (Tilted) */}
+                  <div className="w-36 h-36 rounded-4xl border border-white/20 bg-white/10 backdrop-blur-md flex items-center justify-center shadow-2xl shadow-black/10 transform rotate-[-8deg] hover:rotate-0 transition-transform duration-300">
+                    <Image
+                      src="/Masarak-logo-light.png"
+                      alt="Masarak Logo"
+                      width={130}
+                      height={130}
+                      className="object-contain  dark:bg-card rounded-3xl  block dark:hidden"
+                      priority
+                    />
+                    <Image
+                      src="/Masarak-logo-dark.png"
+                      alt="Masarak Logo"
+                      width={130}
+                      height={130}
+                      className="object-contain bg-white rounded-3xl hidden dark:block"
+                      priority
+                    />
+                  </div>
+      
+                  {/* Right Square (Straight) */}
+                  <div className="w-36 h-36 rounded-4xl border p-2 border-white/20 bg-white/10 backdrop-blur-md flex items-center justify-center shadow-2xl shadow-black/10 transition-transform duration-300 hover:scale-105">
+                    <Image
+                      src="/Masarak-new-light.png"
+                      alt="Masarak Logo"
+                      width={130}
+                      height={130}
+                      className="object-contain bg-white dark:bg-card rounded-3xl p-1 block dark:hidden"
+                      priority
+                    />
+                    <Image
+                      src="/Masarak-new-dark.png"
+                      alt="Masarak Logo"
+                      width={130}
+                      height={130}
+                      className="object-contain bg-white rounded-3xl dark:bg-card p-1 hidden dark:block"
+                      priority
+                    />
+                  </div>
+                </div>
+                </motion.form>
+              </div>
+      
+              {/* Footer / Copyright */}
+              <div dir='ltr' className="absolute bottom-8 left-0 right-0 text-xs text-white/60 font-semibold z-10 font-['Cairo'] text-center">
+                @Masarak. 2026
+              </div>
+            </div>
+
     </div>
   )
 }

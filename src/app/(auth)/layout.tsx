@@ -1,8 +1,9 @@
 'use client'
 
 import { useAuth } from '@/auth/use-auth'
-import AuthNavBar from './_components/auth-navbar'
+import NavBar from '@/components/navbar'
 import React, { useEffect, useState } from 'react'
+import Image from 'next/image'
 
 export default function AuthLayout({
   children,
@@ -38,9 +39,11 @@ export default function AuthLayout({
   }
 
   return (
-    <div className="bg-background flex min-h-svh w-full flex-col">
-      <AuthNavBar />
-      {children}
+    <div className="bg-background relative flex min-h-svh w-full flex-col overflow-x-hidden">
+     
+      
+        {children}
+      
     </div>
   )
 }

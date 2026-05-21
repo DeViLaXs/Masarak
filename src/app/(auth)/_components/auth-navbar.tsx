@@ -16,42 +16,40 @@ import Link from 'next/link'
 export default function AuthNavBar() {
   const { setTheme } = useTheme()
   return (
-    <nav className="bg-card sticky top-0 z-50 flex items-center justify-between border-b px-6 py-4 shadow-sm max-sm:px-4 max-sm:py-3 md:px-12">
-      <div className="flex w-full items-center justify-between">
-        <div className="flex h-10 items-center justify-center">
-          <Link href="/" className="flex h-10 items-center justify-center">
-            <Image
-              src="/Masarak-logo-dark.png"
-              className="block dark:hidden"
-              alt="Logo"
-              width={40}
-              height={40}
-            />
-            <Image
-              src="/Masarak-logo.png"
-              className="hidden dark:block"
-              alt="Logo"
-              width={40}
-              height={40}
-            />
-            <Image
-              src="/masarak-new-dark.png"
-              className="hidden dark:block"
-              alt="Logo"
-              width={100}
-              height={100}
-            />
-            <Image
-              src="/masarak-new-light.png"
-              className="block dark:hidden"
-              alt="Logo"
-              width={100}
-              height={100}
-            />
-          </Link>
-        </div>
-        <AnimatedThemeToggler />
-      </div>
-    </nav>
+    <div className="flex justify-between items-center w-full shrink-0 pt-5">
+              <Link href="/" className="flex h-10 items-center gap-2">
+    
+                <Image
+                  src="/masarak-logo-light.png"
+                  alt="Masarak Logo"
+                  width={40}
+                  height={40}
+                  className="block dark:hidden"
+                />
+                <Image
+                  src="/masarak-new-light.png"
+                  alt="Masarak Logo"
+                  width={100}
+                  height={100}
+                  className="block dark:hidden"
+                />
+    
+                <Image
+                  src="/masarak-logo-dark.png"
+                  alt="Masarak Logo"
+                  width={40}
+                  height={40}
+                  className="hidden dark:block"
+                />
+                <Image
+                  src="/masarak-new-dark.png"
+                  alt="Masarak Logo"
+                  width={80}
+                  height={80}
+                  className="hidden dark:block"
+                />
+              </Link>
+              <AnimatedThemeToggler />
+            </div>
   )
 }

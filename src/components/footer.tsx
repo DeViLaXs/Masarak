@@ -4,70 +4,47 @@ import Link from 'next/link'
 
 export default function Footer() {
   return (
-    <footer className="bg-muted text-foreground w-full" dir="rtl">
-      {/* CTA Section */}
-      <div className="bg-primary text-primary-foreground py-16 text-center">
-        <h2 className="mb-4 text-4xl font-bold">ابدأ في إدارة التوظيف اليوم</h2>
-        <p className="mb-8 text-lg opacity-90">
-          انضم إلى المئات من الشركات التي تستخدم نظامنا لإدارة عمليات التوظيف
-          بكفاءة
-        </p>
-        <Link
-          href="/register"
-          className="bg-background text-secondary hover:bg-background/90 inline-block rounded-lg px-8 py-3 text-lg font-semibold transition"
-        >
-          تسجيل شركة جديدة
-        </Link>
-      </div>
-
-      {/* Main Footer */}
-      <div className="bg-background px-6 py-14">
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 text-right md:grid-cols-3">
-          {/* System Info */}
-          <div>
-            <h4 className="mb-4 text-lg font-bold">نظام التوظيف</h4>
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              منصة شاملة لإدارة التوظيف تمكّن الشركات من نشر الوظائف وإدارة
+     <footer className="relative z-10 bg-white text-slate-950 shadow-[0_-1px_0_rgba(15,23,42,0.08)] transition-colors duration-500 dark:bg-accent dark:text-foreground">
+        <div className="mx-auto grid max-w-445 grid-cols-1 gap-12 px-6 py-10 text-center md:grid-cols-3 md:px-16 md:text-right">
+          <section>
+            <h2 className="mb-7 text-xl font-black">نظام التوظيف</h2>
+            <p className="mx-auto max-w-md font-semibold text-slate-800 md:mx-0 dark:text-muted-foreground">
+              منصة شاملة لإدارة التوظيف تمكن الشركات من نشر الوظائف وإدارة
               طلبات التوظيف بكفاءة عالية
             </p>
-          </div>
+          </section>
 
-          {/* Quick Links */}
-          <div>
-            <h4 className="mb-4 text-lg font-bold">روابط سريعة</h4>
-            <ul className="text-muted-foreground space-y-2 text-sm">
-              <li>
-                <Link
-                  href="/register"
-                  className="hover:text-primary transition"
-                >
-                  تسجيل شركة
-                </Link>
-              </li>
-              <li>
-                <Link href="/login" className="hover:text-primary transition">
-                  تسجيل الدخول
-                </Link>
-              </li>
-            </ul>
-          </div>
+          <section>
+            <h2 className="mb-7 text-xl font-black">روابط سريعة</h2>
+            <nav className="flex flex-col items-center gap-4 font-semibold md:items-start">
+              <Link href="/register" className="transition hover:text-primary">
+                تسجيل شركة
+              </Link>
+              <Link href="/login" className="transition hover:text-primary">
+                تسجيل الدخول
+              </Link>
+            </nav>
+          </section>
 
-          {/* Contact */}
-          <div>
-            <h4 className="mb-4 text-lg font-bold">تواصل معنا</h4>
-            <div className="text-muted-foreground space-y-2 text-sm">
-              <p>📧 البريد الإلكتروني: masarak.platform@gmail.com</p>
-            </div>
-          </div>
+          <section>
+            <h2 className="mb-7 text-xl font-black">تواصل معنا</h2>
+            <p className=" font-semibold text-slate-800 dark:text-muted-foreground">
+              البريد الإلكتروني:
+              <a
+                href="mailto:masarak.platform@gmail.com"
+                className="mr-2 text-slate-950 transition hover:text-primary dark:text-foreground"
+              >
+                masarak.platform@gmail.com
+              </a>
+            </p>
+          </section>
         </div>
-      </div>
 
-      {/* Bottom Bar */}
-      <div className="border-border bg-background text-muted-foreground border-t py-5 text-center text-sm">
-        © 2024 Masarak. جميع الحقوق محفوظة.
-        <span className="mx-1">•</span>
-        Powered by <span className="text-primary font-semibold">Masarak</span>
-      </div>
-    </footer>
+        <div className="border-t border-slate-200 px-6 py-8 text-center font-semibold text-slate-950 dark:border-border dark:text-foreground">
+          © 2024 Masarak. جميع الحقوق محفوظة. · Powered by{' '}
+          
+          <span className="font-bold text-primary">Masarak</span>
+        </div>
+      </footer>
   )
 }

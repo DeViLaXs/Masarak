@@ -21,49 +21,62 @@ import Logo from './logo'
 
 export default function NavBar() {
   const { isAuthenticated, role, isLoading, user } = useAuth()
+  const pathname = usePathname()
 
   const dashboardLink =
     role === 'Admin' || role === 'SubAdmin' ? '/admin' : '/company'
 
+  const showDashboard =
+    isAuthenticated && (!user?.status || user.status === 'Active')
+
   return (
-    <nav className="bg-card sticky top-0 z-50 flex h-19 items-center justify-between gap-4 border-b px-12 py-4 shadow-sm max-md:px-4 max-md:py-3">
-      <Logo />
-
-      <div className="flex items-center gap-6 max-sm:gap-3">
-        {isLoading ? (
-          <div className="flex items-center gap-4">
-            <Skeleton className="h-10 w-35 bg-gray-700" />
-            <Skeleton className="h-10 w-35 bg-gray-700" />
-          </div>
-        ) : isAuthenticated ? (
-          user?.status && user.status !== 'Active' ? null : (
-            <Link
-              href={dashboardLink}
-              className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-5 py-2.5 text-sm font-semibold transition max-sm:px-3 max-sm:py-2 max-sm:text-xs"
-            >
-              لوحة التحكم
-            </Link>
-          )
-        ) : (
-          <>
-            <Link
-              href="/login"
-              className="text-muted-foreground hover:text-primary text-sm font-semibold transition-colors max-sm:text-xs"
-            >
-              تسجيل الدخول
-            </Link>
-
-            <Link
-              href="/register"
-              className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-5 py-2.5 text-sm font-semibold transition max-sm:px-3 max-sm:py-2 max-sm:text-xs"
-            >
-              تسجيل شركة جديدة
-            </Link>
-          </>
-        )}
-
-        <AnimatedThemeToggler />
-      </div>
-    </nav>
+    <nav className="bg-accent text-foreground sticky top-0 flex h-17.5 items-center justify-between rounded-2xl border border-border/80 px-5 shadow-2xl shadow-black/10 backdrop-blur-xl transition-colors duration-500 sm:px-8 dark:bg-accent/40 dark:text-white">
+             <Logo />
+   
+             <div className="flex items-center gap-3 sm:gap-6">
+                {isLoading ? (
+                  <div className="flex items-center gap-3">
+                    {pathname !== '/login' && (
+                      <Skeleton className="h-10 w-24 rounded-full bg-slate-300/80" />
+                    )}
+                    {pathname !== '/register' && (
+                      <Skeleton className="hidden h-10 w-32 rounded-full bg-slate-300/80 sm:block" />
+                    )}
+                  </div>
+                ) : showDashboard ? (
+                  <Link
+                    href={dashboardLink}
+                    className="rounded-full bg-primary px-5 py-3 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:bg-primary/90 sm:px-7"
+                  >
+                    لوحة التحكم
+                  </Link>
+                ) : (
+                  <>
+                    {pathname !== '/login' && (
+                      <Link
+                        href="/login"
+                        className="text-sm font-bold dark:text-white text-slate-900 transition hover:text-primary sm:text-base"
+                      >
+                        <span className="hidden sm:inline">تسجيل الدخول</span>
+                        <span className="inline sm:hidden">دخول</span>
+                      </Link>
+                    )}
+                    {pathname !== '/register' && (
+                      <Link
+                        href="/register"
+                        className="rounded-full bg-primary px-3 py-2 text-xs font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:bg-primary/90 sm:px-8 sm:text-base"
+                      >
+                        <span className="hidden sm:inline">تسجيل شركة جديدة</span>
+                        <span className="inline sm:hidden">سجل شركة</span>
+                      </Link>
+                    )}
+                  </>
+                )}
+   
+               <div className="text-foreground flex size-10 items-center justify-center rounded-full transition hover:bg-slate-300 dark:text-white dark:hover:bg-accent/40">
+                 <AnimatedThemeToggler />
+               </div>
+             </div>
+           </nav>
   )
 }
