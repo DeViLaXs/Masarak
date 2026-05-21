@@ -128,7 +128,7 @@ export function ForgetPassword({
                 {/* Left Square (Tilted) */}
                 <div className="w-36 h-36 rounded-4xl border border-white/20 bg-white/10 backdrop-blur-md flex items-center justify-center shadow-2xl shadow-black/10 transform rotate-[-8deg] hover:rotate-0 transition-transform duration-300">
                   <Image
-                    src="/Masarak-logo-light.png"
+                    src="/masarak-logo-light.png"
                     alt="Masarak Logo"
                     width={130}
                     height={130}
@@ -136,7 +136,7 @@ export function ForgetPassword({
                     priority
                   />
                   <Image
-                    src="/Masarak-logo-dark.png"
+                    src="/masarak-logo-dark.png"
                     alt="Masarak Logo"
                     width={130}
                     height={130}
@@ -148,7 +148,7 @@ export function ForgetPassword({
                 {/* Right Square (Straight) */}
                 <div className="w-36 h-36 rounded-4xl border p-2 border-white/20 bg-white/10 backdrop-blur-md flex items-center justify-center shadow-2xl shadow-black/10 transition-transform duration-300 hover:scale-105">
                   <Image
-                    src="/Masarak-new-light.png"
+                    src="/masarak-new-light.png"
                     alt="Masarak Logo"
                     width={130}
                     height={130}
@@ -156,7 +156,7 @@ export function ForgetPassword({
                     priority
                   />
                   <Image
-                    src="/Masarak-new-dark.png"
+                    src="/masarak-new-dark.png"
                     alt="Masarak Logo"
                     width={130}
                     height={130}

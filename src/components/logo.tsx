@@ -6,14 +6,14 @@ export default function Logo() {
     <div className="flex h-10 items-center justify-center">
       <Link href="/" className="flex h-10 items-center justify-center">
         <Image
-          src="/Masarak-logo-light.png"
+          src="/masarak-logo-light.png"
           className="block dark:hidden"
           alt="Logo"
           width={40}
           height={40}
         />
         <Image
-          src="/Masarak-logo-dark.png"
+          src="/masarak-logo-dark.png"
           className="hidden dark:block"
           alt="Logo"
           width={40}
