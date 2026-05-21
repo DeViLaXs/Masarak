@@ -185,7 +185,7 @@ export function SignupForm({
                     htmlFor="logo"
                     className="flex items-center justify-between h-11 px-5 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-full cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
                   >
-                    <span className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-[120px]">
+                    <span className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-30">
                       {registerForm.logoUrl ? (registerForm.logoUrl as File).name : 'اضغط لرفع الشعار'}
                     </span>
                     <Upload className="h-4 w-4 text-slate-400 shrink-0" />
@@ -257,19 +257,6 @@ export function SignupForm({
 
               {/* Password & Confirmation Side-by-side */}
               <div className="grid grid-cols-2 gap-4">
-                {/* Confirm Password - Left in RTL */}
-                <div className="flex flex-col gap-1.5 text-right relative">
-                  <label htmlFor="confirm-password" className="text-sm font-semibold text-slate-700 dark:text-slate-300">تأكيد كلمة المرور</label>
-                  <PasswordInput
-                    id="confirm-password"
-                    className="h-11 pl-12 pr-5 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-transparent text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-primary focus-visible:ring-primary focus-visible:ring-offset-0"
-                    value={registerForm.passwordConfirmation}
-                    onChange={(e) => handleFieldChange('passwordConfirmation', e.target.value)}
-                  />
-                  {errors.passwordConfirmation && (
-                    <span className="text-xs text-red-500 pr-2">{errors.passwordConfirmation}</span>
-                  )}
-                </div>
 
                 {/* Password - Right in RTL */}
                 <div className="flex flex-col gap-1.5 text-right relative">
@@ -282,6 +269,19 @@ export function SignupForm({
                   />
                   {errors.password && (
                     <span className="text-xs text-red-500 pr-2">{errors.password}</span>
+                  )}
+                </div>
+                {/* Confirm Password - Left in RTL */}
+                <div className="flex flex-col gap-1.5 text-right relative">
+                  <label htmlFor="confirm-password" className="text-sm font-semibold text-slate-700 dark:text-slate-300">تأكيد كلمة المرور</label>
+                  <PasswordInput
+                    id="confirm-password"
+                    className="h-11 pl-12 pr-5 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-transparent text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-primary focus-visible:ring-primary focus-visible:ring-offset-0"
+                    value={registerForm.passwordConfirmation}
+                    onChange={(e) => handleFieldChange('passwordConfirmation', e.target.value)}
+                  />
+                  {errors.passwordConfirmation && (
+                    <span className="text-xs text-red-500 pr-2">{errors.passwordConfirmation}</span>
                   )}
                 </div>
               </div>

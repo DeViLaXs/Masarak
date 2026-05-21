@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { authKeys } from './query-keys'
@@ -43,9 +43,21 @@ export function useAuth(options: UseAuthOptions = {}) {
     queryFn: authService.me,
     retry: 0, // 🛡️ Absolute no retry for session check
     refetchOnWindowFocus: true, // Re-check when user focuses window
-    refetchInterval: 15 * 1000, // Poll every 15 seconds to catch status changes
+    refetchInterval: (query) => (query.state.data ? 15 * 1000 : false), // Poll every 15 seconds ONLY if authenticated
     staleTime: 5 * 1000,
   })
+
+  // Optimistic guest detection to avoid button loading layout flash for non-logged in users
+  const [isOptimisticGuest, setIsOptimisticGuest] = useState(false)
+
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      const isLoggedInCookie = document.cookie
+        .split(';')
+        .some((item) => item.trim().startsWith('is_logged_in='))
+      setIsOptimisticGuest(!isLoggedInCookie)
+    }
+  }, [user])
 
   // Invalidate session on route transitions to ensure real-time status checks
   useEffect(() => {
@@ -262,7 +274,7 @@ export function useAuth(options: UseAuthOptions = {}) {
     // State
     user,
     role,
-    isLoading: isSessionLoading,
+    isLoading: isSessionLoading && !isOptimisticGuest,
     isAuthenticated,
     isError: isSessionError,
     error: sessionError,

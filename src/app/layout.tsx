@@ -15,11 +15,11 @@ const cairo = Cairo({
 })
 
 export const metadata: Metadata = {
-  title: 'Masarak',
+  title: 'Masarak | مسارك',
   description:
     'نظام شامل يمكن الشركات من نشر الوظائف وإدارة طلبات التوظيف ومتابعة عمليات التوظيف بكفاءة عالية',
   icons: {
-    icon: '/Masarak-logo.png',
+    icon: '/masarak-logo-light.png',
   },
 }
 
