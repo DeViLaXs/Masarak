@@ -280,7 +280,6 @@ export default function CreateSubAdminPage() {
                     </FieldLabel>
                     <PasswordInput
                       id="confirm-password"
-                      dir="ltr"
                       className="w-full sm:max-w-md"
                       value={form.passwordConfirmation}
                       onChange={(e) =>

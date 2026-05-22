@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import CompaniesCard from '@/app/(dashboard)/admin/_components/companies-card'
-import { DataTable } from '@/components/data-table'
-import { columns } from '../_components/columns'
+import { CompaniesTable } from '@/app/(dashboard)/admin/_components/companies-table'
 import { useAdmin } from '@/hooks/use-admin'
 import { Input } from '@/components/ui/input'
 import { Search, Check, X, UserX, Ban } from 'lucide-react'
@@ -141,24 +140,27 @@ export default function CompaniesPage() {
     <div className="px-6 py-1 max-sm:p-4">
       <CompaniesCard />
 
-      <div className="mt-6 flex flex-col gap-4">
+      <div className="mt-6 flex flex-col gap-5">
         {/* Search and Filters Bar */}
-        <div className="bg-card flex flex-col gap-4 rounded-xl border p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+        <div
+          className="border-border/40 dark:bg-card flex flex-col gap-4 rounded-3xl border bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between"
+          dir="rtl"
+        >
           {/* Search Input on the Right */}
-          <div className="relative w-full max-w-md">
-            <Search className="absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <div className="relative w-full sm:max-w-xl">
+            <Search className="absolute top-1/2 right-5 h-5 w-5 -translate-y-1/2 text-slate-500" />
             <Input
               placeholder="البحث عن الشركات..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-background w-full pr-9 pl-3 text-right"
+              className="focus-visible:ring-primary/20 h-10 rounded-full border-slate-300 bg-transparent px-6 pr-12 text-right text-base shadow-none dark:border-slate-600"
               dir="rtl"
             />
           </div>
 
           {/* Status Filter on the Left */}
-          <div className="flex items-center gap-2 max-sm:w-full">
-            <span className="text-foreground text-sm font-medium whitespace-nowrap">
+          <div className="flex items-center gap-4 max-sm:w-full">
+            <span className="text-foreground hidden text-sm font-medium whitespace-nowrap">
               الحالة:
             </span>
             <Combobox
@@ -168,7 +170,7 @@ export default function CompaniesPage() {
                 setPage(1)
               }}
             >
-              <ComboboxTrigger className="bg-card flex h-10 w-full min-w-[210px] items-center justify-between rounded-lg border px-3 text-sm sm:w-[210px]">
+              <ComboboxTrigger className="flex h-10 w-full min-w-[250px] items-center justify-between rounded-full border border-slate-300 bg-transparent px-6 text-sm shadow-none sm:w-[250px] dark:border-slate-600">
                 {statusFilter === 'All' && 'جميع الحالات'}
                 {statusFilter === 'Active' && 'موثقة (Active)'}
                 {statusFilter === 'PendingApproval' &&
@@ -177,7 +179,7 @@ export default function CompaniesPage() {
                 {statusFilter === 'Rejected' && 'مرفوضة (Rejected)'}
                 {statusFilter === 'Blocked' && 'محظورة (Blocked)'}
               </ComboboxTrigger>
-              <ComboboxContent className="w-[210px] p-0">
+              <ComboboxContent className="w-[250px] p-0">
                 <ComboboxList>
                   <ComboboxItem value="All">جميع الحالات</ComboboxItem>
                   <ComboboxItem value="Active">موثقة (Active)</ComboboxItem>
@@ -287,20 +289,17 @@ export default function CompaniesPage() {
         </AlertDialog>
 
         {/* Table Container */}
-        <div className="bg-card overflow-hidden rounded-xl border shadow-sm">
-          <div className="border-b p-4">
-            <h2 className="text-right text-lg font-semibold">إدارة الشركات</h2>
-          </div>
+        <div className="border-border/40 dark:bg-card overflow-hidden rounded-3xl border h-full bg-white shadow-sm">
+         
 
           <div className="p-0">
             {isLoading ? (
-              <div className="text-muted-foreground p-8 text-center">
+              <div className="text-muted-foreground flex min-h-[385px] items-center justify-center p-8 text-center">
                 جاري تحميل البيانات...
               </div>
             ) : (
-              <div className="bg-card rounded-xl p-1 shadow-sm sm:p-4">
-                <DataTable
-                  columns={columns}
+              <div>
+                <CompaniesTable
                   data={companies}
                   rowSelection={rowSelection}
                   onRowSelectionChange={setRowSelection}
@@ -315,7 +314,7 @@ export default function CompaniesPage() {
           {/* Pagination Controls */}
           {pag && pag.totalPages > 1 && (
             <div
-              className="text-muted-foreground border-border flex items-center justify-between border-t p-4 text-sm"
+              className="border-border/60 text-muted-foreground flex items-center justify-between border-t px-6 py-3 text-sm"
               dir="rtl"
             >
               <div>
@@ -327,6 +326,7 @@ export default function CompaniesPage() {
                 <Button
                   variant="outline"
                   size="sm"
+                  className="rounded-full border-slate-200 px-5 shadow-sm"
                   disabled={pag.currentPage === 1}
                   onClick={() => setPage((p) => p - 1)}
                 >
@@ -339,7 +339,7 @@ export default function CompaniesPage() {
                         key={p}
                         variant={p === pag.currentPage ? 'default' : 'outline'}
                         size="sm"
-                        className="h-8 w-8 p-0"
+                        className="h-9 w-9 rounded-full p-0 shadow-sm"
                         onClick={() => setPage(p)}
                       >
                         {p}
@@ -350,6 +350,7 @@ export default function CompaniesPage() {
                 <Button
                   variant="outline"
                   size="sm"
+                  className="rounded-full border-slate-200 px-5 shadow-sm"
                   disabled={pag.currentPage === pag.totalPages}
                   onClick={() => setPage((p) => p + 1)}
                 >
