@@ -8,7 +8,7 @@ export const metadata = {
 
 export default function ContactUsPage() {
   return (
-    <div className="w-full">
+    <div className="w-full py-5">
       <ContactUsClient />
     </div>
   )

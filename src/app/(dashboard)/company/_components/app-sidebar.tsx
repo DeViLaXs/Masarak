@@ -7,6 +7,13 @@ import {
   MessagesSquare,
   EllipsisVertical,
   MailIcon,
+  Users,
+  SquareLibrary,
+  Clipboard,
+  Briefcase,
+  CirclePlus,
+  ClipboardList,
+  List,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -44,27 +51,27 @@ const links = [
   {
     title: 'إدارة الوظائف',
     path: '/company/manage-job',
-    icon: Building2,
+    icon: Briefcase,
   },
   {
     title: 'إضافة وظيفة جديدة',
     path: '/company/add-job',
-    icon: MessagesSquare,
+    icon: CirclePlus,
   },
   {
     title: 'طلبات التوظيف ',
     path: '/company/job-order',
-    icon: Settings,
+    icon: ClipboardList,
   },
   {
     title: 'سجل التوظيف ',
     path: '/company/job-history',
-    icon: Settings,
+    icon: List,
   },
   {
     title: 'المقابلات ',
     path: '/company/interview',
-    icon: Settings,
+    icon: Users,
   },
   {
     title: 'تواصل معنا ',

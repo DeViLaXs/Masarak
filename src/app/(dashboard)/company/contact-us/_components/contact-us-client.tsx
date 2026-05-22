@@ -13,9 +13,11 @@ import {
   MessageSquareIcon,
   Loader2,
   CheckCircle2,
+  BriefcaseIcon,
+  Mail,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { motion } from 'framer-motion'
 
 export default function ContactUsClient() {
@@ -90,34 +92,29 @@ export default function ContactUsClient() {
       transition={{ type: 'spring', stiffness: 100, damping: 15 }}
       className="mx-auto w-full max-w-3xl space-y-8 pb-10"
     >
-      {/* Header Banner */}
-      <div className="relative overflow-hidden rounded-2xl border border-primary/10 bg-gradient-to-l from-primary/10 via-background to-background p-8 text-right shadow-sm dark:from-primary/5">
-        <div className="relative z-10 flex flex-col gap-3">
-          <div className="flex items-center gap-3">
-            <div className="flex size-14 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-sm ring-1 ring-primary/20 backdrop-blur-md">
-              <MessageSquareIcon className="size-6" />
-            </div>
-            <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
-              تواصل معنا
-            </h1>
-          </div>
-          <p className="mr-[68px] max-w-2xl text-base leading-relaxed text-muted-foreground">
-            نحن هنا لنسمعك! شاركنا أفكارك، مقترحاتك لتطوير المنصة، أو أبلغنا عن أي مشكلة واجهتك أثناء استخدام مسارك.
-          </p>
-        </div>
-
-        {/* Decorative elements */}
-        <div className="pointer-events-none absolute -left-20 -top-20 size-64 rounded-full bg-primary/5 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-32 right-10 size-64 rounded-full bg-primary/5 blur-3xl" />
-      </div>
-
+      
       <form onSubmit={handleSubmit} className="space-y-8">
         <Card className="overflow-hidden border-border/50 shadow-sm transition-all hover:shadow-md">
+         <CardHeader className="dark:bg-muted/10 border-b pb-5">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-primary/10 text-primary ring-primary/20 flex size-10 items-center justify-center rounded-lg ring-1">
+                        <Mail className="size-5" />
+                      </div>
+                      <div>
+                        <CardTitle size="bold" className="text-lg">
+                          تواصل معنا
+                        </CardTitle>
+                        <CardDescription className="mt-1">
+                          لديك اقتراح أو مشكلة؟ نحن هنا للاستماع إليك!
+                        </CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
           <CardContent className="p-6 sm:p-8">
             <div className="space-y-8">
               {/* Type Selection */}
               <div className="space-y-4">
-                <FieldLabel className="text-lg">ما هو نوع رسالتك؟</FieldLabel>
+               
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   {/* Feature Request */}
                   <label

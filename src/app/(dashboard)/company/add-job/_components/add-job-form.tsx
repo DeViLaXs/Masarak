@@ -324,27 +324,7 @@ export function AddJobForm() {
       transition={{ type: 'spring', stiffness: 100, damping: 15 }}
       className="mx-auto w-full max-w-4xl space-y-8 pb-10"
     >
-      {/* Header Banner */}
-      <div className="border-primary/10 from-primary/10 via-background to-background dark:from-primary/5 relative overflow-hidden rounded-2xl border bg-gradient-to-l p-8 text-right shadow-sm">
-        <div className="relative z-10 flex flex-col gap-3">
-          <div className="flex items-center gap-3">
-            <div className="bg-primary/10 text-primary ring-primary/20 flex size-14 items-center justify-center rounded-xl shadow-sm ring-1 backdrop-blur-md">
-              <Sparkles className="size-6" />
-            </div>
-            <h1 className="text-foreground text-3xl font-extrabold tracking-tight">
-              إضافة وظيفة جديدة
-            </h1>
-          </div>
-          <p className="text-muted-foreground mr-[68px] max-w-2xl text-base leading-relaxed">
-            أنشئ إعلاناً وظيفياً مميزاً واجذب أفضل الكفاءات والمواهب لفريقك
-            بخطوات بسيطة وواضحة.
-          </p>
-        </div>
-
-        {/* Decorative elements */}
-        <div className="bg-primary/5 pointer-events-none absolute -top-20 -left-20 size-64 rounded-full blur-3xl" />
-        <div className="bg-primary/5 pointer-events-none absolute right-10 -bottom-32 size-64 rounded-full blur-3xl" />
-      </div>
+      
 
       <form
         onSubmit={handleSubmit}
