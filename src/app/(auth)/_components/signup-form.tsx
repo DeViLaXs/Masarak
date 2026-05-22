@@ -18,6 +18,10 @@ import { AnimatedThemeToggler } from '@/components/ui/animated-theme-toggler'
 import AuthNavBar from './auth-navbar'
 import SquareContainer from './square-container'
 
+const DEFAULT_LOGO_PLACEHOLDER = new File([], 'User-icon.webp', {
+  type: 'image/webp',
+})
+
 // 1. Validation Schema
 const signupSchema = z
   .object({
@@ -93,7 +97,10 @@ export function SignupForm({
   ]
 
   // 3. Helper to update field and clear its error
-  const handleFieldChange = (field: keyof RegisterDto, value: any) => {
+  const handleFieldChange = (
+    field: keyof RegisterDto,
+    value: RegisterDto[keyof RegisterDto],
+  ) => {
     setRegisterForm((prev) => ({ ...prev, [field]: value }))
     if (errors[field]) {
       setErrors((prev) => {
@@ -107,7 +114,12 @@ export function SignupForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
-    const result = signupSchema.safeParse(registerForm)
+    const payload: RegisterDto = {
+      ...registerForm,
+      logoUrl: registerForm.logoUrl ?? DEFAULT_LOGO_PLACEHOLDER,
+    }
+
+    const result = signupSchema.safeParse(payload)
 
     if (!result.success) {
       const fieldErrors: Record<string, string> = {}
@@ -121,7 +133,7 @@ export function SignupForm({
       return
     }
 
-    register(registerForm, {
+    register(payload, {
       onSuccess: () => {
         sessionStorage.setItem('otp_allowed', '1')
         router.push(`/otp?email=${encodeURIComponent(registerForm.email)}`)

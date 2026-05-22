@@ -18,6 +18,8 @@ export type RegisterDto = {
   logoUrl?: File | null
 }
 
+const DEFAULT_REGISTER_LOGO_PATH = '/User-icon.webp'
+
 export type RegisterSubAdminDto = {
   name: string
   email: string
@@ -61,8 +63,15 @@ export const authService = {
     formData.append('passwordConfirmation', data.passwordConfirmation)
     formData.append('industry', data.industry)
 
-    if (data.logoUrl) {
+    if (data.logoUrl && data.logoUrl.size > 0) {
       formData.append('logoUrl', data.logoUrl)
+    } else {
+      const defaultLogoResponse = await fetch(DEFAULT_REGISTER_LOGO_PATH)
+      const defaultLogoBlob = await defaultLogoResponse.blob()
+      const defaultLogoFile = new File([defaultLogoBlob], 'User-icon.webp', {
+        type: defaultLogoBlob.type || 'image/webp',
+      })
+      formData.append('logoUrl', defaultLogoFile)
     }
 
     const res = await api.post('/Account/Register', formData)
