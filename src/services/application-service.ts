@@ -47,6 +47,31 @@ export const applicationService = {
   },
 
   /**
+   * Retrieves a paginated list of historical company employment records.
+   */
+  getEmploymentRecords: async (
+    params?: GetApplicationsParams,
+  ): Promise<PaginatedData<ApplicationListItemDto>> => {
+    const cleanParams = Object.fromEntries(
+      Object.entries(params || {}).filter(
+        ([_, v]) => v !== undefined && v !== '',
+      ),
+    )
+
+    const res = await api.get('/Applications/company/employment-records', {
+      params: cleanParams,
+    })
+    const data = res.data?.data || res.data
+
+    return {
+      ...data,
+      totalPages:
+        data.totalPages ||
+        Math.max(1, Math.ceil((data.totalCount || 0) / (data.pageSize || 10))),
+    }
+  },
+
+  /**
    * Returns the data needed for the filter dropdowns.
    */
   getFilters: async (): Promise<ApplicationFiltersDto> => {

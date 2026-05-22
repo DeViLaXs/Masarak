@@ -233,6 +233,7 @@ export default function ApplicationsPage() {
       {/* Jobs Table Card */}
       
       <motion.div variants={itemVariants}>
+        <div className="border-border/40 dark:bg-card overflow-hidden rounded-3xl border h-full bg-white shadow-sm">
         <JobOrderTable
           data={data}
           loading={loading}
@@ -248,6 +249,7 @@ export default function ApplicationsPage() {
             setDialogOpen(true)
           }}
         />
+        </div>
       </motion.div>
 
       {dialogOpen && (

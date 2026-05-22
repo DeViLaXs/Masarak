@@ -3,8 +3,8 @@ import Image from 'next/image'
 
 export default function Logo() {
   return (
-    <div className="flex h-10 items-center justify-center">
-      <Link href="/" className="flex h-10 items-center justify-center">
+    
+      <Link href="/" className="flex h-10 items-center ">
         <Image
           src="/masarak-logo-light.png"
           className="block dark:hidden"
@@ -34,6 +34,6 @@ export default function Logo() {
           height={100}
         />
       </Link>
-    </div>
+    
   )
 }

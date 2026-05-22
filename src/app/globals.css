@@ -8,6 +8,39 @@
   box-sizing: border-box;
 }
 
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes rotateFloat {
+  0% {
+    transform: rotate(-8deg);
+  }
+
+  50% {
+    transform: rotate(8deg);
+  }
+
+  100% {
+    transform: rotate(-8deg);
+  }
+}
+
+.animate-rotate-float {
+  animation: rotateFloat 4s ease-in-out infinite;
+}
+
 /* ── Goey-toast reactive theme ──
    Mirrors the library's dark toast rules against app light mode so toast
    colors stay inverted relative to the current color mode. */

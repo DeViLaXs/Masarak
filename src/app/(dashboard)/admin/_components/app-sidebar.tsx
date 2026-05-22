@@ -2,18 +2,19 @@
 
 import {
   LayoutDashboard,
-  Settings,
   Building2,
   MessagesSquare,
-  EllipsisVertical,
   Users,
-  UserStar,
   UserPlus,
+  UserRound,
+  LogOut,
 } from 'lucide-react'
 import {
   Sidebar,
+  SidebarGroup,
   SidebarContent,
   SidebarFooter,
+  SidebarGroupLabel,
   SidebarGroupContent,
   SidebarHeader,
   SidebarMenu,
@@ -22,24 +23,14 @@ import {
 } from '@/components/ui/sidebar'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '../../../../components/ui/dropdown-menu'
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '../../../../components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useAuth } from '@/auth/use-auth'
 import Logo from '@/components/logo'
 import { useUser } from '@/hooks/use-users'
 
 const adminLinks = [
   {
-    title: 'لوحة التحكم ',
+    title: 'لوحة التحكم',
     path: '/admin',
     icon: LayoutDashboard,
   },
@@ -67,7 +58,7 @@ const adminLinks = [
 
 const subAdminLinks = [
   {
-    title: 'لوحة التحكم ',
+    title: 'لوحة التحكم',
     path: '/admin',
     icon: LayoutDashboard,
   },
@@ -85,75 +76,88 @@ const subAdminLinks = [
 
 export function AppSidebar() {
   const pathname = usePathname()
-  console.log('الصفحة الحالية:', pathname)
-
   const { logout, isLoggingOut, role } = useAuth()
   const { user } = useUser()
-
-  const handleLogout = () => {
-    logout()
-  }
 
   const links = role === 'SubAdmin' ? subAdminLinks : adminLinks
 
   return (
     <Sidebar side="right">
-      <SidebarHeader className="text-primary me-2 mt-2 mb-5 text-2xl font-bold">
+      <SidebarHeader className="text-primary me-2 mt-2 mb-5 mr-2 text-2xl font-bold">
         <Logo />
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroupContent>
-          <SidebarMenu>
-            {links.map((link) => {
-              const isActive = pathname === link.path
+        <SidebarGroup className="mb-30">
+          <SidebarGroupLabel className="bg-accent dark:bg-input mb-2 rounded-none px-4 text-[11px] font-semibold tracking-wide uppercase">
+            القائمة الرئيسية
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {links.map((link) => {
+                const isActive = pathname === link.path
 
-              return (
-                <SidebarMenuItem key={link.title} className="mx-2">
-                  <SidebarMenuButton
-                    isActive={isActive}
-                    asChild
-                    className="transition-all"
-                  >
-                    <Link href={link.path}>
-                      <link.icon />
-                      <span>{link.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              )
-            })}
-          </SidebarMenu>
-        </SidebarGroupContent>
-      </SidebarContent>
-      <SidebarFooter>
-        <SidebarMenu className="mt-3">
-          <SidebarMenuItem>
-            <DropdownMenu dir="rtl">
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton className="transition-all">
-                  <Avatar>
-                    <AvatarImage src={user?.sasUrl || '/User-icon.webp'} />
-                    <AvatarFallback className="bg-primary/5 text-primary text-xl font-bold">
-                      {user?.name.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
-                  {user?.name}
-                  <EllipsisVertical className="ms-auto" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent side="top" sideOffset={2}>
-                <DropdownMenuItem asChild>
+                return (
+                  <SidebarMenuItem key={link.title} className="mx-2">
+                    <SidebarMenuButton
+                      isActive={isActive}
+                      asChild
+                      className="transition-all"
+                    >
+                      <Link href={link.path}>
+                        <link.icon />
+                        <span>{link.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup className="mb-auto pb-2">
+          <SidebarGroupLabel className="bg-accent dark:bg-input mb-2 rounded-none px-4 text-[11px] font-semibold tracking-wide uppercase">
+            الحساب
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem className="mx-2">
+                <SidebarMenuButton
+                  isActive={pathname === '/admin/profile'}
+                  asChild
+                  className="transition-all"
+                >
                   <Link href="/admin/profile">
+                    <UserRound />
                     <span>الملف الشخصي</span>
                   </Link>
-                </DropdownMenuItem>
-                {/* <DropdownMenuItem variant="destructive" onClick={() => logout()} > */}
-                <DropdownMenuItem variant="destructive" onClick={handleLogout}>
-                  الخروج
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem className="mx-2">
+                <SidebarMenuButton
+                  onClick={() => logout()}
+                  disabled={isLoggingOut}
+                  className="text-destructive transition-all hover:text-destructive"
+                >
+                  <LogOut />
+                  <span>{isLoggingOut ? 'جاري تسجيل الخروج...' : 'الخروج'}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+
+      <SidebarFooter>
+        <SidebarMenu className="mx-2 flex-row items-center gap-2 border-t py-2">
+          <Avatar>
+            <AvatarImage src={user?.sasUrl || '/User-icon.webp'} />
+            <AvatarFallback className="bg-primary/5 text-primary text-xl font-bold">
+              {user?.name?.charAt(0)}
+            </AvatarFallback>
+          </Avatar>
+          <span className="font-medium capitalize">{user?.name}</span>
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>

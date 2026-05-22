@@ -249,19 +249,21 @@ export default function ManageJobPage() {
 
             {/* ManageJobs Table Card */}
             <motion.div variants={itemVariants}>
-                <ManageJobTable
-                    data={jobs}
-                    isPending={isPending}
-                    page={page}
-                    totalPages={totalPages}
-                    setPage={setPage}
-                    isUpdating={isUpdating}
-                    isUpdatingJob={isUpdatingJob}
-                    handleStatusChange={handleStatusChange}
-                    handleReschedule={handleReschedule}
-                    sorting={sorting}
-                    setSorting={setSorting}
-                />
+                <div className="border-border/40 dark:bg-card overflow-hidden rounded-3xl border h-full bg-white shadow-sm">
+                    <ManageJobTable
+                        data={jobs}
+                        isPending={isPending}
+                        page={page}
+                        totalPages={totalPages}
+                        setPage={setPage}
+                        isUpdating={isUpdating}
+                        isUpdatingJob={isUpdatingJob}
+                        handleStatusChange={handleStatusChange}
+                        handleReschedule={handleReschedule}
+                        sorting={sorting}
+                        setSorting={setSorting}
+                    />
+                </div>
             </motion.div>
         </motion.div>
     )

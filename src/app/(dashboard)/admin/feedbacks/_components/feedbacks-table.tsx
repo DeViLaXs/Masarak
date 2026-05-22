@@ -61,8 +61,7 @@ const getBadgeVariant = (typeName: string) => {
 const getReviewerTypeName = (type?: string) => {
   const t = (type || '').trim().toLowerCase()
   if (t === 'company') return 'شركة'
-  if (t === 'candidate') return 'مرشح'
-  if (t === 'user') return 'مستخدم'
+  if (t === 'candidate') return 'مستخدم'
   return type || 'مجهول'
 }
 
@@ -165,7 +164,7 @@ export function FeedbacksTable({
           const message = row.original.message || ''
 
           return (
-            <p className="text-muted-foreground mx-auto line-clamp-2 max-w-[400px] text-center text-sm leading-relaxed">
+            <p className=" mx-auto line-clamp-2 max-w-[400px] text-center text-sm leading-relaxed">
               {message.length > 50 ? `${message.substring(0, 50)}...` : message}
             </p>
           )
@@ -175,7 +174,7 @@ export function FeedbacksTable({
         accessorKey: 'createdAt',
         header: 'التاريخ',
         cell: ({ row }) => (
-          <span className="text-muted-foreground text-sm">
+          <span className="text-sm">
             {row.original.createdAt &&
             !isNaN(new Date(row.original.createdAt).getTime())
               ? format(new Date(row.original.createdAt), 'dd MMM yyyy', {
@@ -190,7 +189,7 @@ export function FeedbacksTable({
         header: 'الحالة',
         cell: ({ row }) =>
           row.original.isRead ? (
-            <span className="text-muted-foreground inline-flex items-center gap-1 text-xs font-medium">
+            <span className="inline-flex items-center gap-1 text-xs font-medium">
               مقروءة
             </span>
           ) : (
@@ -208,7 +207,7 @@ export function FeedbacksTable({
 
           return (
             <div className="flex items-center justify-center gap-2">
-              {!feedback.isRead && (
+              
                 <Button
                   variant="ghost"
                   size="icon"
@@ -218,11 +217,12 @@ export function FeedbacksTable({
                     e.stopPropagation()
                     onMarkAsRead(feedback.id)
                   }}
-                  disabled={isMarking}
+                  disabled={isMarking || feedback.isRead}
+                  
                 >
                   <CheckCircle2 className="size-4" />
                 </Button>
-              )}
+              
               <Button
                 variant="ghost"
                 size="icon"
@@ -232,7 +232,7 @@ export function FeedbacksTable({
                   e.stopPropagation()
                   onDeleteRequest(feedback.id)
                 }}
-                disabled={isDeleting}
+                disabled={isDeleting }
               >
                 <Trash2 className="size-4" />
               </Button>

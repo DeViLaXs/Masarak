@@ -4,6 +4,8 @@ import { applicationService, type GetApplicationsParams } from '@/services/appli
 export const applicationKeys = {
   all: ['applications'] as const,
   list: (params: GetApplicationsParams) => [...applicationKeys.all, 'list', params] as const,
+  employmentRecords: (params: GetApplicationsParams) =>
+    [...applicationKeys.all, 'employment-records', params] as const,
 }
 
 export function useApplicationFilters() {
@@ -18,6 +20,14 @@ export function useApplications(params: GetApplicationsParams) {
   return useQuery({
     queryKey: applicationKeys.list(params),
     queryFn: () => applicationService.getApplications(params),
+    placeholderData: keepPreviousData,
+  })
+}
+
+export function useEmploymentRecords(params: GetApplicationsParams) {
+  return useQuery({
+    queryKey: applicationKeys.employmentRecords(params),
+    queryFn: () => applicationService.getEmploymentRecords(params),
     placeholderData: keepPreviousData,
   })
 }

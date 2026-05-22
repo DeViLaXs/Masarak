@@ -64,7 +64,7 @@ export function JobOrderTable({
     {
       accessorKey: 'email',
       header: 'البريد الالكتروني',
-      cell: ({ row }) => <div className='w-full flex justify-center'><span className="text-muted-foreground">{row.original.email}</span></div>
+      cell: ({ row }) => <div className='w-full flex justify-center'><span>{row.original.email}</span></div>
     },
     {
       accessorKey: 'jobTitle',
@@ -100,9 +100,9 @@ export function JobOrderTable({
     },
     {
       accessorKey: 'applicationDate',
-      header: 'التاريخ',
+      header: 'التاريخ التقديم',
       cell: ({ row }) => (
-        <span className="text-muted-foreground">
+        <span>
           {new Date(row.original.applicationDate).toLocaleDateString()}
         </span>
       ),
@@ -113,8 +113,8 @@ export function JobOrderTable({
       cell: ({ row }) => {
         const status = row.original.applicationStatus;
         const translations: Record<string, string> = {
-          'PendingReview': 'في قيد الانتظار',
-          'Shortlisted': 'في انتظار المقابلة',
+          'PendingReview': 'قيد الانتظار',
+          'Shortlisted': 'انتظار المقابلة',
           'Rejected': 'مرفوض',
           'Hired': 'تم التوظيف',
           'Withdrawn': 'انسحب',
@@ -231,132 +231,126 @@ export function JobOrderTable({
   })
 
   return (
-    <Card className="border-border/40 shadow-sm overflow-hidden pt-2 pb-2">
-      <div className="space-y-2">
-        <div className="pb-2"></div>
-
-        <div className="bg-white dark:bg-transparent max-h-[460px] overflow-y-auto relative w-full overflow-x-auto">
-          <table className="w-full caption-bottom text-sm">
-            <TableHeader className="sticky top-0 z-10 bg-slate-50 dark:bg-muted shadow-sm">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead
-                        key={header.id}
-                        className="text-center bg-[#f8fafc] dark:bg-muted dark:text-muted-foreground sticky top-0 z-10"
-                        style={{ minWidth: header.column.id === 'actions' ? '160px' : undefined }}
-                      >
-                        {header.isPlaceholder
-                          ? null
-                          : header.column.id !== 'actions' && header.column.id !== 'cv' ? (
-                            <div
-                              className="flex items-center justify-center gap-1 cursor-pointer select-none hover:text-primary transition-colors group"
-                              onClick={(e) => {
-                                header.column.toggleSorting(undefined, true)
-                              }}
-                            >
-                              {flexRender(header.column.columnDef.header, header.getContext())}
-                              <div className="flex items-center">
-                                {{
-                                  asc: <ChevronDown className="h-4 w-4 text-blue-600 bg-blue-100 rounded-sm " />,
-                                  desc: <ChevronUp className="h-4 w-4 text-blue-600 bg-blue-100 rounded-sm" />,
-                                }[header.column.getIsSorted() as string] ?? (
-                                  <ArrowUpDown className="h-4 w-4 opacity-30 group-hover:opacity-50" />
-                                )}
-                                {header.column.getIsSorted() && sorting.length > 1 && (
-                                  <span className="text-[10px] font-bold bg-primary/10 text-primary w-3.5 h-3.5 rounded-full flex items-center justify-center ml-0.5">
-                                    {header.column.getSortIndex() + 1}
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          ) : (
-                            flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )
-                          )}
-                      </TableHead>
-                    )
-                  })}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {loading ? (
-                <TableRow>
+    <div className="max-h-full min-h-112.5 overflow-y-auto">
+      <Table  className="w-full caption-bottom text-sm">
+        <TableHeader className="sticky top-0 z-10 bg-slate-50 dark:bg-muted shadow-sm">
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => {
+                return (
+                  <TableHead
+                    key={header.id}
+                    className="dark:bg-muted dark:text-foreground h-12 bg-slate-100 px-2 text-center font-medium text-slate-700"
+                    style={{ minWidth: header.column.id === 'actions' ? '160px' : undefined }}
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : header.column.id !== 'actions' && header.column.id !== 'cv' ? (
+                        <div
+                          className="flex items-center justify-center gap-1 cursor-pointer select-none hover:text-primary transition-colors group"
+                          onClick={(e) => {
+                            header.column.toggleSorting(undefined, true)
+                          }}
+                        >
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                          <div className="flex items-center">
+                            {{
+                              asc: <ChevronDown className="h-4 w-4 text-blue-600 bg-blue-100 rounded-sm " />,
+                              desc: <ChevronUp className="h-4 w-4 text-blue-600 bg-blue-100 rounded-sm" />,
+                            }[header.column.getIsSorted() as string] ?? (
+                                <ArrowUpDown className="h-4 w-4 opacity-30 group-hover:opacity-50" />
+                              )}
+                            {header.column.getIsSorted() && sorting.length > 1 && (
+                              <span className="text-[10px] font-bold bg-primary/10 text-primary w-3.5 h-3.5 rounded-full flex items-center justify-center ml-0.5">
+                                {header.column.getSortIndex() + 1}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )
+                      )}
+                  </TableHead>
+                )
+              })}
+            </TableRow>
+          ))}
+        </TableHeader>
+        <TableBody>
+          {loading ? (
+            <TableRow>
+              <TableCell
+                colSpan={columns.length}
+                className="h-[300px] p-8 text-center"
+              >
+                <div className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
+                  <Loader2 className="mb-4 size-8 animate-spin text-primary" />
+                  <p>جاري جلب بيانات الطلبات...</p>
+                </div>
+              </TableCell>
+            </TableRow>
+          ) : table.getRowModel().rows?.length ? (
+            table.getRowModel().rows.map((row) => (
+              <TableRow
+                key={row.id}
+                data-state={row.getIsSelected() && "selected"}
+                className="hover:bg-slate-50/80 dark:hover:bg-muted/50 transition-colors cursor-pointer"
+                onClick={() => router.push(`/company/job-order/${row.original.applicationId}`)}
+              >
+                {row.getVisibleCells().map((cell) => (
                   <TableCell
-                    colSpan={columns.length}
-                    className="h-[300px] p-8 text-center"
+                    key={cell.id}
+                    className="text-center"
+                    onClick={(e) => {
+                      if (cell.column.id === 'actions' || cell.column.id === 'cv') {
+                        e.stopPropagation()
+                      }
+                    }}
                   >
-                    <div className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
-                      <Loader2 className="mb-4 size-8 animate-spin text-primary" />
-                      <p>جاري جلب بيانات الطلبات...</p>
-                    </div>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
-                </TableRow>
-              ) : table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                    className="hover:bg-slate-50/80 dark:hover:bg-muted/50 transition-colors cursor-pointer"
-                    onClick={() => router.push(`/company/job-order/${row.original.applicationId}`)}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell
-                        key={cell.id}
-                        className="text-center"
-                        onClick={(e) => {
-                          if (cell.column.id === 'actions' || cell.column.id === 'cv') {
-                            e.stopPropagation()
-                          }
-                        }}
-                      >
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={columns.length} className="h-24 text-center">
-                    <div className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
-                      <FileText className="mb-4 h-12 w-12 text-slate-200 dark:text-slate-700" />
-                      <p className="text-lg font-medium text-slate-600 dark:text-slate-400">
-                        لا توجد طلبات توظيف
-                      </p>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </table>
-        </div>
-        <div className="flex items-center justify-end px-6 pt-2 border-t">
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="shadow-sm"
-              onClick={() => setPage(p => Math.max(1, p - 1))}
-              disabled={page <= 1 || loading}
-            >
-              السابق
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="shadow-sm"
-              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-              disabled={page >= totalPages || loading}
-            >
-              التالي
-            </Button>
-          </div>
+                ))}
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="h-24 text-center">
+                <div className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
+                  <FileText className="mb-4 h-12 w-12 text-slate-200 dark:text-slate-700" />
+                  <p className="text-lg font-medium text-slate-600 dark:text-slate-400">
+                    لا توجد طلبات توظيف
+                  </p>
+                </div>
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+      <div className="flex items-center justify-end px-6 pt-2 border-t">
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="shadow-sm"
+            onClick={() => setPage(p => Math.max(1, p - 1))}
+            disabled={page <= 1 || loading}
+          >
+            السابق
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="shadow-sm"
+            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+            disabled={page >= totalPages || loading}
+          >
+            التالي
+          </Button>
         </div>
       </div>
-    </Card>
+    </div>
   )
 }
