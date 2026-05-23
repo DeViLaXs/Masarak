@@ -80,6 +80,14 @@ export const applicationService = {
   },
 
   /**
+   * Returns the data needed for the employment records filter dropdowns.
+   */
+  getEmploymentRecordsFilters: async (): Promise<ApplicationFiltersDto> => {
+    const res = await api.get('/Applications/company/employment-records/filters')
+    return res.data?.data || res.data
+  },
+
+  /**
    * Reject a candidate.
    */
   reject: async (id: number): Promise<{ message: string }> => {

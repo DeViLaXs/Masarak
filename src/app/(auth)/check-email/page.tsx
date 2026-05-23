@@ -10,6 +10,7 @@ import { gooeyToast as toast } from '@/components/ui/goey-toaster'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/auth/use-auth'
 import AuthNavBar from '../_components/auth-navbar'
+import SquareContainer from '../_components/square-container'
 
 export default function CheckEmail() {
   const searchParams = useSearchParams()
@@ -128,76 +129,7 @@ export default function CheckEmail() {
         </div>
       </div>
 
-      <div className="relative hidden h-full flex-col items-center justify-center overflow-hidden bg-linear-to-br from-[#027fc7] to-[#013856] p-12 text-center text-white md:flex md:w-[45%]">
-        <div className="z-10 flex max-w-sm flex-col items-center gap-2">
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="z-10 flex max-w-sm flex-col items-center gap-2"
-          >
-            <div className="mb-2 font-['Cairo'] text-3xl font-black tracking-wide text-white">
-              Masarak | مسارك
-            </div>
-
-            <h2 className="mb-2 font-['Cairo'] text-2xl leading-tight font-black text-white">
-              خطوتك القادمة تبدأ من هنا
-            </h2>
-
-            <p className="mb-8 max-w-xs font-['Cairo'] text-sm leading-relaxed font-semibold text-white/80">
-              انضم إلى آلاف الشركات التي تشكل مستقبلها من خلال منصة مسارك
-              المتكاملة للتوظيف.
-            </p>
-
-            <div className="mt-2 flex items-center justify-center gap-6">
-              <div className="flex h-36 w-36 rotate-[-8deg] transform items-center justify-center rounded-4xl border border-white/20 bg-white/10 shadow-2xl shadow-black/10 backdrop-blur-md transition-transform duration-300 hover:rotate-0">
-                <Image
-                  src="/Masarak-logo-light.png"
-                  alt="Masarak Logo"
-                  width={130}
-                  height={130}
-                  className="dark:bg-card block rounded-3xl object-contain dark:hidden"
-                  priority
-                />
-                <Image
-                  src="/Masarak-logo-dark.png"
-                  alt="Masarak Logo"
-                  width={130}
-                  height={130}
-                  className="hidden rounded-3xl bg-white object-contain dark:block"
-                  priority
-                />
-              </div>
-
-              <div className="flex h-36 w-36 items-center justify-center rounded-4xl border border-white/20 bg-white/10 p-2 shadow-2xl shadow-black/10 backdrop-blur-md transition-transform duration-300 hover:scale-105">
-                <Image
-                  src="/Masarak-new-light.png"
-                  alt="Masarak Logo"
-                  width={130}
-                  height={130}
-                  className="dark:bg-card block rounded-3xl bg-white object-contain p-1 dark:hidden"
-                  priority
-                />
-                <Image
-                  src="/Masarak-new-dark.png"
-                  alt="Masarak Logo"
-                  width={130}
-                  height={130}
-                  className="dark:bg-card hidden rounded-3xl bg-white object-contain p-1 dark:block"
-                  priority
-                />
-              </div>
-            </div>
-          </motion.div>
-        </div>
-
-        <div
-          dir="ltr"
-          className="absolute right-0 bottom-8 left-0 z-10 text-center font-['Cairo'] text-xs font-semibold text-white/60"
-        >
-          @Masarak. 2026
-        </div>
-      </div>
+     <SquareContainer/>
     </div>
   )
 }

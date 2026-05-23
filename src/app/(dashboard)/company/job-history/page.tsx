@@ -15,7 +15,7 @@ import {
   ComboboxItem,
 } from '@/components/ui/combobox'
 import {
-  useApplicationFilters,
+  useEmploymentRecordsFilters,
   useEmploymentRecords,
 } from '@/hooks/use-applications'
 import { JobHistoryTable } from './_components/job-history-table'
@@ -65,7 +65,7 @@ export default function JobHistoryPage() {
   const [page, setPage] = useState(1)
   const [sorting, setSorting] = useState<any[]>([])
 
-  const { data: filtersData } = useApplicationFilters()
+  const { data: filtersData } = useEmploymentRecordsFilters()
   const { data: listData, isPending: loading } = useEmploymentRecords({
     search: debouncedSearch || undefined,
     applicationStatusId,

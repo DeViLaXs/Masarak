@@ -16,6 +16,14 @@ export function useApplicationFilters() {
   })
 }
 
+export function useEmploymentRecordsFilters() {
+  return useQuery({
+    queryKey: [...applicationKeys.all, 'employment-records-filters'] as const,
+    queryFn: () => applicationService.getEmploymentRecordsFilters(),
+    staleTime: 5 * 60 * 1000,
+  })
+}
+
 export function useApplications(params: GetApplicationsParams) {
   return useQuery({
     queryKey: applicationKeys.list(params),
