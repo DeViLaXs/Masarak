@@ -324,7 +324,7 @@ export function SubadminsTable({
   })
 
   return (
-    <div className="max-h-full min-h-112.5 overflow-y-auto">
+    <div className="max-h-full overflow-y-auto">
       <Table>
         <TableHeader className="dark:bg-muted/50 sticky top-0 z-10 bg-slate-50 shadow-sm">
           {table.getHeaderGroups().map((headerGroup) => (

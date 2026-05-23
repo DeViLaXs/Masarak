@@ -4,13 +4,40 @@ import {
   CardHeader,
   CardTitle,
 } from '../../../../components/ui/card'
-import { Building2, User, Mails, CircleDollarSign } from 'lucide-react'
+import { Skeleton } from '../../../../components/ui/skeleton'
+import { Building2, Briefcase, MessagesSquare, CalendarDays } from 'lucide-react'
+import { useAdmin } from '@/hooks/use-admin'
 
 export default function HomeCard1() {
+  const { useDashboardStatistics } = useAdmin()
+  const { data: response, isLoading } = useDashboardStatistics()
+  const stats = response?.data
+
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-4 gap-4 max-sm:grid-cols-2 lg:grid-cols-4 md:grid-cols-2" dir="rtl">
+        {[...Array(4)].map((_, i) => (
+          <Card key={i} className="relative overflow-hidden border-border/40 bg-white shadow-sm dark:bg-card">
+            <CardHeader className="pb-2">
+              <Skeleton className="h-4 w-24 rounded-full" />
+            </CardHeader>
+            <CardContent className="flex items-center justify-between pt-2">
+              <div className="space-y-2">
+                <Skeleton className="h-8 w-16 rounded-lg" />
+                <Skeleton className="h-3 w-28 rounded-full" />
+              </div>
+              <Skeleton className="size-12 rounded-2xl" />
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    )
+  }
+
   const cardsData = [
     {
       title: 'إجمالي الشركات',
-      value: '247',
+      value: stats?.totalCompanies ?? 0,
       icon: Building2,
       colorClass: 'text-blue-500',
       bgColorClass: 'bg-blue-500/10 dark:bg-blue-500/25',
@@ -19,34 +46,34 @@ export default function HomeCard1() {
       description: 'شركات مسجلة في المنصة',
     },
     {
-      title: 'المستخدمين النشطين',
-      value: '1456',
-      icon: User,
+      title: 'إجمالي الوظائف المنشورة',
+      value: stats?.totalPublishedJobs ?? 0,
+      icon: Briefcase,
       colorClass: 'text-amber-500',
       bgColorClass: 'bg-amber-500/10 dark:bg-amber-500/25',
       borderColorClass: 'hover:border-amber-300 dark:hover:border-amber-950',
       gradientClass: 'from-amber-500/5 to-transparent',
-      description: 'مستخدمين نشطين حالياً',
+      description: 'فرص عمل معلنة للجميع',
     },
     {
-      title: 'إجمالي الرسائل',
-      value: '156',
-      icon: Mails,
+      title: 'إجمالي الملاحظات',
+      value: stats?.totalFeedbacks ?? 0,
+      icon: MessagesSquare,
       colorClass: 'text-emerald-500',
       bgColorClass: 'bg-emerald-500/10 dark:bg-emerald-500/25',
       borderColorClass: 'hover:border-emerald-300 dark:hover:border-emerald-950',
       gradientClass: 'from-emerald-500/5 to-transparent',
-      description: 'تواصل واستفسارات نشطة',
+      description: 'شكاوى واقتراحات مستلمة',
     },
     {
-      title: 'إيرادات الشهر',
-      value: '285K',
-      icon: CircleDollarSign,
+      title: 'الشركات المسجلة هذا الشهر',
+      value: stats?.companiesRegisteredThisMonth ?? 0,
+      icon: CalendarDays,
       colorClass: 'text-purple-500',
       bgColorClass: 'bg-purple-500/10 dark:bg-purple-500/25',
       borderColorClass: 'hover:border-purple-300 dark:hover:border-purple-950',
       gradientClass: 'from-purple-500/5 to-transparent',
-      description: 'الأرباح المحققة هذا الشهر',
+      description: 'شركات جديدة انضمت مؤخراً',
     },
   ]
 
@@ -63,17 +90,17 @@ export default function HomeCard1() {
             <div className={`absolute inset-0 bg-gradient-to-br ${card.gradientClass} opacity-0 transition-opacity duration-300 group-hover:opacity-100`} />
             
             <CardHeader className="relative z-10 pb-2">
-              <CardTitle className="text-muted-foreground text-xs font-semibold max-sm:text-[11px]">
+              <CardTitle className="text-muted-foreground text-xs font-semibold max-sm:text-[11px] text-nowrap">
                 {card.title}
               </CardTitle>
             </CardHeader>
             
             <CardContent className="relative z-10 flex items-center justify-between pt-2">
-              <div className="space-y-1">
+              <div className="space-y-1 flex-1">
                 <span className={`text-3xl font-extrabold tracking-tight ${card.colorClass}`}>
                   {card.value}
                 </span>
-                <p className="text-muted-foreground text-[10px] font-normal leading-none">
+                <p className="text-muted-foreground text-[10px] font-normal leading-none text-nowrap">
                   {card.description}
                 </p>
               </div>

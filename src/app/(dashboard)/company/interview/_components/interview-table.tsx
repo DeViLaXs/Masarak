@@ -216,7 +216,7 @@ export function InterviewTable({
   })
 
   return (
-    <div className="max-h-full min-h-112.5 overflow-y-auto">
+    <div className="max-h-full overflow-y-auto">
       <Table>
         <TableHeader className="sticky top-0 z-10 bg-slate-50 dark:bg-muted shadow-sm">
           {table.getHeaderGroups().map((headerGroup) => (

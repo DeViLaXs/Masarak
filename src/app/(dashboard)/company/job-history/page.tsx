@@ -196,7 +196,7 @@ export default function JobHistoryPage() {
       </motion.div>
 
       <motion.div variants={itemVariants}>
-        <div className="border-border/40 dark:bg-card h-full overflow-hidden rounded-3xl border bg-white shadow-sm">
+        <div className="border-border/40 dark:bg-card overflow-hidden rounded-3xl border bg-white shadow-sm">
           <JobHistoryTable
             data={data}
             loading={loading}

@@ -16,6 +16,16 @@ export interface StatisticsDto {
   rejected: number
 }
 
+export interface DashboardStatisticsDto {
+  totalCompanies: number
+  totalFeedbacks: number
+  pendingVerificationRequests: number
+  unreadFeedbacks: number
+  totalPublishedJobs: number
+  companiesRegisteredThisMonth: number
+  newFeedbacksThisWeek: number
+}
+
 export interface CompanyDto {
   id: number
   companyName: string
@@ -89,6 +99,11 @@ export interface BulkActionDto {
 export const adminService = {
   getStatistics: async (): Promise<BaseResponse<StatisticsDto>> => {
     const res = await api.get('/Admin/statistics')
+    return res.data
+  },
+
+  getDashboardStatistics: async (): Promise<BaseResponse<DashboardStatisticsDto>> => {
+    const res = await api.get('/Admin/dashboard-statistics')
     return res.data
   },
 

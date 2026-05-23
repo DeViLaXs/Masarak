@@ -242,7 +242,7 @@ export default function InterviewsPage() {
       </motion.div>
 
       <motion.div variants={itemVariants}>
-        <div className="border-border/40 dark:bg-card overflow-hidden rounded-3xl border h-full bg-white shadow-sm">
+        <div className="border-border/40 dark:bg-card overflow-hidden rounded-3xl border bg-white shadow-sm">
         <InterviewTable
           data={data}
           loading={loading}

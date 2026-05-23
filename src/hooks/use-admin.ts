@@ -5,11 +5,13 @@ import {
   type UpdateCompanyStatusDto,
   type UpdateCompanyDto,
   type BulkActionDto,
+  type DashboardStatisticsDto,
 } from '@/services/admin-service'
 
 export const adminKeys = {
   all: ['admin'] as const,
   statistics: () => [...adminKeys.all, 'statistics'] as const,
+  dashboardStatistics: () => [...adminKeys.all, 'dashboard-statistics'] as const,
   companies: () => [...adminKeys.all, 'companies'] as const,
   company: (id: number) => [...adminKeys.companies(), id] as const,
 }
@@ -22,6 +24,12 @@ export function useAdmin() {
     useQuery({
       queryKey: adminKeys.statistics(),
       queryFn: adminService.getStatistics,
+    })
+
+  const useDashboardStatistics = () =>
+    useQuery({
+      queryKey: adminKeys.dashboardStatistics(),
+      queryFn: adminService.getDashboardStatistics,
     })
 
   const useCompanies = (params: GetCompaniesParams) =>
@@ -44,6 +52,7 @@ export function useAdmin() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: adminKeys.companies() })
       queryClient.invalidateQueries({ queryKey: adminKeys.statistics() })
+      queryClient.invalidateQueries({ queryKey: adminKeys.dashboardStatistics() })
     },
   })
 
@@ -63,6 +72,7 @@ export function useAdmin() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: adminKeys.companies() })
       queryClient.invalidateQueries({ queryKey: adminKeys.statistics() })
+      queryClient.invalidateQueries({ queryKey: adminKeys.dashboardStatistics() })
     },
   })
 
@@ -71,12 +81,14 @@ export function useAdmin() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: adminKeys.companies() })
       queryClient.invalidateQueries({ queryKey: adminKeys.statistics() })
+      queryClient.invalidateQueries({ queryKey: adminKeys.dashboardStatistics() })
     },
   })
 
   return {
     // Queries
     useStatistics,
+    useDashboardStatistics,
     useCompanies,
     useCompany,
 

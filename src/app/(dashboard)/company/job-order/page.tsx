@@ -233,7 +233,7 @@ export default function ApplicationsPage() {
       {/* Jobs Table Card */}
       
       <motion.div variants={itemVariants}>
-        <div className="border-border/40 dark:bg-card overflow-hidden rounded-3xl border h-full bg-white shadow-sm">
+        <div className="border-border/40 dark:bg-card overflow-hidden rounded-3xl border bg-white shadow-sm">
         <JobOrderTable
           data={data}
           loading={loading}

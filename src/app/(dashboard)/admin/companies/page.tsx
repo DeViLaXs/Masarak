@@ -289,7 +289,7 @@ export default function CompaniesPage() {
         </AlertDialog>
 
         {/* Table Container */}
-        <div className="border-border/40 dark:bg-card overflow-hidden rounded-3xl border h-full bg-white shadow-sm">
+        <div className="border-border/40 dark:bg-card overflow-hidden rounded-3xl border bg-white shadow-sm">
          
 
           <div className="p-0">

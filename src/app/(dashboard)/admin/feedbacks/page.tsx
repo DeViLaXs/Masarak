@@ -270,7 +270,7 @@ export default function FeedbacksClient() {
       </div>
 
       
-        <div className="border-border/40 dark:bg-card overflow-hidden rounded-3xl border h-full bg-white shadow-sm">
+        <div className="border-border/40 dark:bg-card overflow-hidden rounded-3xl border bg-white shadow-sm">
           <FeedbacksTable
             feedbacks={feedbacks}
             isLoading={isFeedbacksLoading}
