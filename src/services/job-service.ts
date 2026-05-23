@@ -16,6 +16,14 @@ export type PaginatedData<T> = {
   totalPages: number
 }
 
+export interface JobsStatisticsDto {
+  totalJobs: number
+  activeJobs: number
+  expiredJobs: number
+  fullTimeJobs: number
+  partTimeJobs: number
+}
+
 // ============== Lookup DTOs ==============
 export type LookupItem = {
   id: number
@@ -102,6 +110,14 @@ export type EnhanceDescriptionDto = {
 // ============== Job Service ==============
 
 export const jobService = {
+  /**
+   * Get job statistics
+   */
+  getStatistics: async (): Promise<JobsStatisticsDto> => {
+    const res = await api.get('/Jobs/jobs/statistics')
+    return res.data?.data || res.data
+  },
+
   /**
    * Enhance job description using AI
    */

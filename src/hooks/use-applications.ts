@@ -47,6 +47,7 @@ export function useRejectCandidate() {
     mutationFn: (id: number) => applicationService.reject(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: applicationKeys.all })
+      queryClient.invalidateQueries({ queryKey: ['company'] })
     },
   })
 }
@@ -58,6 +59,7 @@ export function useHireCandidate() {
     mutationFn: (id: number) => applicationService.hire(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: applicationKeys.all })
+      queryClient.invalidateQueries({ queryKey: ['company'] })
     },
   })
 }
@@ -70,9 +72,23 @@ export function useScheduleInterview() {
       applicationService.scheduleInterview(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: applicationKeys.all })
-      // Also invalidate interviews as a new entry will appear there
       queryClient.invalidateQueries({ queryKey: ['interviews'] })
+      queryClient.invalidateQueries({ queryKey: ['company'] })
     },
+  })
+}
+
+export function useApplicationStatistics() {
+  return useQuery({
+    queryKey: [...applicationKeys.all, 'statistics'] as const,
+    queryFn: () => applicationService.getStatistics(),
+  })
+}
+
+export function useEmploymentRecordsStatistics() {
+  return useQuery({
+    queryKey: [...applicationKeys.all, 'employment-records-statistics'] as const,
+    queryFn: () => applicationService.getEmploymentRecordsStatistics(),
   })
 }
 

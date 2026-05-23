@@ -59,6 +59,7 @@ export function useRescheduleInterview() {
       interviewService.reschedule(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: interviewKeys.all })
+      queryClient.invalidateQueries({ queryKey: ['company'] })
     },
   })
 }
@@ -71,6 +72,7 @@ export function useCancelInterview() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: interviewKeys.all })
       queryClient.invalidateQueries({ queryKey: ['applications'] })
+      queryClient.invalidateQueries({ queryKey: ['company'] })
     },
   })
 }
@@ -83,6 +85,7 @@ export function useMissingInterview() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: interviewKeys.all })
       queryClient.invalidateQueries({ queryKey: ['applications'] })
+      queryClient.invalidateQueries({ queryKey: ['company'] })
     },
   })
 }
@@ -95,6 +98,14 @@ export function useCompleteInterview() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: interviewKeys.all })
       queryClient.invalidateQueries({ queryKey: ['applications'] })
+      queryClient.invalidateQueries({ queryKey: ['company'] })
     },
+  })
+}
+
+export function useCompanyInterviewStatistics() {
+  return useQuery({
+    queryKey: [...interviewKeys.all, 'company-statistics'] as const,
+    queryFn: () => interviewService.getCompanyStatistics(),
   })
 }

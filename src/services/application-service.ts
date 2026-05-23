@@ -30,7 +30,39 @@ export type ApplicationFiltersDto = {
   jobs: { id: number; name: string }[]
 }
 
+export interface ApplicationsStatisticsDto {
+  totalApplications: number
+  pendingReviewApplications: number
+  shortlistedApplications: number
+  interviewedApplications: number
+  applicationsThisWeek: number
+}
+
+export interface EmploymentRecordsStatisticsDto {
+  totalRecords: number
+  withdrawnRecords: number
+  missingInterviewRecords: number
+  hiredRecords: number
+  rejectedRecords: number
+}
+
 export const applicationService = {
+  /**
+   * Retrieves active applications statistics.
+   */
+  getStatistics: async (): Promise<ApplicationsStatisticsDto> => {
+    const res = await api.get('/Applications/company/statistics')
+    return res.data?.data || res.data
+  },
+
+  /**
+   * Retrieves employment records statistics.
+   */
+  getEmploymentRecordsStatistics: async (): Promise<EmploymentRecordsStatisticsDto> => {
+    const res = await api.get('/Applications/company/employment-records/statistics')
+    return res.data?.data || res.data
+  },
+
   /**
    * Retrieves a paginated list of all applications for the logged-in company's jobs.
    */

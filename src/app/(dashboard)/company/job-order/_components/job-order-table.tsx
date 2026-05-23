@@ -23,6 +23,8 @@ interface JobOrderTableProps {
   loading: boolean
   page: number
   totalPages: number
+  totalCount: number
+  pageSize: number
   setPage: (page: number | ((p: number) => number)) => void
   handleReject: (id: number) => void
   handleHire: (id: number) => void
@@ -36,6 +38,8 @@ export function JobOrderTable({
   loading,
   page,
   totalPages,
+  totalCount,
+  pageSize,
   setPage,
   handleReject,
   handleHire,
@@ -329,28 +333,53 @@ export function JobOrderTable({
           )}
         </TableBody>
       </Table>
-      <div className="flex items-center justify-end px-6 pt-2 border-t">
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="shadow-sm"
-            onClick={() => setPage(p => Math.max(1, p - 1))}
-            disabled={page <= 1 || loading}
-          >
-            السابق
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="shadow-sm"
-            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-            disabled={page >= totalPages || loading}
-          >
-            التالي
-          </Button>
+      {totalPages > 1 && (
+        <div
+          className="border-border/60 text-muted-foreground flex items-center justify-between border-t px-6 py-3 text-sm"
+          dir="rtl"
+        >
+          <div>
+            عرض {(page - 1) * pageSize + 1} إلى{' '}
+            {Math.min(page * pageSize, totalCount)} من أصل {totalCount} طلب
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-full border-slate-200 px-5 shadow-sm"
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={page <= 1 || loading}
+            >
+              السابق
+            </Button>
+            <div className="flex items-center gap-1">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                (p) => (
+                  <Button
+                    key={p}
+                    variant={p === page ? 'default' : 'outline'}
+                    size="sm"
+                    className="h-9 w-9 rounded-full p-0 shadow-sm"
+                    disabled={loading}
+                    onClick={() => setPage(p)}
+                  >
+                    {p}
+                  </Button>
+                ),
+              )}
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-full border-slate-200 px-5 shadow-sm"
+              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              disabled={page >= totalPages || loading}
+            >
+              التالي
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

@@ -1,21 +1,48 @@
+'use client'
+
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from '../../../../components/ui/card'
+import { Skeleton } from '../../../../components/ui/skeleton'
 import {
   BriefcaseBusiness,
   UserRoundPlus,
   Clock3,
   CircleCheckBig,
 } from 'lucide-react'
+import { useCompanyDashboardStatistics } from '@/hooks/use-company'
 
 export default function FeedbackCard() {
+  const { data: stats, isLoading } = useCompanyDashboardStatistics()
+
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-4 gap-4 max-sm:grid-cols-2 lg:grid-cols-4 md:grid-cols-2" dir="rtl">
+        {[...Array(4)].map((_, i) => (
+          <Card key={i} className="relative overflow-hidden border-border/40 bg-white shadow-sm dark:bg-card">
+            <CardHeader className="pb-2">
+              <Skeleton className="h-4 w-24 rounded-full" />
+            </CardHeader>
+            <CardContent className="flex items-center justify-between pt-2">
+              <div className="space-y-2">
+                <Skeleton className="h-8 w-16 rounded-lg" />
+                <Skeleton className="h-3 w-28 rounded-full" />
+              </div>
+              <Skeleton className="size-12 rounded-2xl" />
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    )
+  }
+
   const cardsData = [
     {
-      title: 'الوظائف النشطة',
-      value: '156',
+      title: 'الوظائف النشطة حالياً',
+      value: stats?.activeJobsNow ?? 0,
       icon: BriefcaseBusiness,
       colorClass: 'text-blue-500',
       bgColorClass: 'bg-blue-500/10 dark:bg-blue-500/25',
@@ -24,8 +51,8 @@ export default function FeedbackCard() {
       description: 'إعلانات وظائف معلنة حالياً',
     },
     {
-      title: 'المتقدمين الجدد',
-      value: '98',
+      title: 'المتقدمون الجدد هذا الأسبوع',
+      value: stats?.newApplicantsThisWeek ?? 0,
       icon: UserRoundPlus,
       colorClass: 'text-emerald-500',
       bgColorClass: 'bg-emerald-500/10 dark:bg-emerald-500/25',
@@ -34,18 +61,18 @@ export default function FeedbackCard() {
       description: 'طلبات جديدة قيد المراجعة',
     },
     {
-      title: 'الوظائف المنتهية',
-      value: '23',
+      title: 'مقابلات اليوم',
+      value: stats?.interviewsToday ?? 0,
       icon: Clock3,
       colorClass: 'text-amber-500',
       bgColorClass: 'bg-amber-500/10 dark:bg-amber-500/25',
       borderColorClass: 'hover:border-amber-300 dark:hover:border-amber-950',
       gradientClass: 'from-amber-500/5 to-transparent',
-      description: 'إعلانات وظائف انتهى تقديمها',
+      description: 'مقابلات مجدولة اليوم',
     },
     {
       title: 'التوظيفات الناجحة',
-      value: '35',
+      value: stats?.successfulHires ?? 0,
       icon: CircleCheckBig,
       colorClass: 'text-purple-500',
       bgColorClass: 'bg-purple-500/10 dark:bg-purple-500/25',

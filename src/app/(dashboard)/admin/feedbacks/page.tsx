@@ -285,20 +285,42 @@ export default function FeedbacksClient() {
       
 
       {feedbacksData && feedbacksData.totalPages > 1 && (
-        <div className="border-border/40 dark:bg-card mt-[-20px] flex items-center justify-between rounded-b-3xl border-x border-b bg-white px-6 py-3 text-right">
-          <p className="text-muted-foreground text-sm">
-            عرض الصفحة{' '}
-            <span className="text-foreground font-bold">
-              {feedbacksData.currentPage}
-            </span>{' '}
-            من{' '}
-            <span className="text-foreground font-bold">
-              {feedbacksData.totalPages}
-            </span>{' '}
-            (إجمالي {feedbacksData.totalCount} ملاحظة)
-          </p>
-          <div className="flex items-center gap-2" dir="ltr">
-             <Button
+        <div
+          className="border-border/40 dark:bg-card mt-[-20px] flex items-center justify-between rounded-b-3xl border-x border-b bg-white px-6 py-3 text-sm text-right"
+          dir="rtl"
+        >
+          <div className="text-muted-foreground">
+            عرض {(feedbacksData.currentPage - 1) * feedbacksData.pageSize + 1} إلى{' '}
+            {Math.min(feedbacksData.currentPage * feedbacksData.pageSize, feedbacksData.totalCount)} من
+            أصل {feedbacksData.totalCount} ملاحظة
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-full border-slate-200 px-5 shadow-sm"
+              onClick={() => setPageNumber((p) => Math.max(1, p - 1))}
+              disabled={pageNumber === 1 || isFeedbacksLoading}
+            >
+              السابق
+            </Button>
+            <div className="flex items-center gap-1">
+              {Array.from({ length: feedbacksData.totalPages }, (_, i) => i + 1).map(
+                (p) => (
+                  <Button
+                    key={p}
+                    variant={p === pageNumber ? 'default' : 'outline'}
+                    size="sm"
+                    className="h-9 w-9 rounded-full p-0 shadow-sm"
+                    disabled={isFeedbacksLoading}
+                    onClick={() => setPageNumber(p)}
+                  >
+                    {p}
+                  </Button>
+                ),
+              )}
+            </div>
+            <Button
               variant="outline"
               size="sm"
               className="rounded-full border-slate-200 px-5 shadow-sm"
@@ -311,16 +333,6 @@ export default function FeedbacksClient() {
             >
               التالي
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="rounded-full border-slate-200 px-5 shadow-sm"
-              onClick={() => setPageNumber((p) => Math.max(1, p - 1))}
-              disabled={pageNumber === 1 || isFeedbacksLoading}
-            >
-              السابق
-            </Button>
-           
           </div>
         </div>
       )}

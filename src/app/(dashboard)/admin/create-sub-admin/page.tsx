@@ -150,11 +150,7 @@ export default function CreateSubAdminPage() {
 
   return (
     <div className="mx-auto w-full max-w-3xl space-y-8 px-4 pt-5 pb-10">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-0">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">إضافة مشرف فرعي</h1>
-        </div>
-      </div>
+      
 
       <Card className="ring-border overflow-hidden rounded-2xl border-none shadow-sm ring-1">
         <CardHeader className="px-6 py-4">

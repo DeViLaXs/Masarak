@@ -48,10 +48,10 @@ export function FeedbackStats({ isLoading, stats }: FeedbackStatsProps) {
       title: 'اقتراح ميزة',
       value: stats?.featureRequestsCount ?? 0,
       icon: Lightbulb,
-      colorClass: 'text-amber-500',
-      bgColorClass: 'bg-amber-500/10 dark:bg-amber-500/25',
-      borderColorClass: 'hover:border-amber-300 dark:hover:border-amber-950',
-      gradientClass: 'from-amber-500/5 to-transparent',
+      colorClass: 'text-blue-500',
+      bgColorClass: 'bg-blue-500/10 dark:bg-blue-500/25',
+      borderColorClass: 'hover:border-blue-300 dark:hover:border-blue-950',
+      gradientClass: 'from-blue-500/5 to-transparent',
       description: 'أفكار وميزات جديدة مقترحة',
     },
     {
@@ -68,10 +68,10 @@ export function FeedbackStats({ isLoading, stats }: FeedbackStatsProps) {
       title: 'ملاحظات غير مقروءة',
       value: stats?.unreadFeedbacksCount ?? 0,
       icon: Mail,
-      colorClass: 'text-blue-500',
-      bgColorClass: 'bg-blue-500/10 dark:bg-blue-500/25',
-      borderColorClass: 'hover:border-blue-300 dark:hover:border-blue-950',
-      gradientClass: 'from-blue-500/5 to-transparent',
+      colorClass: 'text-amber-500',
+      bgColorClass: 'bg-amber-500/10 dark:bg-amber-500/25',
+      borderColorClass: 'hover:border-amber-300 dark:hover:border-amber-950',
+      gradientClass: 'from-amber-500/5 to-transparent',
       description: 'رسائل جديدة في انتظار المراجعة',
     },
   ]
@@ -87,13 +87,13 @@ export function FeedbackStats({ isLoading, stats }: FeedbackStatsProps) {
           >
             {/* Subtle Gradient background on hover */}
             <div className={`absolute inset-0 bg-gradient-to-br ${card.gradientClass} opacity-0 transition-opacity duration-300 group-hover:opacity-100`} />
-            
+
             <CardHeader className="relative z-10 pb-2">
               <CardTitle className="text-muted-foreground text-xs font-semibold max-sm:text-[11px]">
                 {card.title}
               </CardTitle>
             </CardHeader>
-            
+
             <CardContent className="relative z-10 flex items-center justify-between pt-2">
               <div className="space-y-1">
                 <span className={`text-3xl font-extrabold tracking-tight ${card.colorClass}`}>
@@ -103,7 +103,7 @@ export function FeedbackStats({ isLoading, stats }: FeedbackStatsProps) {
                   {card.description}
                 </p>
               </div>
-              
+
               <div className={`flex size-12 items-center justify-center rounded-2xl transition-all duration-300 group-hover:scale-110 ${card.bgColorClass}`}>
                 <Icon className={`size-6 ${card.colorClass}`} />
               </div>

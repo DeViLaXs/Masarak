@@ -37,6 +37,7 @@ export function useJobs() {
     mutationFn: (data: CreateJobDto) => jobService.createJob(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: jobKeys.all })
+      queryClient.invalidateQueries({ queryKey: ['company'] })
     },
   })
 
@@ -46,6 +47,7 @@ export function useJobs() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: jobKeys.all })
       queryClient.invalidateQueries({ queryKey: jobKeys.detail(variables.id) })
+      queryClient.invalidateQueries({ queryKey: ['company'] })
     },
   })
 
@@ -103,10 +105,8 @@ export function useUpdateJobStatus() {
       status: 'Published' | 'Closed'
     }) => jobService.updateJobStatus(id, status),
     onSuccess: () => {
-      // Invalidate the company jobs list query so it refreshes the statuses
-      queryClient.invalidateQueries({
-        queryKey: [...jobKeys.all, 'company', 'list'],
-      })
+      queryClient.invalidateQueries({ queryKey: jobKeys.all })
+      queryClient.invalidateQueries({ queryKey: ['company'] })
     },
   })
 }
@@ -210,5 +210,12 @@ export function useSkillsSearch(query: string) {
     queryFn: () => jobService.searchSkills(query),
     enabled: !!query && query.length > 0,
     staleTime: 5 * 60 * 1000,
+  })
+}
+
+export function useJobStatistics() {
+  return useQuery({
+    queryKey: [...jobKeys.all, 'statistics'] as const,
+    queryFn: () => jobService.getStatistics(),
   })
 }

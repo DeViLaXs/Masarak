@@ -13,6 +13,14 @@ export type InterviewStatisticsDto = {
   missingInterview: number
 }
 
+export interface CompanyInterviewStatisticsDto {
+  totalInterviews: number
+  scheduledInterviews: number
+  confirmedInterviews: number
+  completedInterviews: number
+  todayInterviews: number
+}
+
 export type InterviewListItemDto = {
   interviewId: number
   candidateName: string
@@ -54,6 +62,11 @@ export type InterviewFiltersDto = {
 // ============== Service ==============
 
 export const interviewService = {
+  getCompanyStatistics: async (): Promise<CompanyInterviewStatisticsDto> => {
+    const res = await api.get('/Interviews/company/statistics')
+    return res.data?.data || res.data
+  },
+
   getStatistics: async (): Promise<InterviewStatisticsDto> => {
     const res = await api.get('/Interviews/statistics')
     return res.data?.data || res.data
