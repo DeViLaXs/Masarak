@@ -196,7 +196,7 @@ export function ManageJobTable({
             },
             {
                 accessorKey: 'status',
-                size: 110,
+                size: 100,
                 header: () => <div className="text-center font-medium">الحالة</div>,
                 cell: ({ row }) => {
                     const s = statusMap[row.original.status]

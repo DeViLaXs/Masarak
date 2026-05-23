@@ -32,6 +32,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import type { FeedbackResponseDTO } from '@/services/feedback-service'
 
@@ -206,37 +207,45 @@ export function FeedbacksTable({
           const feedback = row.original
 
           return (
-            <div className="flex items-center justify-center gap-2">
-              
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-primary hover:bg-primary/10 hover:text-primary relative z-10"
-                  title="تحديد كمقروءة"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    onMarkAsRead(feedback.id)
-                  }}
-                  disabled={isMarking || feedback.isRead}
-                  
-                >
-                  <CheckCircle2 className="size-4" />
-                </Button>
-              
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-destructive hover:bg-destructive/10 hover:text-destructive relative z-10"
-                title="حذف الملاحظة"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  onDeleteRequest(feedback.id)
-                }}
-                disabled={isDeleting }
-              >
-                <Trash2 className="size-4" />
-              </Button>
-            </div>
+            <TooltipProvider>
+              <div className="flex items-center justify-center gap-2">
+                <Tooltip delayDuration={700} disableHoverableContent={true}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-primary hover:bg-primary/10 hover:text-primary relative z-10"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onMarkAsRead(feedback.id)
+                      }}
+                      disabled={isMarking || feedback.isRead}
+                    >
+                      <CheckCircle2 className="size-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="text-xs">تحديد كمقروءة</TooltipContent>
+                </Tooltip>
+
+                <Tooltip delayDuration={700} disableHoverableContent={true}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-destructive hover:bg-destructive/10 hover:text-destructive relative z-10"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onDeleteRequest(feedback.id)
+                      }}
+                      disabled={isDeleting}
+                    >
+                      <Trash2 className="size-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="text-xs">حذف الملاحظة</TooltipContent>
+                </Tooltip>
+              </div>
+            </TooltipProvider>
           )
         },
       },

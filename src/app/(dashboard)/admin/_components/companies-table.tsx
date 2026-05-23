@@ -29,6 +29,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip'
 import { useAdmin } from '@/hooks/use-admin'
 import type { CompanyDto } from '@/services/admin-service'
 
@@ -136,57 +137,75 @@ const ActionCell = ({ company }: { company: CompanyDto }) => {
   const dialogContent = getDialogContent()
 
   return (
-    <div
-      className="flex items-center justify-center gap-1"
-      onClick={(e) => e.stopPropagation()}
-    >
-      <Button
-        variant="ghost"
-        size="icon"
-        title="توثيق"
-        className="h-8 w-8 text-green-500 hover:bg-green-50 hover:text-green-600 disabled:opacity-30 disabled:hover:bg-transparent"
-        onClick={() => handleActionClick('Approve')}
-        disabled={isProcessing || company.status === 'Active'}
+    <TooltipProvider>
+      <div
+        className="flex items-center justify-center gap-1"
+        onClick={(e) => e.stopPropagation()}
       >
-        <Check className="h-4 w-4" />
-      </Button>
+        <Tooltip delayDuration={700} disableHoverableContent={true}>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-green-500 hover:bg-green-50 hover:text-green-600 disabled:opacity-30 disabled:hover:bg-transparent"
+              onClick={() => handleActionClick('Approve')}
+              disabled={isProcessing || company.status === 'Active'}
+            >
+              <Check className="h-4 w-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="text-xs">توثيق</TooltipContent>
+        </Tooltip>
 
-      <Button
-        variant="ghost"
-        size="icon"
-        title="تعليق"
-        className="h-8 w-8 text-orange-500 hover:bg-orange-50 hover:text-orange-600 disabled:opacity-30 disabled:hover:bg-transparent"
-        onClick={() => handleActionClick('Suspend')}
-        disabled={
-          isProcessing ||
-          company.status === 'Suspended' ||
-          company.status === 'Inactive'
-        }
-      >
-        <Ban className="h-4 w-4" />
-      </Button>
+        <Tooltip delayDuration={700} disableHoverableContent={true}>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-orange-500 hover:bg-orange-50 hover:text-orange-600 disabled:opacity-30 disabled:hover:bg-transparent"
+              onClick={() => handleActionClick('Suspend')}
+              disabled={
+                isProcessing ||
+                company.status === 'Suspended' ||
+                company.status === 'Inactive'
+              }
+            >
+              <Ban className="h-4 w-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="text-xs">تعليق</TooltipContent>
+        </Tooltip>
 
-      <Button
-        variant="ghost"
-        size="icon"
-        title="رفض"
-        className="h-8 w-8 text-red-500 hover:bg-red-50 hover:text-red-600 disabled:opacity-30 disabled:hover:bg-transparent"
-        onClick={() => handleActionClick('Reject')}
-        disabled={isProcessing || company.status !== 'PendingApproval'}
-      >
-        <X className="h-4 w-4" />
-      </Button>
+        <Tooltip delayDuration={700} disableHoverableContent={true}>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-red-500 hover:bg-red-50 hover:text-red-600 disabled:opacity-30 disabled:hover:bg-transparent"
+              onClick={() => handleActionClick('Reject')}
+              disabled={isProcessing || company.status !== 'PendingApproval'}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="text-xs">رفض</TooltipContent>
+        </Tooltip>
 
-      <Button
-        variant="ghost"
-        size="icon"
-        title="حظر"
-        className="h-8 w-8 text-red-500 hover:bg-red-50 hover:text-red-600 disabled:opacity-30 disabled:hover:bg-transparent"
-        onClick={() => handleActionClick('Delete')}
-        disabled={isProcessing || company.status === 'Blocked'}
-      >
-        <UserX className="h-4 w-4" />
-      </Button>
+        <Tooltip delayDuration={700} disableHoverableContent={true}>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-red-500 hover:bg-red-50 hover:text-red-600 disabled:opacity-30 disabled:hover:bg-transparent"
+              onClick={() => handleActionClick('Delete')}
+              disabled={isProcessing || company.status === 'Blocked'}
+            >
+              <UserX className="h-4 w-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="text-xs">حظر</TooltipContent>
+        </Tooltip>
+      </div>
 
       <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <AlertDialogContent dir="rtl">
@@ -214,7 +233,7 @@ const ActionCell = ({ company }: { company: CompanyDto }) => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </TooltipProvider>
   )
 }
 
