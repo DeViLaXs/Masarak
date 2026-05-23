@@ -18,6 +18,7 @@ import Image from 'next/image'
 import { Skeleton } from './ui/skeleton'
 import { useAuth } from '@/auth/use-auth'
 import Logo from './logo'
+import { ThemeTogglerButton } from './animate-ui/components/buttons/theme-toggler'
 
 export default function NavBar() {
   const { isAuthenticated, role, isLoading, user } = useAuth()
@@ -74,7 +75,8 @@ export default function NavBar() {
                 )}
    
                <div className="text-foreground flex size-10 items-center justify-center rounded-full transition hover:bg-slate-300 dark:text-white dark:hover:bg-accent/40">
-                 <AnimatedThemeToggler />
+                 {/* <AnimatedThemeToggler /> */}
+                  <ThemeTogglerButton />
                </div>
              </div>
            </nav>

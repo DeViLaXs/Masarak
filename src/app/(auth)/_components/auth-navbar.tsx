@@ -12,6 +12,7 @@ import { useTheme } from 'next-themes'
 import { AnimatedThemeToggler } from '@/components/ui/animated-theme-toggler'
 import Image from 'next/image'
 import Link from 'next/link'
+import { ThemeTogglerButton } from '@/components/animate-ui/components/buttons/theme-toggler'
 
 export default function AuthNavBar() {
   const { setTheme } = useTheme()
@@ -49,7 +50,8 @@ export default function AuthNavBar() {
                   className="hidden dark:block"
                 />
               </Link>
-              <AnimatedThemeToggler />
+              {/* <AnimatedThemeToggler /> */}
+              <ThemeTogglerButton />
             </div>
   )
 }

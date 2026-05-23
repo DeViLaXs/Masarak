@@ -13,6 +13,7 @@ import { SidebarTrigger } from './ui/sidebar'
 import { usePathname } from 'next/navigation'
 import { routeTitles } from '@/lib/route-titles'
 import { AnimatedThemeToggler } from '@/components/ui/animated-theme-toggler'
+import { ThemeTogglerButton } from './animate-ui/components/buttons/theme-toggler'
 
 export default function DashboardNavBar() {
   const pathname = usePathname()
@@ -25,7 +26,8 @@ export default function DashboardNavBar() {
         <SidebarTrigger className="-ms-1" />
         <h1 className="text-xl font-bold text-sky-500">{title}</h1>
       </div>
-      <AnimatedThemeToggler duration={700} className="pl-5" />
+      {/* <AnimatedThemeToggler duration={700} className="pl-5" /> */}
+      <ThemeTogglerButton />
     </div>
   )
 }
