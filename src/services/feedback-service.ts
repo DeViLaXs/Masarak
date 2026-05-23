@@ -35,6 +35,13 @@ export type FeedbackTypeDTO = {
   name: string
 }
 
+export type FeedbackStatisticsDTO = {
+  complaintsCount: number
+  featureRequestsCount: number
+  readFeedbacksCount: number
+  unreadFeedbacksCount: number
+}
+
 export const feedbackService = {
   submitFeedback: async (data: SubmitFeedbackDTO) => {
     const res = await api.post('/Feedbacks', data)
@@ -73,6 +80,21 @@ export const feedbackService = {
     if (Array.isArray(res.data?.data)) return res.data.data
 
     return []
+  },
+
+  getFeedbackStatistics: async (): Promise<FeedbackStatisticsDTO> => {
+    const res = await api.get('/Feedbacks/statistics')
+
+    if (res.data?.data) {
+      return res.data.data
+    }
+
+    return {
+      complaintsCount: 0,
+      featureRequestsCount: 0,
+      readFeedbacksCount: 0,
+      unreadFeedbacksCount: 0,
+    }
   },
 
   markAsRead: async (id: number) => {

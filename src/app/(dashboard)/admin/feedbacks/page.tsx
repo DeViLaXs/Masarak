@@ -7,6 +7,7 @@ import {
   useMarkFeedbackAsRead,
   useDeleteFeedback,
   useSendFeedbackReply,
+  useFeedbackStatistics,
 } from '@/hooks/use-feedback'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -61,6 +62,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { FeedbackResponseDTO } from '@/services/feedback-service'
 import { FeedbacksTable } from './_components/feedbacks-table'
+import { FeedbackStats } from './_components/feedback-stats'
 
 export default function FeedbacksClient() {
   const [selectedType, setSelectedType] = React.useState<number | undefined>(
@@ -84,6 +86,8 @@ export default function FeedbacksClient() {
   const feedbacks = feedbacksData?.items || []
 
   const { data: feedbackTypes, isLoading: isTypesLoading } = useFeedbackTypes()
+
+  const { data: statsData, isLoading: isStatsLoading } = useFeedbackStatistics()
 
   const { mutateAsync: markAsRead, isPending: isMarking } =
     useMarkFeedbackAsRead()
@@ -164,6 +168,8 @@ export default function FeedbacksClient() {
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 space-y-5 px-6 pb-10 duration-500">
+      <FeedbackStats isLoading={isStatsLoading} stats={statsData} />
+
       <div className="border-border/40 dark:bg-card relative overflow-hidden rounded-3xl border bg-white p-5 text-right shadow-sm">
         <div className="relative z-10 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           

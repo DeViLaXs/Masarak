@@ -1,11 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { feedbackService, SubmitFeedbackDTO, SendFeedbackReplyDTO } from '@/services/feedback-service'
+import {
+  feedbackService,
+  SubmitFeedbackDTO,
+  SendFeedbackReplyDTO,
+  FeedbackStatisticsDTO,
+} from '@/services/feedback-service'
 
 export const feedbackKeys = {
   all: ['feedbacks'] as const,
   list: (typeId?: number, isRead?: boolean, pageNumber?: number, pageSize?: number) =>
     [...feedbackKeys.all, 'list', typeId, isRead, pageNumber, pageSize] as const,
   types: () => [...feedbackKeys.all, 'types'] as const,
+  statistics: () => [...feedbackKeys.all, 'statistics'] as const,
 }
 
 export function useSubmitFeedback() {
@@ -32,6 +38,13 @@ export function useFeedbackTypes() {
   return useQuery({
     queryKey: feedbackKeys.types(),
     queryFn: () => feedbackService.getFeedbackTypes(),
+  })
+}
+
+export function useFeedbackStatistics() {
+  return useQuery({
+    queryKey: feedbackKeys.statistics(),
+    queryFn: () => feedbackService.getFeedbackStatistics(),
   })
 }
 
