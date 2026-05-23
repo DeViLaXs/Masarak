@@ -14,6 +14,8 @@ export const adminKeys = {
   dashboardStatistics: () => [...adminKeys.all, 'dashboard-statistics'] as const,
   companies: () => [...adminKeys.all, 'companies'] as const,
   company: (id: number) => [...adminKeys.companies(), id] as const,
+  companyStatusDistribution: () => [...adminKeys.all, 'company-status-distribution'] as const,
+  companyRegistrations: (period: string) => [...adminKeys.all, 'company-registrations', period] as const,
 }
 
 export function useAdmin() {
@@ -43,6 +45,18 @@ export function useAdmin() {
       queryKey: adminKeys.company(id),
       queryFn: () => adminService.getCompany(id),
       enabled: !!id,
+    })
+
+  const useCompanyStatusDistribution = () =>
+    useQuery({
+      queryKey: adminKeys.companyStatusDistribution(),
+      queryFn: adminService.getCompanyStatusDistribution,
+    })
+
+  const useCompanyRegistrations = (period = 'weekly') =>
+    useQuery({
+      queryKey: adminKeys.companyRegistrations(period),
+      queryFn: () => adminService.getCompanyRegistrations(period),
     })
 
   // Mutations
@@ -91,6 +105,8 @@ export function useAdmin() {
     useDashboardStatistics,
     useCompanies,
     useCompany,
+    useCompanyStatusDistribution,
+    useCompanyRegistrations,
 
     // Mutations
     updateCompanyStatus: updateStatusMutation.mutateAsync,

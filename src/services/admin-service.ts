@@ -94,6 +94,39 @@ export interface BulkActionDto {
   action: 'Approve' | 'Reject' | 'Suspend' | 'Delete'
 }
 
+export interface ChartPieItemDto {
+  key: string
+  label: string
+  value: number
+  fill: string
+}
+
+export interface ChartPieResponseDto {
+  title: string
+  description: string
+  items: ChartPieItemDto[]
+}
+
+export interface ChartSeriesDto {
+  key: string
+  label: string
+  color: string
+}
+
+export interface ChartBarMultiPointDto {
+  label: string
+  [key: string]: string | number
+}
+
+export interface ChartBarMultiResponseDto {
+  title: string
+  description: string
+  period: string
+  xKey: string
+  series: ChartSeriesDto[]
+  items: ChartBarMultiPointDto[]
+}
+
 // ============== Service ==============
 
 export const adminService = {
@@ -148,6 +181,18 @@ export const adminService = {
     BaseResponse<{ successCount: number; failedCount: number; message: string }>
   > => {
     const res = await api.post('/Admin/companies/bulk-action', data)
+    return res.data
+  },
+
+  getCompanyStatusDistribution: async (): Promise<BaseResponse<ChartPieResponseDto>> => {
+    const res = await api.get('/Admin/dashboard-charts/company-status-distribution')
+    return res.data
+  },
+
+  getCompanyRegistrations: async (period = 'weekly'): Promise<BaseResponse<ChartBarMultiResponseDto>> => {
+    const res = await api.get(`/Admin/dashboard-charts/company-registrations`, {
+      params: { period }
+    })
     return res.data
   },
 }
