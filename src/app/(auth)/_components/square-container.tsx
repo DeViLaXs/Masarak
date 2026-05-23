@@ -1,21 +1,24 @@
 import React from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
+import { BubbleBackground } from '@/components/animate-ui/components/backgrounds/bubble'
 
 export default function SquareContainer() {
     return (
-         <div className="hidden md:flex md:w-[45%] h-full flex-col justify-center items-center text-center p-12 text-white relative overflow-hidden bg-linear-to-br from-[#027fc7] to-[#013856]">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -inset-16 z-0 opacity-[0.08]"
-          style={{
-            backgroundImage: "url('/masarak-new-dark.png')",
-            backgroundRepeat: 'repeat',
-            backgroundSize: '120px 120px',
-            transform: 'rotate(-24deg)',
-            transformOrigin: 'center',
-          }}
-        />
+         <BubbleBackground
+           interactive
+           colors={{
+             first: '2,127,199',   // #027fc7
+             second: '1,56,86',     // #013856
+             third: '0,162,255',    // #00a2ff
+             fourth: '0,208,255',   // #00d0ff
+             fifth: '14,165,233',   // #0ea5e9
+             sixth: '0,220,255',    // bright cyan
+           }}
+           className="hidden md:flex md:w-[45%] h-full flex-col justify-center items-center text-center p-12 text-white relative overflow-hidden bg-gradient-to-br from-[#027fc7] to-[#013856]"
+         >
+          
+
 
         {/* Content Container */}
         <div className="flex flex-col items-center max-w-sm z-10 gap-2">
@@ -90,6 +93,6 @@ export default function SquareContainer() {
         <div dir='ltr' className="absolute bottom-8 left-0 right-0 text-xs text-white/60 font-semibold z-10 font-['Cairo'] text-center">
           @Masarak. 2026
         </div>
-      </div>
+      </BubbleBackground>
     )
 }
