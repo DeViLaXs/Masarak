@@ -33,6 +33,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip'
+import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import type { FeedbackResponseDTO } from '@/services/feedback-service'
 
@@ -259,18 +260,7 @@ export function FeedbacksTable({
     getCoreRowModel: getCoreRowModel(),
   })
 
-  if (isLoading) {
-    return (
-      <div className="flex min-h-[385px] flex-col items-center justify-center gap-4">
-        <Loader2 className="text-primary size-8 animate-spin" />
-        <p className="text-muted-foreground animate-pulse text-sm font-medium">
-          جاري تحميل الملاحظات...
-        </p>
-      </div>
-    )
-  }
-
-  if (feedbacks.length === 0) {
+  if (!isLoading && feedbacks.length === 0) {
     return (
       <div className="flex min-h-[385px] flex-col items-center justify-center gap-4 p-8 text-center">
         <div className="relative flex size-16 items-center justify-center">
@@ -313,7 +303,18 @@ export function FeedbacksTable({
           ))}
         </TableHeader>
         <TableBody>
-          {table.getRowModel().rows.map((row) => (
+          {isLoading ? (
+            [...Array(5)].map((_, rowIndex) => (
+              <TableRow key={rowIndex} className="h-16 text-center">
+                {columns.map((column, colIndex) => (
+                  <TableCell key={colIndex} className="px-5 text-center align-middle">
+                    <Skeleton className="h-5 w-2/3 mx-auto rounded-md" />
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : (
+            table.getRowModel().rows.map((row) => (
             <TableRow
               key={row.id}
               className=
@@ -331,7 +332,7 @@ export function FeedbacksTable({
                 </TableCell>
               ))}
             </TableRow>
-          ))}
+          )))}
         </TableBody>
       </Table>
     </div>

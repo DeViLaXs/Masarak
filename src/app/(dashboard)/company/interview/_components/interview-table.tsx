@@ -18,6 +18,8 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { CalendarDays, CircleCheck, CircleX, FileText, Loader2, UserX, UserX2, X, Clock, RotateCcw, CheckCircle2, AlertCircle, MapPin, Video, Phone, ExternalLink, Eye, ArrowUpDown, ChevronUp, ChevronDown } from 'lucide-react'
 
+import { Skeleton } from '@/components/ui/skeleton'
+
 interface InterviewTableProps {
   data: InterviewListItemDto[]
   loading: boolean
@@ -271,17 +273,15 @@ export function InterviewTable({
         </TableHeader>
         <TableBody>
           {loading ? (
-            <TableRow>
-              <TableCell
-                colSpan={columns.length}
-                className="h-[300px] p-8 text-center"
-              >
-                <div className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
-                  <Loader2 className="mb-4 size-8 animate-spin text-primary" />
-                  <p>جاري جلب بيانات المقابلات...</p>
-                </div>
-              </TableCell>
-            </TableRow>
+            [...Array(5)].map((_, rowIndex) => (
+              <TableRow key={rowIndex} className="h-16 text-center">
+                {columns.map((column, colIndex) => (
+                  <TableCell key={colIndex} className="px-5 text-center align-middle">
+                    <Skeleton className="h-5 w-2/3 mx-auto rounded-md" />
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
           ) : table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow

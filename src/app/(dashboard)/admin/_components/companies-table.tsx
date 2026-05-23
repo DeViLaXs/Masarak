@@ -30,6 +30,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useAdmin } from '@/hooks/use-admin'
 import type { CompanyDto } from '@/services/admin-service'
 
@@ -40,6 +41,7 @@ interface CompaniesTableProps {
     React.SetStateAction<Record<string, boolean>>
   >
   onRowClick: (row: CompanyDto) => void
+  isLoading?: boolean
 }
 
 const ActionCell = ({ company }: { company: CompanyDto }) => {
@@ -409,6 +411,7 @@ export function CompaniesTable({
   rowSelection,
   onRowSelectionChange,
   onRowClick,
+  isLoading = false,
 }: CompaniesTableProps) {
   const table = useReactTable({
     data,
@@ -443,7 +446,17 @@ export function CompaniesTable({
           ))}
         </TableHeader>
         <TableBody>
-          {table.getRowModel().rows?.length ? (
+          {isLoading ? (
+            [...Array(5)].map((_, rowIndex) => (
+              <TableRow key={rowIndex} className="h-16 text-center">
+                {columns.map((column, colIndex) => (
+                  <TableCell key={colIndex} className="text-center align-middle">
+                    <Skeleton className="h-5 w-2/3 mx-auto rounded-md" />
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}

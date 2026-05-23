@@ -61,11 +61,7 @@ const links = [
     path: '/company/interview',
     icon: Users,
   },
-  {
-    title: 'تواصل معنا',
-    path: '/company/contact-us',
-    icon: MailIcon,
-  },
+  
 ]
 
 export function AppSidebar() {
@@ -122,6 +118,18 @@ export function AppSidebar() {
                   <Link href="/company/profile">
                     <UserRound />
                     <span>الملف الشخصي</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem className="mx-2">
+                <SidebarMenuButton
+                  isActive={pathname === '/company/contact-us'}
+                  asChild
+                  className="transition-all"
+                >
+                  <Link href="/company/contact-us">
+                    <MailIcon />
+                    <span>تواصل معنا</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

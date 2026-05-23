@@ -293,22 +293,17 @@ export default function CompaniesPage() {
          
 
           <div className="p-0">
-            {isLoading ? (
-              <div className="text-muted-foreground flex min-h-[385px] items-center justify-center p-8 text-center">
-                جاري تحميل البيانات...
-              </div>
-            ) : (
-              <div>
-                <CompaniesTable
-                  data={companies}
-                  rowSelection={rowSelection}
-                  onRowSelectionChange={setRowSelection}
-                  onRowClick={(row) =>
-                    router.push(`/admin/companies/${row.id}`)
-                  }
-                />
-              </div>
-            )}
+            <div>
+              <CompaniesTable
+                data={companies}
+                rowSelection={rowSelection}
+                onRowSelectionChange={setRowSelection}
+                onRowClick={(row) =>
+                  router.push(`/admin/companies/${row.id}`)
+                }
+                isLoading={isLoading}
+              />
+            </div>
           </div>
 
           {/* Pagination Controls */}

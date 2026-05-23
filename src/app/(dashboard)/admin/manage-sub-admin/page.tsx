@@ -288,19 +288,14 @@ export default function ManageSubAdminPage() {
           </div>
 
           <div className="p-0">
-            {isLoading ? (
-              <div className="text-muted-foreground flex min-h-[385px] items-center justify-center p-8 text-center">
-                جاري تحميل البيانات...
-              </div>
-            ) : (
-              <div>
-                <SubadminsTable
-                  data={subadmins}
-                  rowSelection={rowSelection}
-                  onRowSelectionChange={setRowSelection}
-                />
-              </div>
-            )}
+            <div>
+              <SubadminsTable
+                data={subadmins}
+                rowSelection={rowSelection}
+                onRowSelectionChange={setRowSelection}
+                isLoading={isLoading}
+              />
+            </div>
           </div>
 
           {/* Pagination Controls */}

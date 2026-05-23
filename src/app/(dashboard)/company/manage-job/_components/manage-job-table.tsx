@@ -43,6 +43,8 @@ import { Card } from '@/components/ui/card'
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip'
 import Link from 'next/link'
 
+import { Skeleton } from '@/components/ui/skeleton'
+
 // --- Arabic Translation Helpers ---
 
 export const formatJobType = (type: string) => {
@@ -381,17 +383,22 @@ export function ManageJobTable({
                 </TableHeader>
                 <TableBody>
                     {isPending ? (
-                        <TableRow>
-                            <TableCell
-                                colSpan={columns.length}
-                                className="h-[300px] p-8 text-center"
-                            >
-                                <div className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
-                                    <Loader2 className="mb-4 size-8 animate-spin text-blue-500" />
-                                    <p>جاري جلب بيانات الوظائف...</p>
-                                </div>
-                            </TableCell>
-                        </TableRow>
+                        [...Array(5)].map((_, rowIndex) => (
+                            <TableRow key={rowIndex} className="h-16 text-center">
+                                {table.getVisibleFlatColumns().map((column, colIndex) => (
+                                    <TableCell
+                                        key={colIndex}
+                                        className="text-center align-middle"
+                                        style={{
+                                            width: column.getSize(),
+                                            minWidth: column.getSize(),
+                                        }}
+                                    >
+                                        <Skeleton className="h-5 w-2/3 mx-auto rounded-md" />
+                                    </TableCell>
+                                ))}
+                            </TableRow>
+                        ))
                     ) : table.getRowModel().rows.length === 0 ? (
                         <TableRow>
                             <TableCell

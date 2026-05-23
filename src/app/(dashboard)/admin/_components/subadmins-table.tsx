@@ -30,6 +30,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useSubadmins, type SubAdminDto } from '@/hooks/use-subadmins'
 
 interface SubadminsTableProps {
@@ -38,6 +39,7 @@ interface SubadminsTableProps {
   onRowSelectionChange: React.Dispatch<
     React.SetStateAction<Record<string, boolean>>
   >
+  isLoading?: boolean
 }
 
 const ActionCell = ({ subadmin }: { subadmin: SubAdminDto }) => {
@@ -327,6 +329,7 @@ export function SubadminsTable({
   data,
   rowSelection,
   onRowSelectionChange,
+  isLoading = false,
 }: SubadminsTableProps) {
   const table = useReactTable({
     data,
@@ -361,7 +364,17 @@ export function SubadminsTable({
           ))}
         </TableHeader>
         <TableBody>
-          {table.getRowModel().rows?.length ? (
+          {isLoading ? (
+            [...Array(5)].map((_, rowIndex) => (
+              <TableRow key={rowIndex} className="h-16 text-center">
+                {columns.map((column, colIndex) => (
+                  <TableCell key={colIndex} className="px-5 text-center align-middle">
+                    <Skeleton className="h-5 w-2/3 mx-auto rounded-md" />
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
