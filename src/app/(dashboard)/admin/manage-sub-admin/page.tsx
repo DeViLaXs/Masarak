@@ -161,9 +161,9 @@ export default function ManageSubAdminPage() {
               />
             </div>
             <Link href="/admin/create-sub-admin">
-              <Button className="bg-primary hover:bg-primary/80 flex h-10 items-center gap-2 rounded-full px-6 font-medium text-white shadow-sm">
+              <Button className="bg-primary hover:bg-primary/80 flex h-10 items-center  rounded-full px-6 font-medium text-white shadow-sm">
                 <Plus className="h-4 w-4" />
-                <span className="max-sm:hidden px-2">إضافة مشرف</span>
+                <span className="max-sm:hidden pl-4">إضافة مشرف</span>
               </Button>
             </Link>
           </div>
