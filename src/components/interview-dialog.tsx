@@ -348,7 +348,7 @@ export function ScheduleRescheduleDialog({
                   <FieldLabel className="text-right w-full block text-muted-foreground">وقت المقابلة</FieldLabel>
                   <div className="flex items-center gap-1.5 w-full" dir="ltr">
                     <Select value={String(currentHour12)} onValueChange={(v) => updateTime(parseInt(v, 10), currentMinute, currentAmPm)}>
-                      <SelectTrigger className="flex-1 h-10 text-center bg-background border-input/60 dark:bg-input/20 focus:ring-primary shadow-sm hover:bg-accent hover:text-accent-foreground transition-all" dir="ltr">
+                      <SelectTrigger className="flex-1 h-10 text-center border-input/60 focus:ring-primary shadow-sm hover:bg-accent hover:text-accent-foreground transition-all" dir="ltr">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent dir="ltr" position="popper" className="min-w-0">
@@ -359,7 +359,7 @@ export function ScheduleRescheduleDialog({
                     </Select>
                     <span className="font-bold shrink-0 px-0.5 text-muted-foreground">:</span>
                     <Select value={currentMinute} onValueChange={(v) => updateTime(currentHour12, v, currentAmPm)}>
-                      <SelectTrigger className="flex-1 h-10 text-center bg-background border-input/60 dark:bg-input/20 focus:ring-primary shadow-sm hover:bg-accent hover:text-accent-foreground transition-all" dir="ltr">
+                      <SelectTrigger className="flex-1 h-10 text-center border-input/60 focus:ring-primary shadow-sm hover:bg-accent hover:text-accent-foreground transition-all" dir="ltr">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent dir="ltr" position="popper" className="min-w-0">
@@ -369,7 +369,7 @@ export function ScheduleRescheduleDialog({
                       </SelectContent>
                     </Select>
                     <Select value={currentAmPm} onValueChange={(v) => updateTime(currentHour12, currentMinute, v)}>
-                      <SelectTrigger className="flex-1 h-10 text-center bg-background border-input/60 dark:bg-input/20 focus:ring-primary shadow-sm hover:bg-accent hover:text-accent-foreground transition-all" dir="ltr">
+                      <SelectTrigger className="flex-1 h-10 text-center border-input/60 focus:ring-primary shadow-sm hover:bg-accent hover:text-accent-foreground transition-all" dir="ltr">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent dir="ltr" position="popper" className="min-w-0">
@@ -392,7 +392,7 @@ export function ScheduleRescheduleDialog({
                 <Field className="flex-1">
                   <FieldLabel className="text-right w-full block text-muted-foreground">نوع المقابلة</FieldLabel>
                   <Select value={String(formData.interviewTypeId)} onValueChange={(v) => setFormData({ ...formData, interviewTypeId: Number(v) })} dir="rtl">
-                    <SelectTrigger className="flex-1 h-10 text-center bg-background border-input/60 shadow-sm hover:bg-accent hover:text-primary transition-all" dir="rtl">
+                    <SelectTrigger className="flex-1 h-10 text-center border-input/60 shadow-sm hover:bg-accent hover:text-primary transition-all" dir="rtl">
                       <SelectValue placeholder="اختر نوع المقابلة" />
                     </SelectTrigger>
                     <SelectContent dir="rtl" position="popper" className="min-w-0">
@@ -448,7 +448,7 @@ export function ScheduleRescheduleDialog({
                     >
                       <ComboboxInput
                         placeholder="اختر الدولة..."
-                        className="h-10 text-right bg-background border-input/60 shadow-sm hover:bg-accent/50 transition-all"
+                        className="h-10 text-right border-input/60 shadow-sm hover:bg-accent/50 transition-all"
                         showClear
                       />
                       <ComboboxContent
@@ -486,7 +486,7 @@ export function ScheduleRescheduleDialog({
                     >
                       <ComboboxInput
                         placeholder={!formData.countryId ? "يرجى اختيار الدولة أولاً" : "اختر المحافظة..."}
-                        className="h-10 text-right bg-background border-input/60 shadow-sm hover:bg-accent/50 transition-all"
+                        className="h-10 text-right border-input/60 shadow-sm hover:bg-accent/50 transition-all"
                         disabled={!formData.countryId || governates.length === 0}
                         showClear
                       />
@@ -513,7 +513,7 @@ export function ScheduleRescheduleDialog({
                     <Input
 
                       placeholder="الشارع، المبنى..."
-                      className="bg-background h-10 text-right border-input/60 shadow-sm"
+                      className="h-10 text-right border-input/60 shadow-sm"
                       value={formData.addressLine || ''}
                       onChange={(e) => setFormData({ ...formData, addressLine: e.target.value })}
                     />
