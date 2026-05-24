@@ -62,6 +62,8 @@ import {
   ComboboxList,
   ComboboxItem,
   ComboboxEmpty,
+  ComboboxTrigger,
+  ComboboxValue,
 } from '@/components/ui/combobox'
 
 // --- Arabic Translation Helpers ---
@@ -359,7 +361,7 @@ export function AddJobForm() {
           <CardContent className="grid gap-7 pt-7">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <Field>
-                <FieldLabel htmlFor="title">عنوان الوظيفة *</FieldLabel>
+                <FieldLabel htmlFor="title">عنوان الوظيفة </FieldLabel>
                 <Input
                   id="title"
                   placeholder="مثال: مطور واجهات أمامية"
@@ -373,7 +375,7 @@ export function AddJobForm() {
               </Field>
 
               <Field>
-                <FieldLabel>تصنيف الوظيفة *</FieldLabel>
+                <FieldLabel>تصنيف الوظيفة </FieldLabel>
                 <Combobox
                   value={
                     categories?.find((cat) => cat.id === formData.categoryId) ||
@@ -424,7 +426,7 @@ export function AddJobForm() {
 
             <Field>
               <div className="flex items-center justify-between">
-                <FieldLabel htmlFor="description">وصف الوظيفة *</FieldLabel>
+                <FieldLabel htmlFor="description">وصف الوظيفة </FieldLabel>
                 <Button
                   type="button"
                   variant="ghost"
@@ -491,7 +493,7 @@ export function AddJobForm() {
           <CardContent className="grid gap-7 pt-7">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <Field>
-                <FieldLabel>نوع الدوام *</FieldLabel>
+                <FieldLabel>نوع الدوام </FieldLabel>
                 <Combobox
                   value={
                     jobTypes?.find((jt) => jt.id === formData.jobTypeId) || null
@@ -541,40 +543,26 @@ export function AddJobForm() {
               </Field>
 
               <Field>
-                <FieldLabel>نوع مكان العمل *</FieldLabel>
+                <FieldLabel>نوع مكان العمل </FieldLabel>
                 <Combobox
                   value={
                     locationTypes?.find(
                       (lt) => lt.id === formData.jobLocationTypeId,
                     ) || null
                   }
-                  inputValue={comboboxInputs.locationType}
                   onValueChange={(val: any) => {
                     setFormData((prev) => ({
                       ...prev,
                       jobLocationTypeId: val ? val.id : '',
                     }))
-                    setComboboxInputs((prev) => ({
-                      ...prev,
-                      locationType: val ? formatLocationTypeName(val.name) : '',
-                    }))
-                  }}
-                  filter={null}
-                  onInputValueChange={(value: string) => {
-                    setComboboxInputs((prev) => ({ ...prev, locationType: value }))
-                    if (value === '') {
-                      setFormData((prev) => ({ ...prev, jobLocationTypeId: '' }))
-                    }
                   }}
                   itemToStringLabel={(item: any) =>
                     item ? formatLocationTypeName(item.name) : ''
                   }
                 >
-                  <ComboboxInput
-                    placeholder="حضوري، عن بعد، إلخ..."
-                    className="bg-background focus:ring-primary/20 transition-shadow"
-                    showClear
-                  />
+                  <ComboboxTrigger className="flex h-10 w-full items-center justify-between gap-2 rounded-md border border-input bg-background dark:bg-input/30 px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 text-right cursor-pointer">
+                    <ComboboxValue placeholder="حضوري، عن بعد، إلخ..." />
+                  </ComboboxTrigger>
                   <ComboboxContent>
                     <ComboboxList>
                       {locationTypes && locationTypes.length === 0 && (
@@ -593,7 +581,7 @@ export function AddJobForm() {
               </Field>
 
               <Field>
-                <FieldLabel>الدولة *</FieldLabel>
+                <FieldLabel>الدولة </FieldLabel>
                 <Combobox
                   value={
                     countries?.find((c) => c.id === formData.countryId) || null
@@ -647,7 +635,7 @@ export function AddJobForm() {
               </Field>
 
               <Field>
-                <FieldLabel>المحافظة / المنطقة *</FieldLabel>
+                <FieldLabel>المحافظة / المنطقة </FieldLabel>
                 <Combobox
                   value={
                     governates?.find((g) => g.id === formData.governateId) ||
@@ -724,7 +712,7 @@ export function AddJobForm() {
           <CardContent className="grid gap-7 pt-7">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
               <Field className="lg:col-span-1">
-                <FieldLabel>العملة *</FieldLabel>
+                <FieldLabel>العملة </FieldLabel>
                 <Combobox
                   value={
                     currencies?.find((c) => c.id === formData.currencyId) ||
@@ -775,7 +763,7 @@ export function AddJobForm() {
               </Field>
 
               <Field className="lg:col-span-1">
-                <FieldLabel htmlFor="minSalary">الراتب من *</FieldLabel>
+                <FieldLabel htmlFor="minSalary">الراتب من </FieldLabel>
                 <Input
                   id="minSalary"
                   type="number"
@@ -793,7 +781,7 @@ export function AddJobForm() {
               </Field>
 
               <Field className="lg:col-span-1">
-                <FieldLabel htmlFor="maxSalary">الراتب إلى *</FieldLabel>
+                <FieldLabel htmlFor="maxSalary">الراتب إلى </FieldLabel>
                 <Input
                   id="maxSalary"
                   type="number"
@@ -811,7 +799,7 @@ export function AddJobForm() {
               </Field>
 
               <Field className="flex flex-col justify-end lg:col-span-1">
-                <FieldLabel>تاريخ الانتهاء *</FieldLabel>
+                <FieldLabel>تاريخ الانتهاء </FieldLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button

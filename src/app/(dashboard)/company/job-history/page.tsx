@@ -119,7 +119,7 @@ export default function JobHistoryPage() {
                 bgColorClass: 'bg-blue-500/10 dark:bg-blue-500/25',
                 borderColorClass: 'hover:border-blue-300 dark:hover:border-blue-950',
                 gradientClass: 'from-blue-500/5 to-transparent',
-                description: 'إجمالي السجلات التاريخية للشركة',
+                description: 'إجمالي السجلات التاريخية',
               },
               {
                 title: 'تم التوظيف',
@@ -129,7 +129,7 @@ export default function JobHistoryPage() {
                 bgColorClass: 'bg-emerald-500/10 dark:bg-emerald-500/25',
                 borderColorClass: 'hover:border-emerald-300 dark:hover:border-emerald-950',
                 gradientClass: 'from-emerald-500/5 to-transparent',
-                description: 'مرشحين تم قبولهم وتوظيفهم',
+                description: 'مرشحين تم توظيفهم',
               },
               {
                 title: 'المرفوض',
@@ -211,7 +211,7 @@ export default function JobHistoryPage() {
                 />
               </div>
 
-              <div className="bg-background border-input focus-within:ring-primary/20 focus-within:border-primary flex h-10 w-full items-center overflow-hidden rounded-lg border shadow-sm transition-all focus-within:ring-2 md:w-[200px]">
+              <div className="bg-background dark:bg-input/30 border-input focus-within:ring-primary/20 focus-within:border-primary flex h-10 w-full items-center overflow-hidden rounded-lg border shadow-sm transition-all focus-within:ring-2 md:w-[200px]">
                 <Combobox
                   value={
                     applicationStatusId === undefined
@@ -252,7 +252,7 @@ export default function JobHistoryPage() {
                 </Combobox>
               </div>
 
-              <div className="bg-background border-input focus-within:ring-primary/20 focus-within:border-primary flex h-10 w-full items-center overflow-hidden rounded-lg border shadow-sm transition-all focus-within:ring-2 md:w-[200px]">
+              <div className="bg-background dark:bg-input/30 border-input focus-within:ring-primary/20 focus-within:border-primary flex h-10 w-full items-center overflow-hidden rounded-lg border shadow-sm transition-all focus-within:ring-2 md:w-[200px]">
                 <Combobox
                   value={
                     jobId === undefined

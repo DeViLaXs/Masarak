@@ -367,7 +367,7 @@ export default function ProfilePage() {
               <h4 className="text-destructive text-sm font-bold">
               حذف الحساب
               </h4>
-              <p className="text-muted-foreground max-w-lg text-xs leading-relaxed">
+              <p className="text-muted-foreground max-w-lg text-xs leading-relaxed pl-7">
                 سيؤدي هذا الإجراء إلى حذف بيانات شركتك وجميع الحسابات المرتبطة
                 بها بشكل نهائي. هذا الإجراء غير قابل للتراجع.
               </p>
@@ -377,7 +377,7 @@ export default function ProfilePage() {
               description="سيؤدي هذا الإجراء إلى حذف بيانات شركتك وجميع الحسابات المرتبطة بها بشكل نهائي. هذا الإجراء غير قابل للتراجع."
               onConfirm={handleDeleteAccount}
               isLoading={isDeletingAccount}
-              triggerText="إلغاء تنشيط الشركة"
+              triggerText="حذف الحساب"
             />
           </CardContent>
         </Card>

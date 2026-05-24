@@ -137,7 +137,7 @@ export default function ApplicationsPage() {
                 bgColorClass: 'bg-blue-500/10 dark:bg-blue-500/25',
                 borderColorClass: 'hover:border-blue-300 dark:hover:border-blue-950',
                 gradientClass: 'from-blue-500/5 to-transparent',
-                description: 'طلبات التوظيف النشطة بالشركة',
+                description: 'طلبات التوظيف النشطة',
               },
               {
                 title: 'قيد الانتظار',
@@ -177,7 +177,7 @@ export default function ApplicationsPage() {
                 bgColorClass: 'bg-red-500/10 dark:bg-red-500/25',
                 borderColorClass: 'hover:border-red-300 dark:hover:border-red-950',
                 gradientClass: 'from-red-500/5 to-transparent',
-                description: 'طلبات جديدة مستلمة هذا الأسبوع',
+                description: 'طلبات جديدة هذا الأسبوع',
               },
             ].map((card, idx) => {
               const Icon = card.icon
@@ -230,7 +230,7 @@ export default function ApplicationsPage() {
               />
             </div>
 
-            <div className="w-full md:w-[200px] shadow-sm rounded-lg overflow-hidden border border-input focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all h-10 flex items-center">
+            <div className="w-full md:w-[200px] shadow-sm rounded-lg overflow-hidden bg-background dark:bg-input/30 border border-input focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all h-10 flex items-center">
               <Combobox
                 value={
                   applicationStatusId === undefined
@@ -261,7 +261,7 @@ export default function ApplicationsPage() {
               >
                 <ComboboxInput
                   placeholder="جميع الحالات"
-                  className="bg-background w-full border-none focus:ring-0 px-3 text-sm h-full cursor-pointer "
+                  className="bg-transparent w-full border-none focus:ring-0 px-3 text-sm h-full cursor-pointer "
                   readOnly
                 />
                 <ComboboxContent>
@@ -291,7 +291,7 @@ export default function ApplicationsPage() {
               </Combobox>
             </div>
 
-            <div className="w-full md:w-[200px] shadow-sm rounded-lg overflow-hidden border border-input focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all h-10 flex items-center">
+            <div className="w-full md:w-[200px] shadow-sm rounded-lg overflow-hidden bg-background dark:bg-input/30 border border-input focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all h-10 flex items-center">
               <Combobox
                 value={
                   jobId === undefined
@@ -308,7 +308,7 @@ export default function ApplicationsPage() {
               >
                 <ComboboxInput
                   placeholder="جميع الوظائف"
-                  className="bg-background w-full border-none focus:ring-0 px-3 text-sm h-full cursor-pointer"
+                  className="bg-transparent w-full border-none focus:ring-0 px-3 text-sm h-full cursor-pointer"
                   readOnly
                 />
                 <ComboboxContent>

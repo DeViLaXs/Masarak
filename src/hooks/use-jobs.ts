@@ -61,6 +61,7 @@ export function useJobs() {
     updateJobAsync: updateJobMutation.mutateAsync,
     isUpdatingJob: updateJobMutation.isPending,
     updateJobError: updateJobMutation.error,
+    updateJobVariables: updateJobMutation.variables,
   }
 }
 

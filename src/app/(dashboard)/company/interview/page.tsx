@@ -232,7 +232,7 @@ export default function InterviewsPage() {
               <Search className="absolute right-3 top-2.5 h-5 w-5 text-muted-foreground" />
               <Input
                 placeholder="ابحث بالاسم أو الوظيفة..."
-                className="pr-10 h-10 shadow-sm rounded-lg"
+                className="bg-background pr-10 h-10 shadow-sm rounded-lg"
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value)
@@ -241,7 +241,7 @@ export default function InterviewsPage() {
               />
             </div>
 
-            <div className="w-full md:w-[200px] shadow-sm rounded-lg overflow-hidden bg-background border border-input focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all h-10 flex items-center">
+            <div className="w-full md:w-[200px] shadow-sm rounded-lg overflow-hidden bg-background dark:bg-input/30 border border-input focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all h-10 flex items-center">
               <Combobox
                 value={
                   interviewStatusId === undefined
@@ -302,7 +302,7 @@ export default function InterviewsPage() {
               </Combobox>
             </div>
 
-            <div className="w-full md:w-[200px] shadow-sm rounded-lg overflow-hidden bg-background border border-input focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all h-10 flex items-center">
+            <div className="w-full md:w-[200px] shadow-sm rounded-lg overflow-hidden bg-background dark:bg-input/30 border border-input focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all h-10 flex items-center">
               <Combobox
                 value={
                   jobId === undefined

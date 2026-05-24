@@ -223,7 +223,7 @@ export function JobHistoryTable({
     },
     {
       id: 'cv',
-      header: 'السيرة',
+      header:() => <div className="text-center px-3">السيرة</div>,
       cell: ({ row }) => {
         const url = row.original.cvDownloadUrl
         return url ? (
@@ -266,7 +266,7 @@ export function JobHistoryTable({
 
   return (
     <div className="max-h-full overflow-y-auto">
-      <Table className="w-full caption-bottom text-sm">
+      <Table className="w-full caption-bottom text-sm ">
         <TableHeader className="sticky top-0 z-10 bg-slate-50 shadow-sm dark:bg-muted">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>

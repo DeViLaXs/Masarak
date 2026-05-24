@@ -63,6 +63,8 @@ import {
   ComboboxList,
   ComboboxItem,
   ComboboxEmpty,
+  ComboboxTrigger,
+  ComboboxValue,
 } from '@/components/ui/combobox'
 
 // --- Arabic Translation Helpers ---
@@ -603,15 +605,13 @@ export default function JobDetailsPage() {
                       jobLocationTypeId: val ? val.id : '',
                     }))
                   }
-                  filter={null}
                   itemToStringLabel={(item: any) =>
                     item ? formatLocationTypeName(item.name) : ''
                   }
                 >
-                  <ComboboxInput
-                    placeholder="حضوري، عن بعد، إلخ..."
-                    className="bg-background focus:ring-primary/20 transition-shadow"
-                  />
+                  <ComboboxTrigger className="flex h-10 w-full items-center justify-between gap-2 rounded-md border border-input bg-background dark:bg-input/30 px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 text-right cursor-pointer">
+                    <ComboboxValue placeholder="حضوري، عن بعد، إلخ..." />
+                  </ComboboxTrigger>
                   <ComboboxContent>
                     <ComboboxList>
                       {locationTypes && locationTypes.length === 0 && (
@@ -968,7 +968,7 @@ export default function JobDetailsPage() {
           <Button
             type="button"
             variant="outline"
-            className="h-12 rounded-xl px-10 font-bold"
+            className="h-12 rounded-xl px-10 font-bold text-red-500 shadow-md hover:text-red-600 hover:bg-red-100 disabled:opacity-70"
             onClick={() => router.push('/company/manage-job')}
             disabled={isUpdatingJob}
           >
@@ -976,7 +976,7 @@ export default function JobDetailsPage() {
           </Button>
           <Button
             type="submit"
-            className="h-12 rounded-xl bg-[#3b82f6] px-10 font-bold text-white shadow-md hover:bg-blue-600 disabled:opacity-70"
+            className="h-12 rounded-xl bg-primary px-10 font-bold text-white shadow-md hover:bg-primary/90 disabled:opacity-70"
             disabled={isUpdatingJob}
           >
             {isUpdatingJob ? (

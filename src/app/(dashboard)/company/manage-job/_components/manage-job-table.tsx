@@ -97,8 +97,8 @@ interface ManageJobTableProps {
     totalCount: number
     pageSize: number
     setPage: React.Dispatch<React.SetStateAction<number>>
-    isUpdating: boolean
-    isUpdatingJob: boolean
+    updatingStatusJobId?: number
+    updatingJobJobId?: number
     handleStatusChange: (id: number, newStatus: 'Published' | 'Closed') => void
     handleReschedule: (id: number, newDate: Date) => void
     sorting: SortingState
@@ -113,8 +113,8 @@ export function ManageJobTable({
     totalCount,
     pageSize,
     setPage,
-    isUpdating,
-    isUpdatingJob,
+    updatingStatusJobId,
+    updatingJobJobId,
     handleStatusChange,
     handleReschedule,
     sorting,
@@ -219,6 +219,7 @@ export function ManageJobTable({
                 header: () => <div className="text-center font-medium">الإجراءات</div>,
                 cell: ({ row }) => {
                     const job = row.original
+                    const isUpdatingThisJob = updatingStatusJobId === job.id || updatingJobJobId === job.id
                     return (
                         <TooltipProvider>
                             <div className="flex items-center justify-center gap-2">
@@ -239,7 +240,7 @@ export function ManageJobTable({
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                disabled={isUpdating || isUpdatingJob}
+                                                disabled={isUpdatingThisJob}
                                                 onClick={() => handleStatusChange(job.id, 'Closed')}
                                                 className="h-8 w-8 rounded-full text-red-500 hover:bg-red-100 hover:text-red-600 disabled:opacity-50"
                                             >
@@ -256,7 +257,7 @@ export function ManageJobTable({
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                disabled={isUpdating || isUpdatingJob}
+                                                disabled={isUpdatingThisJob}
                                                 onClick={() => handleStatusChange(job.id, 'Published')}
                                                 className="h-8 w-8 rounded-full text-emerald-500 hover:bg-emerald-100 hover:text-emerald-600 disabled:opacity-50"
                                             >
@@ -276,10 +277,10 @@ export function ManageJobTable({
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
-                                                            disabled={isUpdating || isUpdatingJob}
+                                                            disabled={isUpdatingThisJob}
                                                             className="h-8 w-8 rounded-full text-blue-500 hover:bg-blue-100 hover:text-blue-600 disabled:opacity-50"
                                                         >
-                                                            {isUpdatingJob ? <Loader2 className="size-4 animate-spin" /> : <CalendarDays size={18} />}
+                                                            {updatingJobJobId === job.id ? <Loader2 className="size-4 animate-spin" /> : <CalendarDays size={18} />}
                                                         </Button>
                                                     </TooltipTrigger>
                                                     <TooltipContent side="top" className="text-xs">إعادة جدولة</TooltipContent>
@@ -308,7 +309,7 @@ export function ManageJobTable({
                 enableSorting: false,
             },
         ],
-        [isUpdating, isUpdatingJob, handleStatusChange, handleReschedule],
+        [updatingStatusJobId, updatingJobJobId, handleStatusChange, handleReschedule],
     )
 
     // --- TanStack Table Instance ---

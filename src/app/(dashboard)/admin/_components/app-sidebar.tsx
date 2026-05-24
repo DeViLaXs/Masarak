@@ -82,13 +82,13 @@ export function AppSidebar() {
   const links = role === 'SubAdmin' ? subAdminLinks : adminLinks
 
   return (
-    <Sidebar side="right">
-      <SidebarHeader className="text-primary me-2 mt-2 mb-5 mr-2 text-2xl font-bold">
+    <Sidebar side="right" collapsible="icon">
+      <SidebarHeader className="text-primary me-2 mt-2 mb-5 mr-2 text-2xl font-bold group-data-[state=collapsed]:me-0 group-data-[state=collapsed]:mr-0 group-data-[state=collapsed]:justify-center group-data-[state=collapsed]:flex group-data-[state=collapsed]:w-full">
         <Logo />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup className="mb-30">
-          <SidebarGroupLabel className="bg-accent dark:bg-input mb-2 rounded-none px-4 text-[11px] font-semibold tracking-wide uppercase">
+          <SidebarGroupLabel className="bg-accent dark:bg-input mb-2 rounded-none px-4 text-[11px] font-semibold tracking-wide uppercase group-data-[state=collapsed]:hidden">
             القائمة الرئيسية
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -102,6 +102,7 @@ export function AppSidebar() {
                       isActive={isActive}
                       asChild
                       className="transition-all"
+                      tooltip={{ children: link.title, side: 'left' }}
                     >
                       <Link href={link.path}>
                         <link.icon />
@@ -116,7 +117,7 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarGroup className="mb-auto pb-2">
-          <SidebarGroupLabel className="bg-accent dark:bg-input mb-2 rounded-none px-4 text-[11px] font-semibold tracking-wide uppercase">
+          <SidebarGroupLabel className="bg-accent dark:bg-input mb-2 rounded-none px-4 text-[11px] font-semibold tracking-wide uppercase group-data-[state=collapsed]:hidden">
             الحساب
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -126,6 +127,7 @@ export function AppSidebar() {
                   isActive={pathname === '/admin/profile'}
                   asChild
                   className="transition-all"
+                  tooltip={{ children: 'الملف الشخصي', side: 'left' }}
                 >
                   <Link href="/admin/profile">
                     <UserRound />
@@ -139,6 +141,7 @@ export function AppSidebar() {
                   onClick={() => logout()}
                   disabled={isLoggingOut}
                   className="text-destructive transition-all hover:text-destructive"
+                  tooltip={{ children: isLoggingOut ? 'جاري تسجيل الخروج...' : 'الخروج', side: 'left' }}
                 >
                   <LogOut />
                   <span>{isLoggingOut ? 'جاري تسجيل الخروج...' : 'الخروج'}</span>
@@ -150,14 +153,14 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter>
-        <SidebarMenu className="mx-2 flex-row items-center gap-2 border-t py-2">
+        <SidebarMenu className="mx-2 flex-row items-center gap-2 border-t py-2 group-data-[state=collapsed]:mx-0 group-data-[state=collapsed]:flex-col group-data-[state=collapsed]:justify-center group-data-[state=collapsed]:gap-0">
           <Avatar>
             <AvatarImage src={user?.sasUrl || '/User-icon.webp'} />
             <AvatarFallback className="bg-primary/5 text-primary text-xl font-bold">
               {user?.name?.charAt(0)}
             </AvatarFallback>
           </Avatar>
-          <span className="font-medium capitalize">{user?.name}</span>
+          <span className="font-medium capitalize group-data-[state=collapsed]:hidden">{user?.name}</span>
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>

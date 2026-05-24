@@ -25,7 +25,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Combobox, ComboboxInput, ComboboxContent, ComboboxList, ComboboxItem } from '@/components/ui/combobox'
+import { Combobox, ComboboxInput, ComboboxContent, ComboboxList, ComboboxItem, ComboboxTrigger, ComboboxValue } from '@/components/ui/combobox'
 import Link from 'next/link'
 import { ManageJobTable, formatJobType } from './_components/manage-job-table'
 import { motion } from 'framer-motion'
@@ -81,8 +81,12 @@ export default function ManageJobPage() {
     const { data: statsData, isPending: statsPending } = useJobStatistics()
 
     // Mutations
-    const { mutate: updateStatus, isPending: isUpdating } = useUpdateJobStatus()
-    const { updateJob, isUpdatingJob } = useJobs()
+    const updateStatusMutation = useUpdateJobStatus()
+    const updateStatus = updateStatusMutation.mutate
+    const { updateJob, isUpdatingJob, updateJobVariables } = useJobs()
+
+    const updatingStatusJobId = updateStatusMutation.isPending ? updateStatusMutation.variables?.id : undefined
+    const updatingJobJobId = isUpdatingJob ? updateJobVariables?.id : undefined
 
     // Handlers
     const handleStatusChange = (
@@ -173,7 +177,7 @@ export default function ManageJobPage() {
                                 bgColorClass: 'bg-blue-500/10 dark:bg-blue-500/25',
                                 borderColorClass: 'hover:border-blue-300 dark:hover:border-blue-950',
                                 gradientClass: 'from-blue-500/5 to-transparent',
-                                description: 'إجمالي الوظائف المنشورة للشركة',
+                                description: 'إجمالي الوظائف المنشورة',
                             },
                             {
                                 title: 'الوظائف النشطة',
@@ -254,7 +258,7 @@ export default function ManageJobPage() {
                     <CardContent>
                         <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
                             <div className="flex w-full shrink-0 flex-col gap-3 sm:flex-row md:w-auto">
-                                <div className="w-full md:w-[200px] shadow-sm rounded-lg overflow-hidden border border-input focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all h-10 flex items-center">
+                                <div className="w-full md:w-[200px] shadow-sm rounded-lg overflow-hidden bg-background dark:bg-input/30 border border-input focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all h-10 flex items-center">
                                     <Combobox
                                         value={{ id: statusTab, name: statusTab }}
                                         onValueChange={(val: any) => {
@@ -262,7 +266,6 @@ export default function ManageJobPage() {
                                             if (!val) setStatusTab('all')
                                             else setStatusTab(val.id)
                                         }}
-                                        filter={null}
                                         itemToStringLabel={(item: any) => {
                                             if (!item) return ''
                                             const map: any = {
@@ -274,11 +277,9 @@ export default function ManageJobPage() {
                                             return map[item.id] || item.id
                                         }}
                                     >
-                                        <ComboboxInput
-                                            placeholder="جميع الحالات"
-                                            className="bg-background w-full border-none focus:ring-0 px-3 text-sm h-full cursor-pointer"
-                                            readOnly
-                                        />
+                                        <ComboboxTrigger className="flex h-full w-full items-center justify-between gap-3 bg-transparent px-3 text-sm shadow-none border-none outline-none focus:ring-0 cursor-pointer">
+                                            <ComboboxValue placeholder="جميع الحالات" />
+                                        </ComboboxTrigger>
                                         <ComboboxContent>
                                             <ComboboxList>
                                                 <ComboboxItem value={{ id: 'all', name: 'all' }}>جميع الحالات</ComboboxItem>
@@ -289,7 +290,7 @@ export default function ManageJobPage() {
                                         </ComboboxContent>
                                     </Combobox>
                                 </div>
-                                <div className="w-full md:w-[200px] shadow-sm rounded-lg overflow-hidden  border border-input focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all h-10 flex items-center">
+                                <div className="w-full md:w-[200px] shadow-sm rounded-lg overflow-hidden bg-background dark:bg-input/30 border border-input focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all h-10 flex items-center">
                                     <Combobox
                                         value={{ id: jobTypeFilter, name: jobTypeFilter }}
                                         onValueChange={(val: any) => {
@@ -306,7 +307,7 @@ export default function ManageJobPage() {
                                     >
                                         <ComboboxInput
                                             placeholder="نوع الدوام"
-                                            className="bg-background w-full border-none outline-none focus:ring-0 px-4 text-sm h-full cursor-pointer"
+                                            className="bg-transparent w-full border-none outline-none focus:ring-0 px-4 text-sm h-full cursor-pointer"
                                             readOnly
                                         />
                                         <ComboboxContent>
@@ -371,8 +372,8 @@ export default function ManageJobPage() {
                         totalCount={jobsData?.totalCount || 0}
                         pageSize={10}
                         setPage={setPage}
-                        isUpdating={isUpdating}
-                        isUpdatingJob={isUpdatingJob}
+                        updatingStatusJobId={updatingStatusJobId}
+                        updatingJobJobId={updatingJobJobId}
                         handleStatusChange={handleStatusChange}
                         handleReschedule={handleReschedule}
                         sorting={sorting}

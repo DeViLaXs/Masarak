@@ -13,7 +13,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import {
   Combobox,
-  ComboboxInput,
+  ComboboxTrigger,
+  ComboboxValue,
   ComboboxContent,
   ComboboxList,
   ComboboxItem,
@@ -43,6 +44,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogClose,
 } from '@/components/ui/dialog'
 import { Textarea } from '@/components/ui/textarea'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -60,6 +62,8 @@ import {
   Smartphone,
   User,
   X,
+  Clock,
+  Trash2,
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
@@ -142,9 +146,9 @@ export default function FeedbacksClient() {
 
   const getTypeIcon = (typeName: string) => {
     if (typeName === 'FeatureRequest')
-      return <LightbulbIcon className="size-4" />
-    if (typeName === 'Complaint') return <AlertCircleIcon className="size-4" />
-    return <MessageSquare className="size-4" />
+      return <LightbulbIcon className="size-5" />
+    if (typeName === 'Complaint') return <AlertCircleIcon className="size-5" />
+    return <MessageSquare className="size-5" />
   }
 
   const getBadgeVariant = (typeName: string) => {
@@ -215,11 +219,12 @@ export default function FeedbacksClient() {
                     return item.name === 'الكل' ? 'الكل' : item.name
                   }}
                 >
-                  <ComboboxInput
-                    placeholder="تصفية حسب النوع..."
-                    className="h-10 w-full border-none bg-transparent px-6 text-sm focus:ring-0"
+                  <ComboboxTrigger
+                    className="flex h-10 w-full items-center justify-between gap-3 bg-transparent px-6 text-sm shadow-none border-none outline-none focus:ring-0 cursor-pointer disabled:opacity-50"
                     disabled={isTypesLoading}
-                  />
+                  >
+                    <ComboboxValue placeholder="تصفية حسب النوع..." />
+                  </ComboboxTrigger>
                   <ComboboxContent>
                     <ComboboxList>
                       <ComboboxItem value={{ id: 0, name: 'الكل' }}>
@@ -264,10 +269,9 @@ export default function FeedbacksClient() {
                   filter={null}
                   itemToStringLabel={(item: any) => (item ? item.name : '')}
                 >
-                  <ComboboxInput
-                    placeholder="حالة القراءة..."
-                    className="h-10 w-full border-none bg-transparent px-6 text-sm focus:ring-0"
-                  />
+                  <ComboboxTrigger className="flex h-10 w-full items-center justify-between gap-3 bg-transparent px-6 text-sm shadow-none border-none outline-none focus:ring-0 cursor-pointer">
+                    <ComboboxValue placeholder="حالة القراءة..." />
+                  </ComboboxTrigger>
                   <ComboboxContent>
                     <ComboboxList>
                       {isReadFilterOptions.map((opt) => (
@@ -360,139 +364,180 @@ export default function FeedbacksClient() {
         onOpenChange={(open) => !open && setViewFeedback(null)}
       >
         <DialogContent
-          className="w-full max-w-xl overflow-y-auto p-0 rounded-2xl gap-0 max-h-[90vh]"
+          showCloseButton={false}
+          className="w-full max-w-xl overflow-hidden p-0 rounded-3xl gap-0 max-h-[90vh] flex flex-col border border-border/60 shadow-2xl animate-in fade-in zoom-in-95 duration-200"
           dir="rtl"
         >
-          <DialogHeader className="border-b border-border/40 pb-6 text-right bg-gradient-to-l from-primary/5 via-background to-background p-6 rounded-t-2xl">
-            <DialogTitle className="flex items-center gap-2 text-xl font-extrabold tracking-tight">
-              <div className="bg-primary/10 text-primary ring-primary/20 flex size-9 items-center justify-center rounded-lg ring-1">
-                <MessageSquare className="size-5" />
-              </div>
-              <span>تفاصيل الرسالة</span>
-            </DialogTitle>
-            <DialogDescription className="text-muted-foreground text-right mt-1 text-sm">
+          <DialogHeader className="border-b border-border/40 pb-5 text-right p-6 bg-slate-50/80 dark:bg-zinc-900/80 backdrop-blur-sm sticky top-0 z-10 rounded-t-3xl shrink-0">
+            <div className="flex items-center justify-between">
+              <DialogTitle className="flex items-center gap-2 text-xl font-extrabold tracking-tight justify-start">
+                <div className="bg-primary/10 text-primary ring-primary/20 flex size-10 items-center justify-center rounded-xl shadow-inner border border-primary/20 shrink-0">
+                  <MessageSquare className="size-5" />
+                </div>
+                <span>تفاصيل الرسالة</span>
+              </DialogTitle>
+              <DialogClose asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 rounded-full border border-border bg-background hover:bg-muted text-muted-foreground transition-all duration-200"
+                >
+                  <X className="h-4 w-4" />
+                  <span className="sr-only">إغلاق</span>
+                </Button>
+              </DialogClose>
+            </div>
+            <DialogDescription className="text-muted-foreground text-right mt-1.5 text-xs pr-6">
               استعراض الملاحظة المرسلة من المستخدم بالكامل
             </DialogDescription>
           </DialogHeader>
-          {viewFeedback && (
-            <div className="space-y-6 p-6 text-right overflow-y-auto">
-              <div className="space-y-5">
-                <div className="border-border/50 bg-card relative overflow-hidden rounded-2xl border shadow-sm">
-                  {/* Small Top banner background */}
-                  <div className="bg-gradient-to-r from-primary/10 via-background to-background/5 h-12 w-full" />
-                  <div className="flex items-start gap-4 px-4 pb-4">
-                    <Avatar className="size-16 border-4 border-background shadow-md">
+          {viewFeedback && (() => {
+            const isComplaint = viewFeedback.feedbackTypeName === 'Complaint';
+            const isFeature = viewFeedback.feedbackTypeName === 'FeatureRequest';
+
+            return (
+              <div className="space-y-6 px-6 pb-6 text-right overflow-y-auto bg-slate-50/30 dark:bg-zinc-900/80">
+                <div className="space-y-5">
+                  
+                  {/* Sender Profile widget */}
+                  <div className="border border-border/60 bg-card dark:bg-card rounded-2xl p-5 shadow-sm flex items-center gap-4 relative overflow-hidden group">
+                    <Avatar className="size-16 border-2 border-primary/20 shadow-md ring-4 ring-primary/5 shrink-0">
                       <AvatarImage
                         src={viewFeedback.logoUrl || '/User-icon.webp'}
                         alt={viewFeedback.reviewerName}
                         className="object-cover"
                       />
-                      <AvatarFallback className="bg-primary text-primary-foreground text-lg font-bold">
-                        {viewFeedback.reviewerName
-                          ?.substring(0, 2)
-                          .toUpperCase() || 'م'}
+                      <AvatarFallback className="bg-primary/10 text-primary text-xl font-bold">
+                        {viewFeedback.reviewerName?.substring(0, 2).toUpperCase() || 'م'}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="">
-                      <span className="text-muted-foreground text-xs font-bold block tracking-wider uppercase mb-0.5">
-                        المرسل
+                    <div className="space-y-1.5 flex-1 min-w-0">
+                      <span className="text-muted-foreground text-[12px] font-bold block tracking-wider uppercase">
+                        معلومات المرسل
                       </span>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <p className="text-foreground text-lg font-extrabold leading-none">
+                      <div className="flex flex-wrap items-center gap-4">
+                        <h3 className="text-foreground text-lg font-black  truncate">
                           {viewFeedback.reviewerName}
-                        </p>
-                        <Badge variant="secondary" className="bg-primary/10 text-primary text-xs px-2 py-0.5 font-medium">
+                        </h3>
+                        <Badge variant="secondary" className="bg-primary/10 text-primary text-[10px] px-2.5 py-0.5 font-bold rounded-full">
                           {getReviewerTypeName(viewFeedback.reviewerType)}
                         </Badge>
                       </div>
-                      <p className="text-muted-foreground mt-1 text-sm font-normal">
-                        {viewFeedback.reviewerEmail}
+                      <div className="flex items-center justify-end gap-1.5 text-muted-foreground text-sm font-medium truncate" dir="ltr">
+                        <Mail className="size-3.5 text-primary shrink-0" />
+                        <span className="truncate">{viewFeedback.reviewerEmail}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Widgets grid */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className={cn(
+                      "border rounded-2xl p-4 shadow-sm flex items-center justify-between gap-3",
+                      isComplaint ? "border-red-100 bg-red-50/20 dark:border-red-950/30 dark:bg-red-950/10" :
+                      isFeature ? "border-blue-100 bg-blue-50/20 dark:border-blue-950/30 dark:bg-blue-950/10" :
+                      "border-border/60 bg-card"
+                    )}>
+                      <div className="space-y-1">
+                        <span className="text-muted-foreground text-[10px] font-bold block tracking-wider uppercase">
+                          نوع الملاحظة
+                        </span>
+                        <span className={cn(
+                          "font-extrabold text-sm block",
+                          isComplaint ? "text-red-600 dark:text-red-400" :
+                          isFeature ? "text-sky-500 dark:text-sky-400" : "text-foreground"
+                        )}>
+                          {viewFeedback.feedbackTypeName === 'FeatureRequest' ? 'اقتراح ميزة' :
+                           viewFeedback.feedbackTypeName === 'Complaint' ? 'شكوى' : viewFeedback.feedbackTypeName}
+                        </span>
+                      </div>
+                      <div className={cn(
+                        "size-10 rounded-xl flex items-center justify-center ring-1 shrink-0",
+                        isComplaint ? "bg-red-100/50 text-red-600 ring-red-200/50 dark:bg-red-900/20 dark:text-red-400 dark:ring-red-800/20" :
+                        isFeature ? "bg-slate-100 text-sky-500 ring-blue-200/50 dark:bg-blue-900/20 dark:text-blue-400 dark:ring-blue-800/20" :
+                        "bg-slate-100 text-slate-600 ring-slate-200"
+                      )}>
+                        {getTypeIcon(viewFeedback.feedbackTypeName)}
+                      </div>
+                    </div>
+
+                    <div className="border border-border/60 bg-card rounded-2xl p-4 shadow-sm flex items-center justify-between gap-3">
+                      <div className="space-y-1">
+                        <span className="text-muted-foreground text-[10px] font-bold block tracking-wider uppercase">
+                          تاريخ الإرسال
+                        </span>
+                        <span className="font-extrabold text-sm block text-foreground">
+                          {viewFeedback.createdAt && !isNaN(new Date(viewFeedback.createdAt).getTime())
+                            ? format(new Date(viewFeedback.createdAt), 'yyyy-MM-dd')
+                            : '-'}
+                        </span>
+                        <span className="text-muted-foreground text-[10px] block">
+                          {viewFeedback.createdAt && !isNaN(new Date(viewFeedback.createdAt).getTime())
+                            ? format(new Date(viewFeedback.createdAt), 'hh:mm a', { locale: ar })
+                            : ''}
+                        </span>
+                      </div>
+                      <div className="size-10 rounded-xl bg-slate-100/50 text-slate-600 ring-1 ring-slate-200/50 dark:bg-zinc-800/50 dark:text-zinc-400 dark:ring-zinc-700/50 flex items-center justify-center shrink-0">
+                        <Clock className="size-5 text-sky-500" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Message Bubble Box */}
+                  <div className="border border-border/60 bg-card dark:bg-card overflow-hidden rounded-2xl shadow-sm relative">
+                    <div className="bg-card dark:bg-card border-b  px-5 py-3.5 flex items-center justify-between">
+                      <h4 className="text-foreground flex items-center gap-2 text-sm font-extrabold justify-start">
+                        <MessageSquare className="text-primary size-4" />
+                        محتوى الرسالة
+                      </h4>
+                      <Badge variant="outline" className={cn(
+                        "text-[10px] px-2 py-0.5 rounded-full font-bold",
+                        viewFeedback.isRead 
+                          ? "bg-green-50 text-green-700 border-green-200 dark:bg-green-950/20 dark:text-green-400 dark:border-green-900"
+                          : "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-900"
+                      )}>
+                        {viewFeedback.isRead ? 'مقروءة' : 'غير مقروءة'}
+                      </Badge>
+                    </div>
+                    <div className="relative p-6 bg-card dark:bg-zinc-900/30">
+                      <div 
+                        className={cn(
+                          "absolute top-0 bottom-0 right-0 w-1 rounded-l",
+                          isComplaint ? 'bg-red-500' :
+                          isFeature ? 'bg-blue-500' : 'bg-slate-400'
+                        )} 
+                      />
+                      <p className="text-slate-800 dark:text-slate-200 text-[15px] leading-relaxed whitespace-pre-wrap pr-4 font-medium text-right">
+                        {viewFeedback.message}
                       </p>
                     </div>
                   </div>
-                </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="border-border/50 bg-card flex flex-col justify-between rounded-2xl border p-4 shadow-sm">
-                    <span className="text-muted-foreground text-xs font-bold tracking-wider uppercase mb-2">
-                      نوع الرسالة
-                    </span>
-                    <Badge
-                      variant={getBadgeVariant(viewFeedback.feedbackTypeName)}
-                      className="flex w-fit items-center gap-1.5 px-3 py-1 font-bold text-sm shadow-sm"
+                  {/* Actions Button */}
+                  <div className="flex justify-end gap-3 pt-4">
+                    <Button
+                      variant="destructive"
+                      className="h-9 px-4 rounded-xl text-xs border-red-200/60 dark:border-red-900/30 text-white hover:bg-red-700 hover:text-white hover:dark:bg-red-950/20 gap-2 shrink-0 font-bold"
+                      onClick={() => {
+                        handleDelete(viewFeedback.id)
+                        setViewFeedback(null)
+                      }}
                     >
-                      {getTypeIcon(viewFeedback.feedbackTypeName)}
-                      <span className="font-bold">
-                        {viewFeedback.feedbackTypeName === 'FeatureRequest'
-                          ? 'اقتراح ميزة'
-                          : viewFeedback.feedbackTypeName === 'Complaint'
-                            ? 'شكوى'
-                            : viewFeedback.feedbackTypeName}
-                      </span>
-                    </Badge>
+                      <Trash2 className="size-4" />
+                      حذف
+                    </Button>
+                    <Button
+                      className="flex h-9 items-center justify-end gap-2 rounded-xl text-xs font-bold bg-primary hover:bg-sky-600 text-primary-foreground shadow-md transition-all hover:shadow-lg"
+                      onClick={() => setIsReplyDialogOpen(true)}
+                    >
+                      <Mail className="size-4" />
+                      رد عبر البريد الإلكتروني
+                    </Button>
                   </div>
-
-                  <div className="border-border/50 bg-card flex flex-col justify-between rounded-2xl border p-4 shadow-sm">
-                    <span className="text-muted-foreground text-xs font-bold tracking-wider uppercase mb-2">
-                      تاريخ الإرسال
-                    </span>
-                    <div>
-                      <p className="text-foreground text-base font-bold flex items-center gap-1.5 justify-start">
-                        <span className="text-sky-500">•</span>
-                        {viewFeedback.createdAt &&
-                        !isNaN(new Date(viewFeedback.createdAt).getTime())
-                          ? format(
-                              new Date(viewFeedback.createdAt),
-                              'dd MMM yyyy',
-                              { locale: ar },
-                            )
-                          : '-'}
-                      </p>
-                      <p className="text-muted-foreground text-sm mt-1 pr-3">
-                        {viewFeedback.createdAt &&
-                        !isNaN(new Date(viewFeedback.createdAt).getTime())
-                          ? format(new Date(viewFeedback.createdAt), 'hh:mm a', {
-                              locale: ar,
-                            })
-                          : ''}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="border-border/50 bg-card overflow-hidden rounded-2xl border shadow-sm">
-                  <div className="bg-muted/30 border-border/50 border-b px-4 py-3">
-                    <h4 className="text-foreground flex items-center gap-2 text-base font-bold justify-start">
-                      <MessageSquare className="text-primary size-4" />
-                      محتوى الرسالة
-                    </h4>
-                  </div>
-                  <div className="relative p-5">
-                    <div 
-                      className={cn(
-                        "absolute top-0 bottom-0 right-0 w-1.5",
-                        viewFeedback.feedbackTypeName === 'FeatureRequest' ? 'bg-blue-500' :
-                        viewFeedback.feedbackTypeName === 'Complaint' ? 'bg-red-500' : 'bg-slate-400'
-                      )} 
-                    />
-                    <p className="text-foreground text-base leading-relaxed whitespace-pre-wrap pr-3">
-                      {viewFeedback.message}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="pt-4">
-                  <Button
-                    className="flex h-12 w-full items-center justify-center gap-2 rounded-xl text-lg font-bold bg-primary hover:bg-primary/95 text-primary-foreground shadow-md transition-all hover:shadow-lg"
-                    onClick={() => setIsReplyDialogOpen(true)}
-                  >
-                    <Mail className="size-5" />
-                    رد عبر البريد الإلكتروني
-                  </Button>
                 </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
         </DialogContent>
       </Dialog>
 
@@ -526,13 +571,25 @@ export default function FeedbacksClient() {
       </AlertDialog>
 
       <Dialog open={isReplyDialogOpen} onOpenChange={setIsReplyDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]" dir="rtl">
+        <DialogContent showCloseButton={false} className="sm:max-w-[500px] bg-card" dir="rtl">
           <DialogHeader className="text-right">
-            <DialogTitle className="flex items-center gap-2 text-xl">
-              <Mail className="text-primary size-5" />
-              الرد على {viewFeedback?.reviewerName}
-            </DialogTitle>
-            <DialogDescription>
+            <div className="flex items-center justify-between">
+              <DialogTitle className="flex items-center gap-2 text-xl">
+                <Mail className="text-primary size-5" />
+                الرد على {viewFeedback?.reviewerName}
+              </DialogTitle>
+              <DialogClose asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 rounded-full border border-border bg-background hover:bg-muted text-muted-foreground transition-all duration-200"
+                >
+                  <X className="h-4 w-4" />
+                  <span className="sr-only">إغلاق</span>
+                </Button>
+              </DialogClose>
+            </div>
+            <DialogDescription className="text-muted-foreground text-xs mt-1.5 text-right">
               سيتم إرسال هذا الرد مباشرة إلى البريد الإلكتروني:{' '}
               <span className="text-foreground font-semibold">
                 {viewFeedback?.reviewerEmail}
@@ -551,7 +608,7 @@ export default function FeedbacksClient() {
               <Textarea
                 id="reply"
                 placeholder="اكتب ردك هنا..."
-                className="min-h-[150px] resize-none"
+                className="min-h-[150px] resize-none mt-2"
                 value={replyMessage}
                 onChange={(e) => setReplyMessage(e.target.value)}
               />
@@ -569,7 +626,7 @@ export default function FeedbacksClient() {
             </Button>
             <Button
               onClick={handleSendReply}
-              className="min-w-[120px] font-bold"
+              className="min-w-[120px] font-bold mx-2"
               disabled={isSendingReply}
             >
               {isSendingReply ? (
@@ -579,7 +636,7 @@ export default function FeedbacksClient() {
                 </>
               ) : (
                 <>
-                  <Send className="ml-2 size-4" />
+                  <Send className=" size-4" />
                   إرسال الرد
                 </>
               )}
