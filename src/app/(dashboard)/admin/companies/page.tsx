@@ -4,9 +4,11 @@ import { useState, useEffect } from 'react'
 import CompaniesCard from '@/app/(dashboard)/admin/_components/companies-card'
 import { CompaniesTable } from '@/app/(dashboard)/admin/_components/companies-table'
 import { useAdmin } from '@/hooks/use-admin'
+import { cn } from '@/lib/utils'
 import { Input } from '@/components/ui/input'
 import { Search, Check, X, UserX, Ban } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { SortingState } from '@tanstack/react-table'
 import {
   Combobox,
   ComboboxContent,
@@ -33,6 +35,7 @@ export default function CompaniesPage() {
   const [statusFilter, setStatusFilter] = useState('All')
   const [page, setPage] = useState(1)
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({})
+  const [sorting, setSorting] = useState<SortingState>([])
 
   const [bulkActionDialogOpen, setBulkActionDialogOpen] = useState(false)
   const [bulkActionType, setBulkActionType] = useState<
@@ -101,14 +104,14 @@ export default function CompaniesPage() {
           title: 'تأكيد توثيق الشركات',
           description: `هل أنت متأكد من رغبتك في توثيق ${selectedCount} شركة/شركات المحددة؟`,
           confirmText: 'نعم، توثيق',
-          variant: 'default' as const,
+          variant: 'green' as const,
         }
       case 'Suspend':
         return {
           title: 'تأكيد تعليق الشركات',
           description: `هل أنت متأكد من رغبتك في تعليق ${selectedCount} شركة/شركات المحددة؟ لن يتمكنوا من تسجيل الدخول أو نشر وظائف.`,
           confirmText: 'نعم، تعليق',
-          variant: 'destructive' as const,
+          variant: 'orange' as const,
         }
       case 'Reject':
         return {
@@ -137,7 +140,7 @@ export default function CompaniesPage() {
   const dialogContent = getBulkDialogContent()
 
   return (
-    <div className="px-6 py-1 max-sm:p-4">
+    <div className="px-6 max-sm:p-4">
       <CompaniesCard />
 
       <div className="mt-6 flex flex-col gap-5">
@@ -160,6 +163,17 @@ export default function CompaniesPage() {
 
           {/* Status Filter on the Left */}
           <div className="flex items-center gap-4 max-sm:w-full">
+            {sorting.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSorting([])}
+                className="text-xs text-red-600 hover:text-red-500 hover:bg-red-50 hover:border-red-500 whitespace-nowrap h-10 px-4 rounded-full shrink-0"
+              >
+                <X className="w-3 h-3 ml-1" />
+                مسح الفرز
+              </Button>
+            )}
             <span className="text-foreground text-sm font-medium whitespace-nowrap">
               الحالة :
             </span>
@@ -297,6 +311,8 @@ export default function CompaniesPage() {
                 data={companies}
                 rowSelection={rowSelection}
                 onRowSelectionChange={setRowSelection}
+                sorting={sorting}
+                setSorting={setSorting}
                 onRowClick={(row) =>
                   router.push(`/admin/companies/${row.id}`)
                 }

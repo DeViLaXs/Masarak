@@ -7,6 +7,8 @@ import type { ColumnDef } from '@tanstack/react-table'
 import {
   flexRender,
   getCoreRowModel,
+  getSortedRowModel,
+  SortingState,
   useReactTable,
 } from '@tanstack/react-table'
 import {
@@ -20,6 +22,9 @@ import {
   Smartphone,
   Trash2,
   User,
+  ArrowUpDown,
+  ChevronUp,
+  ChevronDown,
 } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -43,6 +48,8 @@ interface FeedbacksTableProps {
   isMarking: boolean
   isDeleting: boolean
   selectedType?: number
+  sorting: SortingState
+  setSorting: React.Dispatch<React.SetStateAction<SortingState>>
   onOpenFeedback: (feedback: FeedbackResponseDTO) => void
   onMarkAsRead: (id: number) => void
   onDeleteRequest: (id: number) => void
@@ -86,6 +93,8 @@ export function FeedbacksTable({
   isMarking,
   isDeleting,
   selectedType,
+  sorting,
+  setSorting,
   onOpenFeedback,
   onMarkAsRead,
   onDeleteRequest,
@@ -99,7 +108,7 @@ export function FeedbacksTable({
           const feedback = row.original
 
           return (
-            <div className="flex items-center justify-start gap-3">
+            <div className="flex w-full items-center justify-start gap-3">
               <Avatar className="border-border/50 size-10 border shadow-sm transition-transform group-hover:scale-105">
                 <AvatarImage
                   src={feedback.logoUrl || '/User-icon.webp'}
@@ -167,7 +176,7 @@ export function FeedbacksTable({
 
           return (
             <p className=" mx-auto line-clamp-2 max-w-[400px] text-center text-sm leading-relaxed">
-              {message.length > 50 ? `${message.substring(0, 50)}...` : message}
+              {message.length > 50 ? `${message.substring(0, 30)}...` : message}
             </p>
           )
         },
@@ -177,12 +186,7 @@ export function FeedbacksTable({
         header: 'التاريخ',
         cell: ({ row }) => (
           <span className="text-sm">
-            {row.original.createdAt &&
-            !isNaN(new Date(row.original.createdAt).getTime())
-              ? format(new Date(row.original.createdAt), 'dd MMM yyyy', {
-                  locale: ar,
-                })
-              : '-'}
+            {new Date(row.original.createdAt).toLocaleDateString('en-CA')}
           </span>
         ),
       },
@@ -191,14 +195,17 @@ export function FeedbacksTable({
         header: 'الحالة',
         cell: ({ row }) =>
           row.original.isRead ? (
-            <span className="inline-flex items-center gap-1 text-xs font-medium">
-              مقروءة
-            </span>
+            
+              <Badge variant="secondary" className="inline-flex items-center gap-1 text-xs font-medium bg-gray-100 text-black dark:bg-gray-700 dark:text-white">
+                <span>مقروءة</span>
+              </Badge>
+            
           ) : (
-            <span className="bg-primary/10 text-primary inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium">
-              <div className="bg-primary size-1.5 animate-pulse rounded-full" />
-              جديدة
-            </span>
+
+            <Badge variant="secondary" className="inline-flex items-center gap-1 text-xs font-medium bg-blue-100 text-blue-800  dark:bg-blue-900 dark:text-blue-200">
+             <div className="bg-primary size-1.5 animate-pulse rounded-full" />
+              <span>جديدة</span>
+            </Badge>
           ),
       },
       {
@@ -249,15 +256,32 @@ export function FeedbacksTable({
             </TooltipProvider>
           )
         },
+        enableSorting: false,
       },
     ],
     [isDeleting, isMarking, onDeleteRequest, onMarkAsRead],
   )
 
+  const columnAlignments: Record<string, 'right' | 'center'> = {
+    reviewerName: 'center',
+    feedbackTypeName: 'center',
+    reviewerType: 'center',
+    message: 'center',
+    createdAt: 'center',
+    isRead: 'center',
+  }
+
   const table = useReactTable({
     data: feedbacks,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    enableMultiSort: true,
+    maxMultiSortColCount: columns.length,
+    state: {
+      sorting,
+    },
   })
 
   if (!isLoading && feedbacks.length === 0) {
@@ -289,14 +313,40 @@ export function FeedbacksTable({
               {headerGroup.headers.map((header) => (
                 <TableHead
                   key={header.id}
-                  className="dark:bg-muted dark:text-foreground h-12 bg-slate-100 px-5 text-center font-medium text-slate-700"
+                  className={`dark:bg-muted dark:text-foreground h-12 bg-slate-100 px-5 font-medium text-slate-700 ${columnAlignments[header.column.id] === 'right' ? 'text-right' : 'text-center'
+                    }`}
                 >
                   {header.isPlaceholder
                     ? null
-                    : flexRender(
+                    : header.column.getCanSort() ? (
+                      <div
+                        className={`flex items-center gap-1 cursor-pointer select-none hover:text-primary transition-colors group ${columnAlignments[header.column.id] === 'right' ? 'justify-start' : 'justify-center'
+                          }`}
+                        onClick={(e) => {
+                          header.column.toggleSorting(undefined, true)
+                        }}
+                      >
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        <div className="flex items-center">
+                          {{
+                            asc: <ChevronDown className="h-4 w-4 text-blue-600 bg-blue-100 rounded-sm" />,
+                            desc: <ChevronUp className="h-4 w-4 text-blue-600 bg-blue-100 rounded-sm" />,
+                          }[header.column.getIsSorted() as string] ?? (
+                              <ArrowUpDown className="h-4 w-4 opacity-30 group-hover:opacity-50" />
+                            )}
+                          {header.column.getIsSorted() && sorting.length > 1 && (
+                            <span className="text-[10px] font-bold bg-primary/10 text-primary w-3.5 h-3.5 rounded-full flex items-center justify-center ml-0.5">
+                              {header.column.getSortIndex() + 1}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      flexRender(
                         header.column.columnDef.header,
-                        header.getContext(),
-                      )}
+                        header.getContext()
+                      )
+                    )}
                 </TableHead>
               ))}
             </TableRow>
@@ -306,33 +356,44 @@ export function FeedbacksTable({
           {isLoading ? (
             [...Array(5)].map((_, rowIndex) => (
               <TableRow key={rowIndex} className="h-16 text-center">
-                {columns.map((column, colIndex) => (
-                  <TableCell key={colIndex} className="px-5 text-center align-middle">
-                    <Skeleton className="h-5 w-2/3 mx-auto rounded-md" />
-                  </TableCell>
-                ))}
+                {columns.map((column, colIndex) => {
+                  const colId = (column.id || (column as any).accessorKey) as string
+                  return (
+                    <TableCell
+                      key={colIndex}
+                      className={`px-5 align-middle ${colId && columnAlignments[colId] === 'right' ? 'text-right' : 'text-center'
+                        }`}
+                    >
+                      <Skeleton className="h-5 w-2/3 mx-auto rounded-md" />
+                    </TableCell>
+                  )
+                })}
               </TableRow>
             ))
           ) : (
             table.getRowModel().rows.map((row) => (
-            <TableRow
-              key={row.id}
-              className=
+              <TableRow
+                key={row.id}
+                className=
                 " h-16 cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-black/20"
-                
-              
-              onClick={() => {
-                onOpenFeedback(row.original)
-                if (!row.original.isRead) onMarkAsRead(row.original.id)
-              }}
-            >
-              {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id} className="px-5 text-center">
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ))}
-            </TableRow>
-          )))}
+
+
+                onClick={() => {
+                  onOpenFeedback(row.original)
+                  if (!row.original.isRead) onMarkAsRead(row.original.id)
+                }}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell
+                    key={cell.id}
+                    className={`px-5 align-middle ${columnAlignments[cell.column.id] === 'right' ? 'text-right' : 'text-center'
+                      }`}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            )))}
         </TableBody>
       </Table>
     </div>

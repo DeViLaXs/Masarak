@@ -18,6 +18,7 @@ import {
   ComboboxList,
   ComboboxItem,
 } from '@/components/ui/combobox'
+import { SortingState } from '@tanstack/react-table'
 import {
   Sheet,
   SheetContent,
@@ -58,8 +59,10 @@ import {
   Send,
   Smartphone,
   User,
+  X,
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
 import { FeedbackResponseDTO } from '@/services/feedback-service'
 import { FeedbacksTable } from './_components/feedbacks-table'
 import { FeedbackStats } from './_components/feedback-stats'
@@ -77,6 +80,7 @@ export default function FeedbacksClient() {
     null,
   )
   const [pageNumber, setPageNumber] = React.useState(1)
+  const [sorting, setSorting] = React.useState<SortingState>([])
 
   const { data: feedbacksData, isLoading: isFeedbacksLoading } = useFeedbacks(
     selectedType,
@@ -172,6 +176,17 @@ export default function FeedbacksClient() {
 
       <div className="border-border/40 dark:bg-card relative overflow-hidden rounded-3xl border bg-white p-5 text-right shadow-sm">
         <div className="relative z-10 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+          {sorting.length > 0 && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setSorting([])}
+              className="text-xs text-red-600 hover:text-red-500 hover:bg-red-50 hover:border-red-500 whitespace-nowrap h-10 px-4 rounded-full shrink-0"
+            >
+              <X className="w-3 h-3 ml-1" />
+              مسح الفرز
+            </Button>
+          )}
           
 
           <div className="flex w-full max-w-[520px] items-center gap-4 sm:mt-0">
@@ -277,6 +292,8 @@ export default function FeedbacksClient() {
             isMarking={isMarking}
             isDeleting={isDeleting}
             selectedType={selectedType}
+            sorting={sorting}
+            setSorting={setSorting}
             onOpenFeedback={setViewFeedback}
             onMarkAsRead={handleMarkAsRead}
             onDeleteRequest={setDeleteConfirmId}
@@ -338,69 +355,76 @@ export default function FeedbacksClient() {
       )}
       </div>
 
-      <Sheet
+      <Dialog
         open={!!viewFeedback}
         onOpenChange={(open) => !open && setViewFeedback(null)}
       >
-        <SheetContent
-          side="left" 
-          className="w-full overflow-y-auto border-r-0 border-l sm:max-w-md"
+        <DialogContent
+          className="w-full max-w-xl overflow-y-auto p-0 rounded-2xl gap-0 max-h-[90vh]"
           dir="rtl"
         >
-          <SheetHeader className="border-b pb-6 text-right">
-            <SheetTitle className="flex items-center gap-2">
-              <MessageSquare className="text-primary size-5" />
-              تفاصيل الرسالة
-            </SheetTitle>
-            <SheetDescription>استعراض الملاحظة بالكامل</SheetDescription>
-          </SheetHeader>
+          <DialogHeader className="border-b border-border/40 pb-6 text-right bg-gradient-to-l from-primary/5 via-background to-background p-6 rounded-t-2xl">
+            <DialogTitle className="flex items-center gap-2 text-xl font-extrabold tracking-tight">
+              <div className="bg-primary/10 text-primary ring-primary/20 flex size-9 items-center justify-center rounded-lg ring-1">
+                <MessageSquare className="size-5" />
+              </div>
+              <span>تفاصيل الرسالة</span>
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground text-right mt-1 text-sm">
+              استعراض الملاحظة المرسلة من المستخدم بالكامل
+            </DialogDescription>
+          </DialogHeader>
           {viewFeedback && (
-            <div className="space-y-6 py-6 text-right">
+            <div className="space-y-6 p-6 text-right overflow-y-auto">
               <div className="space-y-5">
-                <div className="border-border/50 bg-muted/20 flex items-center gap-4 rounded-xl border p-4">
-                  <Avatar className="size-12 border shadow-sm">
-                    <AvatarImage
-                      src={viewFeedback.logoUrl || '/User-icon.webp'}
-                      alt={viewFeedback.reviewerName}
-                      className="object-cover"
-                    />
-                    <AvatarFallback className="bg-primary/10 text-primary text-lg font-bold">
-                      {viewFeedback.reviewerName
-                        ?.substring(0, 2)
-                        .toUpperCase() || 'م'}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <h4 className="text-muted-foreground mb-1 text-xs font-semibold tracking-wider uppercase">
-                      المرسل
-                    </h4>
-                    <div className="flex items-center gap-2">
-                      <p className="text-foreground text-lg leading-none font-bold">
-                        {viewFeedback.reviewerName}
+                <div className="border-border/50 bg-card relative overflow-hidden rounded-2xl border shadow-sm">
+                  {/* Small Top banner background */}
+                  <div className="bg-gradient-to-r from-primary/10 via-background to-background/5 h-12 w-full" />
+                  <div className="flex items-start gap-4 px-4 pb-4">
+                    <Avatar className="size-16 border-4 border-background shadow-md">
+                      <AvatarImage
+                        src={viewFeedback.logoUrl || '/User-icon.webp'}
+                        alt={viewFeedback.reviewerName}
+                        className="object-cover"
+                      />
+                      <AvatarFallback className="bg-primary text-primary-foreground text-lg font-bold">
+                        {viewFeedback.reviewerName
+                          ?.substring(0, 2)
+                          .toUpperCase() || 'م'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="">
+                      <span className="text-muted-foreground text-xs font-bold block tracking-wider uppercase mb-0.5">
+                        المرسل
+                      </span>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="text-foreground text-lg font-extrabold leading-none">
+                          {viewFeedback.reviewerName}
+                        </p>
+                        <Badge variant="secondary" className="bg-primary/10 text-primary text-xs px-2 py-0.5 font-medium">
+                          {getReviewerTypeName(viewFeedback.reviewerType)}
+                        </Badge>
+                      </div>
+                      <p className="text-muted-foreground mt-1 text-sm font-normal">
+                        {viewFeedback.reviewerEmail}
                       </p>
-                      <Badge variant="outline" className="bg-muted/30 text-xs">
-                        {getReviewerTypeName(viewFeedback.reviewerType)}
-                      </Badge>
                     </div>
-                    <p className="text-muted-foreground mt-1 text-sm font-normal">
-                      {viewFeedback.reviewerEmail}
-                    </p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="border-border/50 bg-muted/20 rounded-xl border p-4">
-                    <h4 className="text-muted-foreground mb-2 text-xs font-semibold tracking-wider uppercase">
-                      النوع
-                    </h4>
+                  <div className="border-border/50 bg-card flex flex-col justify-between rounded-2xl border p-4 shadow-sm">
+                    <span className="text-muted-foreground text-xs font-bold tracking-wider uppercase mb-2">
+                      نوع الرسالة
+                    </span>
                     <Badge
                       variant={getBadgeVariant(viewFeedback.feedbackTypeName)}
-                      className="flex w-fit items-center gap-1.5 shadow-sm"
+                      className="flex w-fit items-center gap-1.5 px-3 py-1 font-bold text-sm shadow-sm"
                     >
                       {getTypeIcon(viewFeedback.feedbackTypeName)}
                       <span className="font-bold">
                         {viewFeedback.feedbackTypeName === 'FeatureRequest'
-                          ? 'اقتراح'
+                          ? 'اقتراح ميزة'
                           : viewFeedback.feedbackTypeName === 'Complaint'
                             ? 'شكوى'
                             : viewFeedback.feedbackTypeName}
@@ -408,46 +432,58 @@ export default function FeedbacksClient() {
                     </Badge>
                   </div>
 
-                  <div className="border-border/50 bg-muted/20 rounded-xl border p-4">
-                    <h4 className="text-muted-foreground mb-2 text-xs font-semibold tracking-wider uppercase">
-                      التاريخ والوقت
-                    </h4>
-                    <p className="text-foreground text-sm font-semibold">
-                      {viewFeedback.createdAt &&
-                      !isNaN(new Date(viewFeedback.createdAt).getTime())
-                        ? format(
-                            new Date(viewFeedback.createdAt),
-                            'dd MMM yyyy',
-                            { locale: ar },
-                          )
-                        : '-'}
-                    </p>
-                    <p className="text-muted-foreground mt-0.5 text-xs">
-                      {viewFeedback.createdAt &&
-                      !isNaN(new Date(viewFeedback.createdAt).getTime())
-                        ? format(new Date(viewFeedback.createdAt), 'hh:mm a', {
-                            locale: ar,
-                          })
-                        : ''}
-                    </p>
+                  <div className="border-border/50 bg-card flex flex-col justify-between rounded-2xl border p-4 shadow-sm">
+                    <span className="text-muted-foreground text-xs font-bold tracking-wider uppercase mb-2">
+                      تاريخ الإرسال
+                    </span>
+                    <div>
+                      <p className="text-foreground text-base font-bold flex items-center gap-1.5 justify-start">
+                        <span className="text-sky-500">•</span>
+                        {viewFeedback.createdAt &&
+                        !isNaN(new Date(viewFeedback.createdAt).getTime())
+                          ? format(
+                              new Date(viewFeedback.createdAt),
+                              'dd MMM yyyy',
+                              { locale: ar },
+                            )
+                          : '-'}
+                      </p>
+                      <p className="text-muted-foreground text-sm mt-1 pr-3">
+                        {viewFeedback.createdAt &&
+                        !isNaN(new Date(viewFeedback.createdAt).getTime())
+                          ? format(new Date(viewFeedback.createdAt), 'hh:mm a', {
+                              locale: ar,
+                            })
+                          : ''}
+                      </p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="border-border/50 bg-card overflow-hidden rounded-xl border shadow-sm">
+                <div className="border-border/50 bg-card overflow-hidden rounded-2xl border shadow-sm">
                   <div className="bg-muted/30 border-border/50 border-b px-4 py-3">
-                    <h4 className="text-foreground flex items-center gap-2 text-sm font-bold">
-                      <MessageSquare className="text-muted-foreground size-4" />
+                    <h4 className="text-foreground flex items-center gap-2 text-base font-bold justify-start">
+                      <MessageSquare className="text-primary size-4" />
                       محتوى الرسالة
                     </h4>
                   </div>
-                  <div className="text-foreground p-5 text-base leading-relaxed whitespace-pre-wrap">
-                    {viewFeedback.message}
+                  <div className="relative p-5">
+                    <div 
+                      className={cn(
+                        "absolute top-0 bottom-0 right-0 w-1.5",
+                        viewFeedback.feedbackTypeName === 'FeatureRequest' ? 'bg-blue-500' :
+                        viewFeedback.feedbackTypeName === 'Complaint' ? 'bg-red-500' : 'bg-slate-400'
+                      )} 
+                    />
+                    <p className="text-foreground text-base leading-relaxed whitespace-pre-wrap pr-3">
+                      {viewFeedback.message}
+                    </p>
                   </div>
                 </div>
 
                 <div className="pt-4">
                   <Button
-                    className="flex h-12 w-full items-center gap-2 text-base font-bold"
+                    className="flex h-12 w-full items-center justify-center gap-2 rounded-xl text-lg font-bold bg-primary hover:bg-primary/95 text-primary-foreground shadow-md transition-all hover:shadow-lg"
                     onClick={() => setIsReplyDialogOpen(true)}
                   >
                     <Mail className="size-5" />
@@ -457,8 +493,8 @@ export default function FeedbacksClient() {
               </div>
             </div>
           )}
-        </SheetContent>
-      </Sheet>
+        </DialogContent>
+      </Dialog>
 
       <AlertDialog
         open={deleteConfirmId !== null}

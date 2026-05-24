@@ -5,9 +5,11 @@ import {
   type ColumnDef,
   flexRender,
   getCoreRowModel,
+  getSortedRowModel,
+  SortingState,
   useReactTable,
 } from '@tanstack/react-table'
-import { Check, Ban, Inbox, UserX, X } from 'lucide-react'
+import { Check, Ban, Inbox, UserX, X, ArrowUpDown, ChevronUp, ChevronDown } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   AlertDialog,
@@ -33,6 +35,7 @@ import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/comp
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAdmin } from '@/hooks/use-admin'
 import type { CompanyDto } from '@/services/admin-service'
+import { cn } from '@/lib/utils'
 
 interface CompaniesTableProps {
   data: CompanyDto[]
@@ -40,6 +43,8 @@ interface CompaniesTableProps {
   onRowSelectionChange: React.Dispatch<
     React.SetStateAction<Record<string, boolean>>
   >
+  sorting: SortingState
+  setSorting: React.Dispatch<React.SetStateAction<SortingState>>
   onRowClick: (row: CompanyDto) => void
   isLoading?: boolean
 }
@@ -103,14 +108,14 @@ const ActionCell = ({ company }: { company: CompanyDto }) => {
           title: 'تأكيد التوثيق',
           description: `هل أنت متأكد من رغبتك في توثيق الحساب الخاص بشركة "${company.companyName}"؟ ستتمكن الشركة من استخدام جميع ميزات المنصة.`,
           confirmText: 'نعم، توثيق',
-          variant: 'default' as const,
+          variant: 'green' as const,
         }
       case 'Suspend':
         return {
           title: 'تأكيد التعليق',
           description: `هل أنت متأكد من رغبتك في تعليق الحساب الخاص بشركة "${company.companyName}"؟ لن تتمكن الشركة من تسجيل الدخول أو نشر وظائف.`,
           confirmText: 'نعم، تعليق',
-          variant: 'destructive' as const,
+          variant: 'orange' as const,
         }
       case 'Reject':
         return {
@@ -242,8 +247,9 @@ const ActionCell = ({ company }: { company: CompanyDto }) => {
 const columns: ColumnDef<CompanyDto>[] = [
   {
     id: 'select',
+    size: 50,
     header: ({ table }) => (
-      <div className="w-[50px]">
+      <div className="w-[50px] mx-auto">
         <Checkbox
           checked={
             table.getIsAllPageRowsSelected() ||
@@ -255,7 +261,7 @@ const columns: ColumnDef<CompanyDto>[] = [
       </div>
     ),
     cell: ({ row }) => (
-      <div className="w-[50px]" onClick={(e) => e.stopPropagation()}>
+      <div className="w-[50px] mx-auto" onClick={(e) => e.stopPropagation()}>
         <Checkbox
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
@@ -268,11 +274,12 @@ const columns: ColumnDef<CompanyDto>[] = [
   },
   {
     accessorKey: 'companyName',
-    header: () => <div className="min-w-[200px] text-right">اسم الشركة</div>,
+    size: 200,
+    header: () => 'اسم الشركة',
     cell: ({ row }) => {
       const company = row.original
       return (
-        <div className="flex min-w-[200px] items-center gap-3 text-right">
+        <div className="flex w-full min-w-[200px] items-center justify-start gap-3 text-right">
           <Avatar className="h-9 w-9 border">
             <AvatarImage
               src={company.logoUrl || '/User-icon.webp'}
@@ -296,39 +303,40 @@ const columns: ColumnDef<CompanyDto>[] = [
   },
   {
     accessorKey: 'email',
-    header: () => (
-      <div className="min-w-[150px] text-right">البريد الإلكتروني</div>
-    ),
+    size: 180,
+    header: () => 'البريد الإلكتروني',
     cell: ({ row }) => (
-      <div className=" min-w-[150px] truncate text-right">
+      <div className="w-full min-w-[150px] truncate text-right">
         {row.getValue('email')}
       </div>
     ),
   },
   {
     accessorKey: 'phoneNumber',
-    header: () => <div className="min-w-[120px] text-right">رقم الهاتف</div>,
+    size: 130,
+    header: () => 'رقم الهاتف',
     cell: ({ row }) => (
-      <div className=" min-w-[120px] text-right" dir="ltr">
+      <div className="w-full min-w-[120px] text-right" dir="ltr">
         {row.getValue('phoneNumber')}
       </div>
     ),
   },
   {
     accessorKey: 'createdAt',
-    header: () => <div className="min-w-[120px] text-right">تاريخ التسجيل</div>,
+    size: 130,
+    header: () => 'تاريخ التسجيل',
     cell: ({ row }) => {
       const dateStr = row.getValue('createdAt') as string
       try {
         const date = new Date(dateStr)
         return (
-          <div className="min-w-[120px] text-right">
+          <div className="w-full min-w-[120px] text-right">
             {date.toLocaleDateString('en-CA')}
           </div>
         )
       } catch {
         return (
-          <div className=" min-w-[120px] text-right">
+          <div className="w-full min-w-[120px] text-right">
             {dateStr}
           </div>
         )
@@ -337,14 +345,15 @@ const columns: ColumnDef<CompanyDto>[] = [
   },
   {
     accessorKey: 'status',
-    header: () => <div className="w-[120px] text-center">الحالة</div>,
+    size: 120,
+    header: () => 'الحالة',
     cell: ({ row }) => {
       const status = row.getValue('status') as string
 
       switch (status) {
         case 'Active':
           return (
-            <div className="flex w-[120px] items-center justify-center">
+            <div className="flex w-[120px] items-center justify-center mx-auto">
               <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800 hover:bg-green-100/80 dark:bg-green-900 dark:text-green-200">
                 موثقة
               </span>
@@ -352,7 +361,7 @@ const columns: ColumnDef<CompanyDto>[] = [
           )
         case 'PendingApproval':
           return (
-            <div className="flex w-[120px] items-center justify-center">
+            <div className="flex w-[120px] items-center justify-center mx-auto">
               <span className="flex items-center gap-1 rounded-full bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-800 hover:bg-yellow-100/80 dark:bg-yellow-900 dark:text-yellow-200">
                 في انتظار التوثيق
               </span>
@@ -360,7 +369,7 @@ const columns: ColumnDef<CompanyDto>[] = [
           )
         case 'Suspended':
           return (
-            <div className="flex w-[120px] items-center justify-center">
+            <div className="flex w-[120px] items-center justify-center mx-auto">
               <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-medium text-orange-800 hover:bg-orange-100/80 dark:bg-orange-900 dark:text-orange-200">
                 معلّقة
               </span>
@@ -368,7 +377,7 @@ const columns: ColumnDef<CompanyDto>[] = [
           )
         case 'Inactive':
           return (
-            <div className="flex w-[120px] items-center justify-center">
+            <div className="flex w-[120px] items-center justify-center mx-auto">
               <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700">
                 غير نشطة
               </span>
@@ -376,7 +385,7 @@ const columns: ColumnDef<CompanyDto>[] = [
           )
         case 'Rejected':
           return (
-            <div className="flex w-[120px] items-center justify-center">
+            <div className="flex w-[120px] items-center justify-center mx-auto">
               <span className="rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-800 hover:bg-red-100/80 dark:bg-red-900 dark:text-red-200">
                 مرفوضة
               </span>
@@ -384,32 +393,44 @@ const columns: ColumnDef<CompanyDto>[] = [
           )
         case 'Blocked':
           return (
-            <div className="flex w-[120px] items-center justify-center">
+            <div className="flex w-[120px] items-center justify-center mx-auto">
               <span className="rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-800 hover:bg-red-100/80 dark:bg-red-900 dark:text-red-200">
                 محظورة
               </span>
             </div>
           )
         default:
-          return <div className="w-[120px] text-center">{status}</div>
+          return <div className="w-[120px] text-center mx-auto">{status}</div>
       }
     },
   },
   {
     id: 'actions',
-    header: () => <div className="w-[160px] text-center">الإجراءات</div>,
+    size: 160,
+    header: () => 'الإجراءات',
     cell: ({ row }) => (
-      <div className="w-[160px]">
+      <div className="w-[160px] mx-auto" onClick={(e) => e.stopPropagation()}>
         <ActionCell company={row.original} />
       </div>
     ),
+    enableSorting: false,
   },
 ]
+
+const columnAlignments: Record<string, 'right' | 'center'> = {
+  companyName: 'right',
+  email: 'right',
+  phoneNumber: 'right',
+  createdAt: 'right',
+  status: 'center',
+}
 
 export function CompaniesTable({
   data,
   rowSelection,
   onRowSelectionChange,
+  sorting,
+  setSorting,
   onRowClick,
   isLoading = false,
 }: CompaniesTableProps) {
@@ -417,9 +438,14 @@ export function CompaniesTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    enableMultiSort: true,
+    maxMultiSortColCount: columns.length,
     onRowSelectionChange,
     state: {
       rowSelection,
+      sorting,
     },
   })
 
@@ -432,13 +458,45 @@ export function CompaniesTable({
               {headerGroup.headers.map((header) => (
                 <TableHead
                   key={header.id}
-                  className="dark:bg-muted h-12 bg-slate-100 px-2 text-center font-medium "
+                  className={`dark:bg-muted h-12 bg-slate-100 px-2 font-medium ${
+                    columnAlignments[header.column.id] === 'right' ? 'text-right' : 'text-center'
+                  }`}
+                  style={{
+                    width: header.getSize(),
+                    minWidth: header.getSize(),
+                  }}
                 >
                   {header.isPlaceholder
                     ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
+                    : header.column.getCanSort() ? (
+                        <div
+                          className={`flex items-center gap-1 cursor-pointer select-none hover:text-primary transition-colors group ${
+                            columnAlignments[header.column.id] === 'right' ? 'justify-start' : 'justify-center'
+                          }`}
+                          onClick={(e) => {
+                            header.column.toggleSorting(undefined, true)
+                          }}
+                        >
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                          <div className="flex items-center">
+                            {{
+                              asc: <ChevronDown className="h-4 w-4 text-blue-600 bg-blue-100 rounded-sm" />,
+                              desc: <ChevronUp className="h-4 w-4 text-blue-600 bg-blue-100 rounded-sm" />,
+                            }[header.column.getIsSorted() as string] ?? (
+                              <ArrowUpDown className="h-4 w-4 opacity-30 group-hover:opacity-50" />
+                            )}
+                            {header.column.getIsSorted() && sorting.length > 1 && (
+                              <span className="text-[10px] font-bold bg-primary/10 text-primary w-3.5 h-3.5 rounded-full flex items-center justify-center ml-0.5">
+                                {header.column.getSortIndex() + 1}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )
                       )}
                 </TableHead>
               ))}
@@ -449,8 +507,17 @@ export function CompaniesTable({
           {isLoading ? (
             [...Array(5)].map((_, rowIndex) => (
               <TableRow key={rowIndex} className="h-16 text-center">
-                {columns.map((column, colIndex) => (
-                  <TableCell key={colIndex} className="text-center align-middle">
+                {table.getVisibleFlatColumns().map((column, colIndex) => (
+                  <TableCell
+                    key={colIndex}
+                    className={`align-middle ${
+                      columnAlignments[column.id] === 'right' ? 'text-right' : 'text-center'
+                    }`}
+                    style={{
+                      width: column.getSize(),
+                      minWidth: column.getSize(),
+                    }}
+                  >
                     <Skeleton className="h-5 w-2/3 mx-auto rounded-md" />
                   </TableCell>
                 ))}
@@ -467,7 +534,13 @@ export function CompaniesTable({
                 {row.getVisibleCells().map((cell) => (
                   <TableCell
                     key={cell.id}
-                    className="text-center align-middle"
+                    className={`align-middle ${
+                      columnAlignments[cell.column.id] === 'right' ? 'text-right' : 'text-center'
+                    }`}
+                    style={{
+                      width: cell.column.getSize(),
+                      minWidth: cell.column.getSize(),
+                    }}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>

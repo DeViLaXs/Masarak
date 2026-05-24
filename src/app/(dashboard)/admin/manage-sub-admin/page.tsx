@@ -5,9 +5,11 @@ import SubadminsCard from '@/app/(dashboard)/admin/_components/subadmins-card'
 import { SubadminsTable } from '@/app/(dashboard)/admin/_components/subadmins-table'
 import { useSubadmins } from '@/hooks/use-subadmins'
 import { useAuth } from '@/auth/use-auth'
+import { cn } from '@/lib/utils'
 import { Input } from '@/components/ui/input'
-import { Search, Check, UserX, Ban, Plus } from 'lucide-react'
+import { Search, Check, X, UserX, Ban, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { SortingState } from '@tanstack/react-table'
 import Link from 'next/link'
 import {
   Combobox,
@@ -35,6 +37,7 @@ export default function ManageSubAdminPage() {
   const [statusFilter, setStatusFilter] = useState('All')
   const [page, setPage] = useState(1)
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({})
+  const [sorting, setSorting] = useState<SortingState>([])
 
   const [bulkActionDialogOpen, setBulkActionDialogOpen] = useState(false)
   const [bulkActionType, setBulkActionType] = useState<
@@ -110,14 +113,14 @@ export default function ManageSubAdminPage() {
           title: 'تأكيد التنشيط',
           description: `هل أنت متأكد من رغبتك في تنشيط ${selectedCount} مشرف/مشرفين محددين؟`,
           confirmText: 'نعم، تنشيط',
-          variant: 'default' as const,
+          variant: 'green' as const,
         }
       case 'Suspend':
         return {
           title: 'تأكيد التعليق',
           description: `هل أنت متأكد من رغبتك في تعليق ${selectedCount} مشرف/مشرفين محددين؟ لن يتمكنوا من تسجيل الدخول.`,
           confirmText: 'نعم، تعليق',
-          variant: 'destructive' as const,
+          variant: 'orange' as const,
         }
       case 'Delete':
         return {
@@ -170,6 +173,17 @@ export default function ManageSubAdminPage() {
 
           {/* Status Filter on the Left */}
           <div className="flex items-center gap-4 max-sm:w-full">
+            {sorting.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSorting([])}
+                className="text-xs text-red-600 hover:text-red-500 hover:bg-red-50 hover:border-red-500 whitespace-nowrap h-10 px-4 rounded-full shrink-0"
+              >
+                <X className="w-3 h-3 ml-1" />
+                مسح الفرز
+              </Button>
+            )}
             <span className="text-foreground text-sm font-medium ">
             الحالة :
             </span>
@@ -293,6 +307,8 @@ export default function ManageSubAdminPage() {
                 data={subadmins}
                 rowSelection={rowSelection}
                 onRowSelectionChange={setRowSelection}
+                sorting={sorting}
+                setSorting={setSorting}
                 isLoading={isLoading}
               />
             </div>

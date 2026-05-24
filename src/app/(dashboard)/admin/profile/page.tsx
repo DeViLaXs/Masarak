@@ -365,7 +365,7 @@ export default function ProfilePage() {
           <CardContent className="flex items-center justify-between p-6 sm:p-8">
             <div className="space-y-1">
               <h4 className="text-destructive text-sm font-bold">
-                إلغاء تنشيط الحساب
+              حذف الحساب
               </h4>
               <p className="text-muted-foreground max-w-lg text-xs leading-relaxed">
                 سيؤدي هذا الإجراء إلى حذف بيانات شركتك وجميع الحسابات المرتبطة
