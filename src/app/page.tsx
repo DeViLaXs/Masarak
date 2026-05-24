@@ -165,7 +165,7 @@ export default function HomePage() {
             </div>
 
             <h1 className="max-w-5xl text-balance text-3xl leading-tight font-black tracking-normal text-foreground drop-shadow-sm sm:text-5xl lg:text-[65px] lg:leading-[1.16] dark:text-white dark:drop-shadow-2xl">
-              منصة <span className="text-primary">مسارك</span> لإدارة توظيف
+              منصة <span className="text-primary">مسارك</span> لإدارة عمليات توظيف
               الشركات
             </h1>
 
