@@ -160,8 +160,8 @@ export default function CompaniesPage() {
 
           {/* Status Filter on the Left */}
           <div className="flex items-center gap-4 max-sm:w-full">
-            <span className="text-foreground hidden text-sm font-medium whitespace-nowrap">
-              الحالة:
+            <span className="text-foreground text-sm font-medium whitespace-nowrap">
+              الحالة :
             </span>
             <Combobox
               value={statusFilter}
@@ -170,29 +170,28 @@ export default function CompaniesPage() {
                 setPage(1)
               }}
             >
-              <ComboboxTrigger className="flex h-10 w-full min-w-[250px] items-center justify-between rounded-full border border-slate-300 bg-transparent px-6 text-sm shadow-none sm:w-[250px] dark:border-slate-600">
+              <ComboboxTrigger className="flex h-10 w-full min-w-[120px] items-center justify-between gap-3 rounded-full border border-slate-300 bg-transparent px-5 text-sm shadow-none sm:w-fit dark:border-slate-600">
                 {statusFilter === 'All' && 'جميع الحالات'}
-                {statusFilter === 'Active' && 'موثقة (Active)'}
-                {statusFilter === 'PendingApproval' &&
-                  'في انتظار التوثيق (Pending)'}
-                {statusFilter === 'Suspended' && 'معلّقة (Suspended)'}
-                {statusFilter === 'Rejected' && 'مرفوضة (Rejected)'}
-                {statusFilter === 'Blocked' && 'محظورة (Blocked)'}
+                {statusFilter === 'Active' && 'موثقة'}
+                {statusFilter === 'PendingApproval' && 'في انتظار التوثيق'}
+                {statusFilter === 'Suspended' && 'معلّقة'}
+                {statusFilter === 'Rejected' && 'مرفوضة'}
+                {statusFilter === 'Blocked' && 'محظورة'}
               </ComboboxTrigger>
-              <ComboboxContent className="w-[250px] p-0">
+              <ComboboxContent className="p-0">
                 <ComboboxList>
                   <ComboboxItem value="All">جميع الحالات</ComboboxItem>
-                  <ComboboxItem value="Active">موثقة (Active)</ComboboxItem>
+                  <ComboboxItem value="Active">موثقة</ComboboxItem>
                   <ComboboxItem value="PendingApproval">
-                    في انتظار التوثيق (Pending)
+                    في انتظار التوثيق
                   </ComboboxItem>
                   <ComboboxItem value="Suspended">
-                    معلّقة (Suspended)
+                    معلّقة
                   </ComboboxItem>
                   <ComboboxItem value="Rejected">
-                    مرفوضة (Rejected)
+                    مرفوضة
                   </ComboboxItem>
-                  <ComboboxItem value="Blocked">محظورة (Blocked)</ComboboxItem>
+                  <ComboboxItem value="Blocked">محظورة</ComboboxItem>
                 </ComboboxList>
               </ComboboxContent>
             </Combobox>

@@ -145,7 +145,7 @@ export default function ManageSubAdminPage() {
       <div className="mt-6 flex flex-col gap-5">
         {/* Search and Filters Bar */}
         <div
-          className="border-border/40 dark:bg-card flex flex-col gap-4 rounded-3xl border bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between"
+          className="border-border/40 dark:bg-card flex flex-col gap-1 rounded-3xl border bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between"
           dir="rtl"
         >
           {/* Search Input and Add Button on the Right */}
@@ -163,15 +163,15 @@ export default function ManageSubAdminPage() {
             <Link href="/admin/create-sub-admin">
               <Button className="bg-primary hover:bg-primary/80 flex h-10 items-center gap-2 rounded-full px-6 font-medium text-white shadow-sm">
                 <Plus className="h-4 w-4" />
-                <span className="max-sm:hidden">إضافة مشرف</span>
+                <span className="max-sm:hidden px-2">إضافة مشرف</span>
               </Button>
             </Link>
           </div>
 
           {/* Status Filter on the Left */}
           <div className="flex items-center gap-4 max-sm:w-full">
-            <span className="text-foreground hidden text-sm font-medium whitespace-nowrap">
-              الحالة:
+            <span className="text-foreground text-sm font-medium ">
+            الحالة :
             </span>
             <Combobox
               value={statusFilter}
@@ -180,20 +180,20 @@ export default function ManageSubAdminPage() {
                 setPage(1)
               }}
             >
-              <ComboboxTrigger className="flex h-10 w-full min-w-[220px] items-center justify-between rounded-full border border-slate-300 bg-transparent px-6 text-sm shadow-none sm:w-[220px] dark:border-slate-600">
+              <ComboboxTrigger className="flex h-10 w-full min-w-[120px] items-center justify-between gap-3 rounded-full border border-slate-300 bg-transparent px-5 text-sm shadow-none sm:w-fit dark:border-slate-600">
                 {statusFilter === 'All' && 'جميع الحالات'}
-                {statusFilter === 'Active' && 'نشط (Active)'}
-                {statusFilter === 'Suspended' && 'معلّق (Suspended)'}
-                {statusFilter === 'Blocked' && 'محظور (Blocked)'}
+                {statusFilter === 'Active' && 'نشط'}
+                {statusFilter === 'Suspended' && 'معلّق'}
+                {statusFilter === 'Blocked' && 'محظور'}
               </ComboboxTrigger>
-              <ComboboxContent className="w-[220px] p-0">
+              <ComboboxContent className="p-0">
                 <ComboboxList>
                   <ComboboxItem value="All">جميع الحالات</ComboboxItem>
-                  <ComboboxItem value="Active">نشط (Active)</ComboboxItem>
+                  <ComboboxItem value="Active">نشط</ComboboxItem>
                   <ComboboxItem value="Suspended">
-                    معلّق (Suspended)
+                    معلّق
                   </ComboboxItem>
-                  <ComboboxItem value="Blocked">محظور (Blocked)</ComboboxItem>
+                  <ComboboxItem value="Blocked">محظور</ComboboxItem>
                 </ComboboxList>
               </ComboboxContent>
             </Combobox>
