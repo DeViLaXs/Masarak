@@ -91,11 +91,9 @@ export function InterviewTable({
       cell: ({ row }) => {
         const status = row.original.interviewStatus;
         const translations: Record<string, string> = {
-          'Scheduled': 'مجدولة',
+          'Scheduled': 'في انتظار الموافقة',
           'Completed': 'مكتملة',
           'Cancelled': 'ملغاة',
-          'Rescheduled': 'معاد جدولتها',
-          'NoShow': 'لم يحضر',
           'Confirmed': 'مؤكدة',
           'MissingInterview': 'لم يحضر',
           'Withdrawn': 'انسحب',
@@ -108,15 +106,12 @@ export function InterviewTable({
         if (status === 'Scheduled' || status === 'Confirmed') {
           badgeColor = "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
           Icon = status === 'Confirmed' ? CheckCircle2 : Clock
-        } else if (status === 'Rescheduled') {
-          badgeColor = "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
-          Icon = RotateCcw
         } else if (status === 'Completed') {
           badgeColor = "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
           Icon = CheckCircle2
-        } else if (status === 'Cancelled' || status === 'NoShow' || status === 'MissingInterview' || status === 'Withdrawn') {
+        } else if (status === 'Cancelled' || status === 'MissingInterview' || status === 'Withdrawn') {
           badgeColor = "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
-          Icon = (status === 'NoShow' || status === 'MissingInterview') ? UserX : status === 'Withdrawn' ? UserX2 : CircleX
+          Icon = (status === 'MissingInterview') ? UserX : status === 'Withdrawn' ? UserX2 : CircleX
         }
 
         return (
