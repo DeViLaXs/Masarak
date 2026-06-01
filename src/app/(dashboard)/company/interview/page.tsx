@@ -258,11 +258,9 @@ export default function InterviewsPage() {
                   if (!item) return ''
                   if (item.name === 'جميع الحالات') return 'جميع الحالات'
                   const translations: Record<string, string> = {
-                    'Scheduled': 'مجدولة',
+                    'Scheduled': 'في انتظار الموافقة',
                     'Completed': 'مكتملة',
                     'Cancelled': 'ملغاة',
-                    'Rescheduled': 'معاد جدولتها',
-                    'NoShow': 'لم يحضر',
                     'Confirmed': 'مؤكدة',
                     'MissingInterview': 'لم يحضر',
                     'Withdrawn': 'منسحب'
@@ -282,11 +280,9 @@ export default function InterviewsPage() {
                     </ComboboxItem>
                     {filters?.statuses.map(s => {
                       const translations: Record<string, string> = {
-                        'Scheduled': 'مجدولة',
+                        'Scheduled': 'في انتظار الموافقة',
                         'Completed': 'مكتملة',
                         'Cancelled': 'ملغاة',
-                        'Rescheduled': 'معاد جدولتها',
-                        'NoShow': 'لم يحضر',
                         'Confirmed': 'مؤكدة',
                         'MissingInterview': 'لم يحضر',
                         'Withdrawn': 'منسحب'
@@ -302,7 +298,7 @@ export default function InterviewsPage() {
               </Combobox>
             </div>
 
-            <div className="w-full md:w-[200px] shadow-sm rounded-lg overflow-hidden bg-background dark:bg-input/30 border border-input focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all h-10 flex items-center">
+            {/* <div className="w-full md:w-[200px] shadow-sm rounded-lg overflow-hidden bg-background dark:bg-input/30 border border-input focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all h-10 flex items-center">
               <Combobox
                 value={
                   jobId === undefined
@@ -335,7 +331,7 @@ export default function InterviewsPage() {
                   </ComboboxList>
                 </ComboboxContent>
               </Combobox>
-            </div>
+            </div> */}
 
             {sorting.length > 0 && (
               <Button variant="outline" size="sm" onClick={() => setSorting([])} className="text-xs text-red-600 hover:text-red-500 hover:bg-red-50 hover:border-red-500 whitespace-nowrap h-10 px-2 shrink-0">
