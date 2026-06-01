@@ -291,7 +291,7 @@ export default function ApplicationsPage() {
               </Combobox>
             </div>
 
-            <div className="w-full md:w-[200px] shadow-sm rounded-lg overflow-hidden bg-background dark:bg-input/30 border border-input focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all h-10 flex items-center">
+            {/* <div className="w-full md:w-[200px] shadow-sm rounded-lg overflow-hidden bg-background dark:bg-input/30 border border-input focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all h-10 flex items-center">
               <Combobox
                 value={
                   jobId === undefined
@@ -324,7 +324,7 @@ export default function ApplicationsPage() {
                   </ComboboxList>
                 </ComboboxContent>
               </Combobox>
-            </div>
+            </div> */}
 
             {sorting.length > 0 && (
               <Button variant="outline" size="sm" onClick={() => setSorting([])} className="text-xs text-red-600 hover:text-red-500 hover:bg-red-50 hover:border-red-500 whitespace-nowrap h-10 px-2 shrink-0">
