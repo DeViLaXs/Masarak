@@ -123,7 +123,7 @@ export function JobHistoryTable({
     },
     {
       accessorKey: 'matchingPercentage',
-      header: 'نسبة المطابقة بـAI',
+      header: 'نسبة المطابقة بـ AI',
       cell: ({ row }) => {
         const match = row.original.matchingPercentage
         if (match === null) {
