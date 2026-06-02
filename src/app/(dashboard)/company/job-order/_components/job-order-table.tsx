@@ -79,7 +79,7 @@ export function JobOrderTable({
     },
     {
       accessorKey: 'matchingPercentage',
-      header: 'نسبة المطابقة بAI',
+      header: 'نسبة المطابقة بـAI',
       cell: ({ row }) => {
         const match = row.original.matchingPercentage
         if (match === null) {
