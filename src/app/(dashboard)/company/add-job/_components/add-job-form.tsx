@@ -142,6 +142,7 @@ export function AddJobForm() {
   })
   const [aiPreviewContent, setAiPreviewContent] = React.useState<string | null>(null)
   const [isAiModalOpen, setIsAiModalOpen] = React.useState(false)
+  const [isCalendarOpen, setIsCalendarOpen] = React.useState(false)
 
   const [debouncedSkillsSearch] = useDebounce(skillsSearch, 500)
 
@@ -225,7 +226,16 @@ export function AddJobForm() {
         governateId: Number(formData.governateId),
         minSalary: Number(formData.minSalary),
         maxSalary: Number(formData.maxSalary),
-        expirationDate: formData.expirationDate.toISOString(),
+        expirationDate: new Date(
+          Date.UTC(
+            formData.expirationDate.getFullYear(),
+            formData.expirationDate.getMonth(),
+            formData.expirationDate.getDate(),
+            12,
+            0,
+            0,
+          )
+        ).toISOString(),
         skillIds: formData.skillIds,
         newSkills: formData.newSkills,
       })
@@ -797,7 +807,7 @@ export function AddJobForm() {
 
               <Field className="flex flex-col justify-end lg:col-span-1">
                 <FieldLabel>تاريخ الانتهاء </FieldLabel>
-                <Popover>
+                <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                   <PopoverTrigger asChild>
                     <Button
                       variant={'outline'}
@@ -818,12 +828,13 @@ export function AddJobForm() {
                     <Calendar
                       mode="single"
                       selected={formData.expirationDate}
-                      onSelect={(date) =>
+                      onSelect={(date) => {
                         setFormData((prev) => ({
                           ...prev,
                           expirationDate: date,
                         }))
-                      }
+                        setIsCalendarOpen(false)
+                      }}
                       disabled={(date) => date < new Date()}
                       initialFocus
                       className="rounded-md border shadow-sm"

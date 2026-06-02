@@ -181,7 +181,7 @@ export function ManageJobTable({
                 ),
                 cell: ({ row }) => (
                     <div className="text-center font-medium whitespace-nowrap ">
-                        {format(new Date(row.original.expirationDate), 'yyyy-MM-dd')}
+                        {row.original.expirationDate ? row.original.expirationDate.split('T')[0] : ''}
                     </div>
                 ),
             },
@@ -290,7 +290,10 @@ export function ManageJobTable({
                                         <PopoverContent align="end" className="w-auto p-0">
                                             <Calendar
                                                 mode="single"
-                                                selected={new Date(job.expirationDate)}
+                                                selected={(() => {
+                                                    const [year, month, day] = job.expirationDate.split('T')[0].split('-').map(Number)
+                                                    return new Date(year, month - 1, day)
+                                                })()}
                                                 onSelect={(date) => {
                                                     if (date) {
                                                         handleReschedule(job.id, date)

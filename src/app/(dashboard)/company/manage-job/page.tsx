@@ -113,7 +113,21 @@ export default function ManageJobPage() {
 
     const handleReschedule = (id: number, newDate: Date) => {
         updateJob(
-            { id, data: { expirationDate: newDate.toISOString() } },
+            {
+                id,
+                data: {
+                    expirationDate: new Date(
+                        Date.UTC(
+                            newDate.getFullYear(),
+                            newDate.getMonth(),
+                            newDate.getDate(),
+                            12,
+                            0,
+                            0,
+                        )
+                    ).toISOString(),
+                },
+            },
             {
                 onSuccess: () => {
                     updateStatus(

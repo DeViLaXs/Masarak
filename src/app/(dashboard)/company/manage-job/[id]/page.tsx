@@ -166,7 +166,10 @@ export default function JobDetailsPage() {
         governateId: job.governateId,
         minSalary: job.minSalary.toString(),
         maxSalary: job.maxSalary.toString(),
-        expirationDate: new Date(job.expirationDate),
+        expirationDate: (() => {
+          const [year, month, day] = job.expirationDate.split('T')[0].split('-').map(Number)
+          return new Date(year, month - 1, day)
+        })(),
         skillIds: job.skills.map((s) => s.id),
         newSkills: [],
       })
@@ -257,7 +260,16 @@ export default function JobDetailsPage() {
           governateId: Number(formData.governateId),
           minSalary: Number(formData.minSalary),
           maxSalary: Number(formData.maxSalary),
-          expirationDate: formData.expirationDate.toISOString(),
+          expirationDate: new Date(
+            Date.UTC(
+              formData.expirationDate.getFullYear(),
+              formData.expirationDate.getMonth(),
+              formData.expirationDate.getDate(),
+              12,
+              0,
+              0,
+            )
+          ).toISOString(),
           skillIds: formData.skillIds,
           newSkills: formData.newSkills,
         },
