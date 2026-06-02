@@ -146,6 +146,7 @@ export default function JobDetailsPage() {
   const [currencySearch, setCurrencySearch] = React.useState('')
   const [aiPreviewContent, setAiPreviewContent] = React.useState<string | null>(null)
   const [isAiModalOpen, setIsAiModalOpen] = React.useState(false)
+  const [isCalendarOpen, setIsCalendarOpen] = React.useState(false)
 
   const [debouncedSkillsSearch] = useDebounce(skillsSearch, 500)
 
@@ -819,7 +820,7 @@ export default function JobDetailsPage() {
 
               <Field className="flex flex-col justify-end lg:col-span-1">
                 <FieldLabel>تاريخ الانتهاء *</FieldLabel>
-                <Popover>
+                <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                   <PopoverTrigger asChild>
                     <Button
                       variant={'outline'}
@@ -840,12 +841,13 @@ export default function JobDetailsPage() {
                     <Calendar
                       mode="single"
                       selected={formData.expirationDate}
-                      onSelect={(date) =>
+                      onSelect={(date) => {
                         setFormData((prev) => ({
                           ...prev,
                           expirationDate: date,
                         }))
-                      }
+                        setIsCalendarOpen(false)
+                      }}
                       disabled={(date) => date < new Date()}
                       initialFocus
                       className="rounded-md border shadow-sm"

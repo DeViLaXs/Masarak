@@ -330,7 +330,7 @@ export function JobHistoryTable({
                 data-state={row.getIsSelected() && 'selected'}
                 className="cursor-pointer transition-colors hover:bg-slate-50/80 dark:hover:bg-muted/50"
                 onClick={() =>
-                  router.push(`/company/job-order/${row.original.applicationId}`)
+                  router.push(`/company/job-history/${row.original.applicationId}`)
                 }
               >
                 {row.getVisibleCells().map((cell) => (
