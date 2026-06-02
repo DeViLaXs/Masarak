@@ -15,7 +15,7 @@ export default function AdminPage() {
   console.log(user)
 
   return (
-    <div className="px-6 py-1 max-sm:px-4 pb-8">
+    <div className="px-6 max-sm:px-4 pb-8">
       <HomeCard1 />
       <HomeCard2 />
       <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6" dir="rtl">

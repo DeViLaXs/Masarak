@@ -72,10 +72,7 @@ const formatJobTypeName = (name: string) => {
   const map: Record<string, string> = {
     FullTime: 'دوام كامل',
     PartTime: 'دوام جزئي',
-    Remote: 'عن بعد',
-    Hybrid: 'هجين',
     Contract: 'عقد',
-    Freelance: 'عمل حر',
     Internship: 'تدريب',
   }
   return map[name] || name
@@ -85,7 +82,7 @@ const formatLocationTypeName = (name: string) => {
   const map: Record<string, string> = {
     OnSite: 'حضوري',
     Remote: 'عن بعد',
-    Hybrid: 'هجين',
+    Hybrid: 'مرن',
   }
   return map[name] || name
 }
