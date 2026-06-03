@@ -66,16 +66,26 @@ export function useAuth(options: UseAuthOptions = {}) {
     }
   }, [pathname, queryClient])
 
+  // Check if it's a real authentication error (401/403)
+  const isAuthError =
+    isSessionError &&
+    ((sessionError as any)?.status === 401 ||
+      (sessionError as any)?.status === 403 ||
+      (sessionError as any)?.response?.status === 401 ||
+      (sessionError as any)?.response?.status === 403)
+
   const role = user?.role ?? null
-  const isAuthenticated = !!user && !isSessionError
+  const isAuthenticated = !!user && !isAuthError
 
   // Handle middleware-based redirects
   useEffect(() => {
     if (isSessionLoading) return
 
     const handleRedirect = () => {
-      // If session error (401/403), user is not authenticated
-      if (isSessionError) {
+      // Clear session only on true auth errors, or if session fetch failed and they don't have the logged-in cookie
+      const isLoggedOut = isAuthError || (isSessionError && isOptimisticGuest)
+
+      if (isLoggedOut) {
         // Clear is_logged_in cookie if it exists
         if (typeof document !== 'undefined') {
           document.cookie =
@@ -159,7 +169,9 @@ export function useAuth(options: UseAuthOptions = {}) {
     handleRedirect()
   }, [
     isSessionLoading,
+    isAuthError,
     isSessionError,
+    isOptimisticGuest,
     isAuthenticated,
     middleware,
     role,
