@@ -31,6 +31,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { gooeyToast } from '@/components/ui/goey-toaster'
 import { ScheduleRescheduleDialog } from '@/components/interview-dialog'
 import { cn } from '@/lib/utils'
+import LoadingScreen from '@/components/loading-screen'
 import { motion } from 'framer-motion'
 
 export default function InterviewDetailPage() {
@@ -105,14 +106,7 @@ export default function InterviewDetailPage() {
   }
 
   if (loading) {
-    return (
-      <div className="flex min-h-[400px] flex-col items-center justify-center gap-4">
-        <Loader2 className="text-primary h-12 w-12 animate-spin" />
-        <p className="text-muted-foreground animate-pulse text-sm font-medium">
-          جاري تحميل تفاصيل المقابلة...
-        </p>
-      </div>
-    )
+    return <LoadingScreen message="جاري تحميل تفاصيل المقابلة..." fullScreen={false} />
   }
 
   if (!interview) {

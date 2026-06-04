@@ -31,7 +31,6 @@ export function LoginForm({
     e.preventDefault()
     login(loginForm, {
       onError: (err: any) => {
-        console.log(err)
         if (err.status === 401) {
           sessionStorage.setItem('otp_allowed', '1')
           router.push(`/otp?email=${encodeURIComponent(loginForm.email)}`)

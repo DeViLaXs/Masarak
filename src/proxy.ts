@@ -17,7 +17,6 @@ export function proxy(request: NextRequest) {
   // تحقق فقط من وجود access_token
   const token = request.cookies.get('access_token')?.value
   const hasToken = Boolean(token)
-  console.log(hasToken)
 
   const isProtectedRoute = protectedPaths.some((path) =>
     pathname.startsWith(path),

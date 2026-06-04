@@ -4,6 +4,7 @@ import { useAuth } from '@/auth/use-auth'
 import Footer from '@/components/footer'
 import Logo from '@/components/logo'
 import NavBar from '@/components/navbar'
+import LoadingScreen from '@/components/loading-screen'
 import { AnimatedThemeToggler } from '@/components/ui/animated-theme-toggler'
 import { Skeleton } from '@/components/ui/skeleton'
 import { motion } from 'framer-motion'
@@ -100,7 +101,7 @@ const getDotStyle = (index: number) => ({
 })
 
 export default function HomePage() {
-  const { isAuthenticated, role, isLoading, user } = useAuth()
+  const { isAuthenticated, role, isLoading, user } = useAuth({ middleware: 'guest' })
 
   const dashboardLink =
     role === 'Admin' || role === 'SubAdmin' ? '/admin' : '/company'
@@ -110,6 +111,10 @@ export default function HomePage() {
 
   const showDashboard =
     isAuthenticated && (!user?.status || user.status === 'Active')
+
+  if (isLoading || isAuthenticated) {
+    return <LoadingScreen />
+  }
 
   return (
     <main

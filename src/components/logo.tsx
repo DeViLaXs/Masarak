@@ -4,7 +4,7 @@ import Image from 'next/image'
 export default function Logo() {
   return (
     
-      <Link href="/" className="flex h-10 items-center group-data-[state=collapsed]:justify-center">
+      <div className="flex h-10 items-center group-data-[state=collapsed]:justify-center">
         <Image
           src="/masarak-logo-light.png"
           className="block dark:hidden"
@@ -33,7 +33,7 @@ export default function Logo() {
           width={100}
           height={100}
         />
-      </Link>
+      </div>
     
   )
 }

@@ -6,6 +6,7 @@ import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { useAuth } from '@/auth/use-auth'
 import DashboardNavbar from '@/components/dashboard-navbar'
 import { MobileRestriction } from '@/components/mobile-restriction'
+import LoadingScreen from '@/components/loading-screen'
 
 export default function AdminLayout({
   children,
@@ -21,11 +22,7 @@ export default function AdminLayout({
     (role === 'SubAdmin' &&
       (user?.status === 'Suspended' || user?.status === 'Blocked'))
   ) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="border-primary h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" />
-      </div>
-    )
+    return <LoadingScreen />
   }
 
   return (

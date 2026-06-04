@@ -4,6 +4,7 @@ import { useAuth } from '@/auth/use-auth'
 import NavBar from '@/components/navbar'
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
+import LoadingScreen from '@/components/loading-screen'
 
 export default function AuthLayout({
   children,
@@ -31,11 +32,7 @@ export default function AuthLayout({
   // 1. If we are optimistically logged out (no is_logged_in cookie), show form immediately
   // 2. Otherwise, if loading or authenticated (and no error yet), show spinner
   if (!isLoggedOutOptimistic && (isLoading || isAuthenticated) && !isError) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="border-primary h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" />
-      </div>
-    )
+    return <LoadingScreen />
   }
 
   return (

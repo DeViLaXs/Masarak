@@ -33,6 +33,7 @@ import {
   SaveIcon,
   ArrowRightIcon,
 } from 'lucide-react'
+import LoadingScreen from '@/components/loading-screen'
 import { cn } from '@/lib/utils'
 
 import {
@@ -352,14 +353,7 @@ export default function JobDetailsPage() {
   }
 
   if (isJobLoading || isCategoriesLoading) {
-    return (
-      <div className="flex min-h-[400px] flex-col items-center justify-center gap-4 xl:min-h-[500px]">
-        <Loader2 className="text-primary size-10 animate-spin" />
-        <p className="text-muted-foreground animate-pulse text-sm font-medium">
-          جاري تحميل بيانات الوظيفة...
-        </p>
-      </div>
-    )
+    return <LoadingScreen message="جاري تحميل بيانات الوظيفة..." fullScreen={false} />
   }
 
   if (!job) {

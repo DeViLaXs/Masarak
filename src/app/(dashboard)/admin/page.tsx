@@ -12,8 +12,6 @@ export default function AdminPage() {
   const { data: statusResponse, isLoading: isStatusLoading } = useCompanyStatusDistribution()
   const { data: registrationsResponse, isLoading: isRegistrationsLoading } = useCompanyRegistrations('weekly')
 
-  console.log(user)
-
   return (
     <div className="px-6 max-sm:px-4 pb-8">
       <HomeCard1 />
