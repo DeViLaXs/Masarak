@@ -211,7 +211,7 @@ export default function ManageJobPage() {
                                 bgColorClass: 'bg-red-500/10 dark:bg-red-500/25',
                                 borderColorClass: 'hover:border-red-300 dark:hover:border-red-950',
                                 gradientClass: 'from-red-500/5 to-transparent',
-                                description: 'الوظائف المغلقة والمنتهية',
+                                description: 'الوظائف المنتهية',
                             },
                             {
                                 title: 'وظائف بدوام كامل',
