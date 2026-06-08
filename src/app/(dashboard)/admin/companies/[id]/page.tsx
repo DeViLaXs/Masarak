@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
-import { gooeyToast } from '@/components/ui/goey-toaster'
+import { gooeyToast as toast } from '@/components/ui/goey-toaster'
 import { cn } from '@/lib/utils'
 import LoadingScreen from '@/components/loading-screen'
 import { motion } from 'framer-motion'
@@ -86,9 +86,9 @@ export default function CompanyDetailsPage() {
       else if (newStatus === 'Rejected') message = "تم رفض طلب الشركة بنجاح"
       else if (newStatus === 'Blocked') message = "تم حظر الشركة بنجاح"
 
-      gooeyToast.success(message)
+      toast.success(message)
     } catch (err: any) {
-      gooeyToast.error(err?.message || "فشلت عملية تحديث الحالة")
+      toast.error(err?.message || "فشلت عملية تحديث الحالة")
     } finally {
       setPendingStatus(null)
     }
@@ -158,7 +158,7 @@ export default function CompanyDetailsPage() {
           <CardContent className="pt-0 pb-6 flex flex-col items-center text-center -mt-10">
             <Avatar className="size-20 rounded-full border-4 border-background object-cover shadow-md">
               <AvatarImage
-                src={company.logoUrl || '/User-icon.webp'}
+                src={company.logoUrl && !company.logoUrl.includes('User-icon.webp') ? company.logoUrl : undefined}
                 alt={company.companyName}
               />
               <AvatarFallback className="bg-primary text-primary-foreground font-bold text-2xl flex items-center justify-center shadow-md w-full h-full">

@@ -4,6 +4,7 @@ import HomeCard2 from '@/app/(dashboard)/admin/_components/home-card-2'
 import { useAuth } from '@/auth/use-auth'
 import { useAdmin } from '@/hooks/use-admin'
 import { DashboardPieChart, DashboardBarMultipleChart } from '@/components/dashboard-charts'
+import { motion } from 'framer-motion'
 
 export default function AdminPage() {
   const { user } = useAuth()
@@ -13,7 +14,12 @@ export default function AdminPage() {
   const { data: registrationsResponse, isLoading: isRegistrationsLoading } = useCompanyRegistrations('weekly')
 
   return (
-    <div className="px-6 max-sm:px-4 pb-8">
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: 'spring', stiffness: 100, damping: 15 }}
+      className="px-6 max-sm:px-4 pb-8"
+    >
       <HomeCard1 />
       <HomeCard2 />
       <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6" dir="rtl">
@@ -36,6 +42,6 @@ export default function AdminPage() {
           />
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }

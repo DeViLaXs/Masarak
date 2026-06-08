@@ -28,6 +28,8 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
+import { gooeyToast as toast } from '@/components/ui/goey-toaster'
 
 export default function CompaniesPage() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -91,6 +93,20 @@ export default function CompaniesPage() {
     try {
       await bulkAction({ companyIds, action: bulkActionType })
       setRowSelection({}) // clear selection after action
+      
+      let message = 'تم تنفيذ العملية بنجاح'
+      if (bulkActionType === 'Approve') {
+        message = 'تم توثيق الشركات المحددة بنجاح'
+      } else if (bulkActionType === 'Suspend') {
+        message = 'تم تعليق الشركات المحددة بنجاح'
+      } else if (bulkActionType === 'Reject') {
+        message = 'تم رفض طلبات الشركات المحددة بنجاح'
+      } else if (bulkActionType === 'Delete') {
+        message = 'تم حظر الشركات المحددة بنجاح'
+      }
+      toast.success(message)
+    } catch (error: any) {
+      toast.error(error?.message || 'حدث خطأ أثناء تنفيذ العملية')
     } finally {
       setBulkActionDialogOpen(false)
       setBulkActionType(null)
@@ -140,7 +156,12 @@ export default function CompaniesPage() {
   const dialogContent = getBulkDialogContent()
 
   return (
-    <div className="px-6 max-sm:p-4">
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: 'spring', stiffness: 100, damping: 15 }}
+      className="px-6 max-sm:p-4"
+    >
       <CompaniesCard />
 
       <div className="mt-6 flex flex-col gap-5">
@@ -371,6 +392,6 @@ export default function CompaniesPage() {
           )}
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }

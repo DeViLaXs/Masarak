@@ -70,6 +70,7 @@ import { cn } from '@/lib/utils'
 import { FeedbackResponseDTO } from '@/services/feedback-service'
 import { FeedbacksTable } from './_components/feedbacks-table'
 import { FeedbackStats } from './_components/feedback-stats'
+import { motion } from 'framer-motion'
 
 export default function FeedbacksClient() {
   const [selectedType, setSelectedType] = React.useState<number | undefined>(
@@ -175,7 +176,12 @@ export default function FeedbacksClient() {
   )
 
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-4 space-y-5 px-6 pb-10 duration-500">
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: 'spring', stiffness: 100, damping: 15 }}
+      className="space-y-5 px-6 pb-10"
+    >
       <FeedbackStats isLoading={isStatsLoading} stats={statsData} />
 
       <div className="border-border/40 dark:bg-card relative overflow-hidden rounded-3xl border bg-white p-5 text-right shadow-sm">
@@ -403,12 +409,12 @@ export default function FeedbacksClient() {
                   <div className="border border-border/60 bg-card dark:bg-card rounded-2xl p-5 shadow-sm flex items-center gap-4 relative overflow-hidden group">
                     <Avatar className="size-16 border-2 border-primary/20 shadow-md ring-4 ring-primary/5 shrink-0">
                       <AvatarImage
-                        src={viewFeedback.logoUrl || '/User-icon.webp'}
+                        src={viewFeedback.logoUrl && !viewFeedback.logoUrl.includes('User-icon.webp') ? viewFeedback.logoUrl : undefined}
                         alt={viewFeedback.reviewerName}
                         className="object-cover"
                       />
                       <AvatarFallback className="bg-primary/10 text-primary text-xl font-bold">
-                        {viewFeedback.reviewerName?.substring(0, 2).toUpperCase() || 'م'}
+                        {viewFeedback.reviewerName?.charAt(0).toUpperCase() || 'م'}
                       </AvatarFallback>
                     </Avatar>
                     <div className="space-y-1.5 flex-1 min-w-0">
@@ -644,6 +650,6 @@ export default function FeedbacksClient() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </motion.div>
   )
 }

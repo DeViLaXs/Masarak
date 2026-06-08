@@ -158,7 +158,7 @@ export default function ProfilePage() {
               <div className="group relative">
                 <Avatar className="ring-background h-24 w-24 bg-white p-2 shadow-md ring-4 transition-transform hover:scale-105">
                   <AvatarImage
-                    src="/Masarak-logo.png"
+                    src="/masarak-logo-light.png"
                     alt="Logo"
                     className="object-contain"
                   />

@@ -20,7 +20,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -35,6 +35,7 @@ import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/comp
 import { Skeleton } from '@/components/ui/skeleton'
 import { useSubadmins, type SubAdminDto } from '@/hooks/use-subadmins'
 import { cn } from '@/lib/utils'
+import { gooeyToast as toast } from '@/components/ui/goey-toaster'
 
 interface SubadminsTableProps {
   data: SubAdminDto[]
@@ -68,11 +69,16 @@ const ActionCell = ({ subadmin }: { subadmin: SubAdminDto }) => {
     try {
       if (actionType === 'Approve') {
         await updateStatus({ id: subadmin.id, data: { status: 'Active' } })
+        toast.success(`تم تنشيط حساب المشرف الفرعي "${subadmin.name}" بنجاح`)
       } else if (actionType === 'Suspend') {
         await updateStatus({ id: subadmin.id, data: { status: 'Suspended' } })
+        toast.success(`تم تعليق حساب المشرف الفرعي "${subadmin.name}" بنجاح`)
       } else if (actionType === 'Delete') {
         await deleteSubadmin(subadmin.id)
+        toast.success(`تم حظر حساب المشرف الفرعي "${subadmin.name}" بنجاح`)
       }
+    } catch (error: any) {
+      toast.error(error?.message || 'حدث خطأ أثناء تنفيذ العملية')
     } finally {
       setDialogOpen(false)
       setActionType(null)
@@ -233,6 +239,7 @@ const columns: ColumnDef<SubAdminDto>[] = [
       return (
         <div className="flex w-full min-w-[200px] items-center justify-start gap-3 text-right">
           <Avatar className="h-9 w-9 border">
+            <AvatarImage src="/masarak-logo-light.png" alt={subadmin.name} className="object-contain" />
             <AvatarFallback className="bg-blue-100 font-bold text-blue-700">
               {subadmin.name.charAt(0)}
             </AvatarFallback>

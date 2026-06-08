@@ -111,7 +111,7 @@ export function FeedbacksTable({
             <div className="flex w-full items-center justify-start gap-3">
               <Avatar className="border-border/50 size-10 border shadow-sm transition-transform group-hover:scale-105">
                 <AvatarImage
-                  src={feedback.logoUrl || '/User-icon.webp'}
+                  src={feedback.logoUrl && !feedback.logoUrl.includes('User-icon.webp') ? feedback.logoUrl : undefined}
                   alt={feedback.reviewerName}
                   className="object-cover"
                 />
@@ -123,7 +123,7 @@ export function FeedbacksTable({
                       : 'bg-muted text-muted-foreground',
                   )}
                 >
-                  {feedback.reviewerName?.substring(0, 2).toUpperCase() || 'م'}
+                  {feedback.reviewerName?.charAt(0).toUpperCase() || 'م'}
                 </AvatarFallback>
               </Avatar>
               <div className="flex flex-col text-right">

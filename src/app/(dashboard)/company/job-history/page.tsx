@@ -86,7 +86,7 @@ export default function JobHistoryPage() {
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className="mx-auto w-full max-w-7xl space-y-4 px-6"
+      className="px-6 py-1 max-sm:px-4 pb-8 space-y-4"
       dir="rtl"
     >
       {/* Stats Cards Section */}

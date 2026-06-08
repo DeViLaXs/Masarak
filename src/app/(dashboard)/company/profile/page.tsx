@@ -61,6 +61,9 @@ export default function ProfilePage() {
     isChangingPassword,
   } = useUser()
 
+  const avatarUrl = previewUrl || user?.sasUrl || undefined
+  const hasCustomAvatar = avatarUrl && !avatarUrl.includes('User-icon.webp') ? avatarUrl : undefined
+
   const [formData, setFormData] = useState({
     name: '',
     phoneNumber: '',
@@ -305,10 +308,10 @@ export default function ProfilePage() {
               <div className="group relative">
                 <Avatar className="ring-background h-24 w-24 shadow-md ring-4 transition-transform group-hover:scale-105">
                   <AvatarImage
-                    src={previewUrl || user?.sasUrl || '/User-icon.webp'}
+                    src={hasCustomAvatar}
                   />
                   <AvatarFallback className="bg-primary/5 text-primary text-xl font-bold">
-                    {user?.name?.slice(0, 2).toUpperCase()}
+                    {user?.name?.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 {/* <div

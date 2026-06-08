@@ -63,8 +63,9 @@ export function useAdmin() {
   const updateStatusMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: UpdateCompanyStatusDto }) =>
       adminService.updateCompanyStatus(id, data),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: adminKeys.companies() })
+      queryClient.invalidateQueries({ queryKey: adminKeys.company(variables.id) })
       queryClient.invalidateQueries({ queryKey: adminKeys.statistics() })
       queryClient.invalidateQueries({ queryKey: adminKeys.dashboardStatistics() })
     },

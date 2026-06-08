@@ -4,13 +4,19 @@ import React from 'react'
 import FeedbackCard from './_components/home-card'
 import { useJobDistribution, useApplicationsTrend } from '@/hooks/use-company'
 import { DashboardPieChart, DashboardBarMultipleChart } from '@/components/dashboard-charts'
+import { motion } from 'framer-motion'
 
 export default function CompanyPage() {
   const { data: jobDistribution, isLoading: isJobDistributionLoading } = useJobDistribution()
   const { data: applicationsTrend, isLoading: isApplicationsTrendLoading } = useApplicationsTrend('weekly')
 
   return (
-    <div className="px-6 py-1 max-sm:px-4 pb-8">
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: 'spring', stiffness: 100, damping: 15 }}
+      className="px-6 py-1 max-sm:px-4 pb-8"
+    >
       <FeedbackCard />
       <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6" dir="rtl">
         <div className="md:col-span-1">
@@ -32,6 +38,6 @@ export default function CompanyPage() {
           />
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }

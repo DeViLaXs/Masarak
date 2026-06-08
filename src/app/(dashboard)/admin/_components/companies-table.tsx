@@ -36,6 +36,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useAdmin } from '@/hooks/use-admin'
 import type { CompanyDto } from '@/services/admin-service'
 import { cn } from '@/lib/utils'
+import { gooeyToast as toast } from '@/components/ui/goey-toaster'
 
 interface CompaniesTableProps {
   data: CompanyDto[]
@@ -77,22 +78,28 @@ const ActionCell = ({ company }: { company: CompanyDto }) => {
           id: company.id,
           data: { status: 'Active' },
         })
+        toast.success(`تم توثيق حساب شركة "${company.companyName}" بنجاح`)
       } else if (actionType === 'Reject') {
         await updateCompanyStatus({
           id: company.id,
           data: { status: 'Rejected' },
         })
+        toast.success(`تم رفض طلب شركة "${company.companyName}" بنجاح`)
       } else if (actionType === 'Suspend') {
         await updateCompanyStatus({
           id: company.id,
           data: { status: 'Suspended' },
         })
+        toast.success(`تم تعليق حساب شركة "${company.companyName}" بنجاح`)
       } else if (actionType === 'Delete') {
         await updateCompanyStatus({
           id: company.id,
           data: { status: 'Blocked' },
         })
+        toast.success(`تم حظر حساب شركة "${company.companyName}" بنجاح`)
       }
+    } catch (error: any) {
+      toast.error(error?.message || 'حدث خطأ أثناء تنفيذ العملية')
     } finally {
       setDialogOpen(false)
       setActionType(null)
@@ -282,7 +289,7 @@ const columns: ColumnDef<CompanyDto>[] = [
         <div className="flex w-full min-w-[200px] items-center justify-start gap-3 text-right">
           <Avatar className="h-9 w-9 border">
             <AvatarImage
-              src={company.logoUrl || '/User-icon.webp'}
+              src={company.logoUrl && !company.logoUrl.includes('User-icon.webp') ? company.logoUrl : undefined}
               alt={company.companyName}
             />
             <AvatarFallback className="bg-blue-100 text-blue-700">

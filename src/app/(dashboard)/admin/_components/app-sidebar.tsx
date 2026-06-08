@@ -155,7 +155,7 @@ export function AppSidebar() {
       <SidebarFooter>
         <SidebarMenu className="mx-2 flex-row items-center gap-2 border-t py-2 group-data-[state=collapsed]:mx-0 group-data-[state=collapsed]:flex-col group-data-[state=collapsed]:justify-center group-data-[state=collapsed]:gap-0">
           <Avatar>
-            <AvatarImage src={user?.sasUrl || '/User-icon.webp'} />
+            <AvatarImage src={user?.sasUrl || '/masarak-logo-light.png'} />
             <AvatarFallback className="bg-primary/5 text-primary text-xl font-bold">
               {user?.name?.charAt(0)}
             </AvatarFallback>

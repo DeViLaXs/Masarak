@@ -30,6 +30,8 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
+import { gooeyToast as toast } from "@/components/ui/goey-toaster"
 
 export default function ManageSubAdminPage() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -100,6 +102,18 @@ export default function ManageSubAdminPage() {
     try {
       await bulkAction({ ids: subadminIds, action: bulkActionType })
       setRowSelection({}) // clear selection after action
+      
+      let message = 'تم تنفيذ العملية بنجاح'
+      if (bulkActionType === 'Approve') {
+        message = 'تم تنشيط حسابات المشرفين المحددين بنجاح'
+      } else if (bulkActionType === 'Suspend') {
+        message = 'تم تعليق حسابات المشرفين المحددين بنجاح'
+      } else if (bulkActionType === 'Delete') {
+        message = 'تم حظر حسابات المشرفين المحددين بنجاح'
+      }
+      toast.success(message)
+    } catch (error: any) {
+      toast.error(error?.message || 'حدث خطأ أثناء تنفيذ العملية')
     } finally {
       setBulkActionDialogOpen(false)
       setBulkActionType(null)
@@ -142,7 +156,12 @@ export default function ManageSubAdminPage() {
   const dialogContent = getBulkDialogContent()
 
   return (
-    <div className="px-6 py-1 max-sm:p-4">
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: 'spring', stiffness: 100, damping: 15 }}
+      className="px-6 py-1 max-sm:p-4"
+    >
       <SubadminsCard />
 
       <div className="mt-6 flex flex-col gap-5">
@@ -364,6 +383,6 @@ export default function ManageSubAdminPage() {
           )}
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }
