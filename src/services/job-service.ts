@@ -107,6 +107,23 @@ export type EnhanceDescriptionDto = {
   description: string
 }
 
+export type JobApplicantDto = {
+  applicationId: number
+  fullName: string
+  email: string
+  matchingPercentage: number | null
+  applicationDate: string // ISO string
+  applicationStatus: string
+  cvDownloadUrl: string | null
+}
+
+export type GetJobApplicantsParams = {
+  page?: number
+  pageSize?: number
+  search?: string
+  applicationStatusId?: number
+}
+
 // ============== Job Service ==============
 
 export const jobService = {
@@ -221,5 +238,19 @@ export const jobService = {
     if (!query) return []
     const res = await api.get(`/Jobs/skills?search=${encodeURIComponent(query)}`)
     return res.data?.data || []
+  },
+
+  /**
+   * Get paginated, filterable list of applicants for a specific job posting.
+   */
+  getJobApplicants: async (
+    jobId: number,
+    params?: GetJobApplicantsParams,
+  ): Promise<PaginatedData<JobApplicantDto>> => {
+    const cleanParams = Object.fromEntries(
+      Object.entries(params || {}).filter(([_, v]) => v !== undefined && v !== ''),
+    )
+    const res = await api.get(`/Jobs/${jobId}/applicants`, { params: cleanParams })
+    return res.data?.data || res.data
   },
 }

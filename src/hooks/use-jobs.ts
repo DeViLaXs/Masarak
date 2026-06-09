@@ -9,6 +9,7 @@ import {
   type CreateJobDto,
   type UpdateJobDto,
   type EnhanceDescriptionDto,
+  type GetJobApplicantsParams,
 } from '@/services/job-service'
 
 export const jobKeys = {
@@ -218,5 +219,17 @@ export function useJobStatistics() {
   return useQuery({
     queryKey: [...jobKeys.all, 'statistics'] as const,
     queryFn: () => jobService.getStatistics(),
+  })
+}
+
+export function useJobApplicants(
+  jobId: number,
+  params?: GetJobApplicantsParams,
+) {
+  return useQuery({
+    queryKey: [...jobKeys.detail(jobId), 'applicants', params] as const,
+    queryFn: () => jobService.getJobApplicants(jobId, params),
+    enabled: !!jobId,
+    placeholderData: keepPreviousData,
   })
 }

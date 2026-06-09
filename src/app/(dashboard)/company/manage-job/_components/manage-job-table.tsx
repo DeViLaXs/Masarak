@@ -190,10 +190,13 @@ export function ManageJobTable({
                 size: 90,
                 header: () => <div className="text-center font-medium">المتقدمين</div>,
                 cell: ({ row }) => (
-                    <div className="mt-1 flex flex-col items-center justify-center gap-1 text-center font-bold ">
-                        <UsersIcon className="size-4 text-slate-400" />
+                    <Link
+                        href={`/company/manage-job/${row.original.id}/applicants`}
+                        className="mt-1 flex flex-col items-center justify-center gap-1 text-center font-bold text-slate-700 hover:text-primary transition-colors cursor-pointer group"
+                    >
+                        <UsersIcon className="size-4 text-slate-400 group-hover:text-primary transition-colors" />
                         <span>{row.original.applicantsCount}</span>
-                    </div>
+                    </Link>
                 ),
             },
             {
