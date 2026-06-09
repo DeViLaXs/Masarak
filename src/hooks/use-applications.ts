@@ -47,6 +47,7 @@ export function useRejectCandidate() {
     mutationFn: (id: number) => applicationService.reject(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: applicationKeys.all })
+      queryClient.invalidateQueries({ queryKey: ['interviews'] })
       queryClient.invalidateQueries({ queryKey: ['company'] })
     },
   })
@@ -59,10 +60,12 @@ export function useHireCandidate() {
     mutationFn: (id: number) => applicationService.hire(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: applicationKeys.all })
+      queryClient.invalidateQueries({ queryKey: ['interviews'] })
       queryClient.invalidateQueries({ queryKey: ['company'] })
     },
   })
 }
+
 
 export function useScheduleInterview() {
   const queryClient = useQueryClient()
