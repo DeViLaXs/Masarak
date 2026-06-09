@@ -109,7 +109,7 @@ export function JobOrderTable({
       header: 'التاريخ التقديم',
       cell: ({ row }) => (
         <span>
-          {new Date(row.original.applicationDate).toLocaleString('en-CA', { dateStyle: "medium", timeStyle: "short", })}
+          {new Date(row.original.applicationDate).toLocaleString('en-CA', { dateStyle: "medium"})}
         </span>
       ),
     },
