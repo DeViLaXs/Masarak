@@ -192,9 +192,9 @@ export function ManageJobTable({
                 cell: ({ row }) => (
                     <Link
                         href={`/company/manage-job/${row.original.id}/applicants`}
-                        className="mt-1 flex flex-col items-center justify-center gap-1 text-center font-bold text-slate-700 hover:text-primary transition-colors cursor-pointer group"
+                        className="mt-1 flex flex-col items-center justify-center gap-1 text-center font-bold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer group"
                     >
-                        <UsersIcon className="size-4 text-slate-400 group-hover:text-primary transition-colors" />
+                        <UsersIcon className="size-4 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
                         <span>{row.original.applicantsCount}</span>
                     </Link>
                 ),

@@ -104,13 +104,13 @@ export function ApplicantsTable({
 
           let badgeColor = ""
           if (match >= 0 && match <= 24) {
-            badgeColor = "bg-red-100 text-red-800 hover:bg-red-100/80 dark:bg-red-955/40 dark:text-red-300"
+            badgeColor = "bg-red-100 text-red-800 hover:bg-red-100/80 dark:bg-red-900 dark:text-red-200"
           } else if (match >= 25 && match <= 49) {
-            badgeColor = "bg-orange-100 text-orange-800 hover:bg-orange-100/80 dark:bg-orange-955/40 dark:text-orange-300"
+            badgeColor = "bg-orange-100 text-orange-800 hover:bg-orange-100/80 dark:bg-orange-900 dark:text-orange-200"
           } else if (match >= 50 && match <= 74) {
-            badgeColor = "bg-blue-100 text-blue-800 hover:bg-blue-100/80 dark:bg-blue-955/40 dark:text-blue-300"
+            badgeColor = "bg-blue-100 text-blue-800 hover:bg-blue-100/80 dark:bg-blue-900 dark:text-blue-200"
           } else if (match >= 75 && match <= 100) {
-            badgeColor = "bg-green-100 text-green-800 hover:bg-green-100/80 dark:bg-green-955/40 dark:text-green-300"
+            badgeColor = "bg-green-100 text-green-800 hover:bg-green-100/80 dark:bg-green-900 dark:text-green-200"
           }
 
           return (
@@ -140,16 +140,16 @@ export function ApplicantsTable({
           let Icon = Clock
 
           if (status === 'PendingReview') {
-            badgeColor = "bg-yellow-100 text-yellow-800 hover:bg-yellow-100/80 dark:bg-yellow-955/40 dark:text-yellow-300"
+            badgeColor = "bg-yellow-100 text-yellow-800 hover:bg-yellow-100/80 dark:bg-yellow-900 dark:text-yellow-200"
             Icon = Clock
           } else if (status === 'Shortlisted' || status === 'Interview' || status === 'Interviewed') {
-            badgeColor = "bg-blue-100 text-blue-800 hover:bg-blue-100/80 dark:bg-blue-950/40 dark:text-blue-300"
+            badgeColor = "bg-blue-100 text-blue-800 hover:bg-blue-100/80 dark:bg-blue-900 dark:text-blue-200"
             Icon = status === 'Interview' ? CalendarDays : status === 'Interviewed' ? CheckCircle2 : UserCheck
           } else if (status === 'Hired') {
-            badgeColor = "bg-green-100 text-green-800 hover:bg-green-100/80 dark:bg-green-950/40 dark:text-green-300"
+            badgeColor = "bg-green-100 text-green-800 hover:bg-green-100/80 dark:bg-green-900 dark:text-green-200"
             Icon = CheckCircle2
           } else if (status === 'Rejected' || status === 'Withdrawn' || status === 'MissingInterview') {
-            badgeColor = "bg-red-100 text-red-800 hover:bg-red-100/80 dark:bg-red-955/40 dark:text-red-300"
+            badgeColor = "bg-red-100 text-red-800 hover:bg-red-100/80 dark:bg-red-900 dark:text-red-200"
             Icon = status === 'MissingInterview' ? UserX : status === 'Withdrawn' ? UserX2 : CircleX
           }
 
