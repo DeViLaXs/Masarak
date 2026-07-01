@@ -233,7 +233,7 @@ const columns: ColumnDef<SubAdminDto>[] = [
   {
     accessorKey: 'name',
     size: 200,
-    header: () => 'اسم المشرف',
+    header: () => <div className="pr-10">اسم المشرف</div>,
     cell: ({ row }) => {
       const subadmin = row.original
       return (
