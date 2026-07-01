@@ -425,8 +425,8 @@ const columns: ColumnDef<CompanyDto>[] = [
 ]
 
 const columnAlignments: Record<string, 'right' | 'center'> = {
-  companyName: 'right',
-  email: 'right',
+  companyName: 'center',
+  email: 'center',
   phoneNumber: 'right',
   createdAt: 'right',
   status: 'center',
