@@ -352,7 +352,7 @@ const columns: ColumnDef<CompanyDto>[] = [
   },
   {
     accessorKey: 'status',
-    size: 120,
+    size: 100,
     header: () => 'الحالة',
     cell: ({ row }) => {
       const status = row.getValue('status') as string
@@ -466,7 +466,7 @@ export function CompaniesTable({
                 <TableHead
                   key={header.id}
                   className={`dark:bg-muted h-12 bg-slate-100 px-2 font-medium ${
-                    columnAlignments[header.column.id] === 'right' ? 'text-right' : 'text-center'
+                    columnAlignments[header.column.id] === 'center' ? 'text-center' : 'text-center'
                   }`}
                   style={{
                     width: header.getSize(),
