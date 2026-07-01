@@ -282,11 +282,11 @@ const columns: ColumnDef<CompanyDto>[] = [
   {
     accessorKey: 'companyName',
     size: 200,
-    header: () => 'اسم الشركة',
+    header: () => <div className="pr-10">اسم الشركة</div>,
     cell: ({ row }) => {
       const company = row.original
       return (
-        <div className="flex w-full min-w-[200px] items-center justify-start gap-3 text-center">
+        <div className="flex w-full min-w-[200px] items-center justify-start gap-3 text-right">
           <Avatar className="h-9 w-9 border">
             <AvatarImage
               src={company.logoUrl && !company.logoUrl.includes('User-icon.webp') ? company.logoUrl : undefined}
@@ -313,7 +313,7 @@ const columns: ColumnDef<CompanyDto>[] = [
     size: 180,
     header: () => 'البريد الإلكتروني',
     cell: ({ row }) => (
-      <div className="w-full min-w-[150px] truncate text-center">
+      <div className="w-full min-w-[150px] truncate text-right">
         {row.getValue('email')}
       </div>
     ),
@@ -352,7 +352,7 @@ const columns: ColumnDef<CompanyDto>[] = [
   },
   {
     accessorKey: 'status',
-    size: 100,
+    size: 120,
     header: () => 'الحالة',
     cell: ({ row }) => {
       const status = row.getValue('status') as string
@@ -425,8 +425,8 @@ const columns: ColumnDef<CompanyDto>[] = [
 ]
 
 const columnAlignments: Record<string, 'right' | 'center'> = {
-  companyName: 'center',
-  email: 'center',
+  companyName: 'right',
+  email: 'right',
   phoneNumber: 'right',
   createdAt: 'right',
   status: 'center',
@@ -466,7 +466,7 @@ export function CompaniesTable({
                 <TableHead
                   key={header.id}
                   className={`dark:bg-muted h-12 bg-slate-100 px-2 font-medium ${
-                    columnAlignments[header.column.id] === 'center' ? 'text-center' : 'text-center'
+                    columnAlignments[header.column.id] === 'right' ? 'text-right' : 'text-center'
                   }`}
                   style={{
                     width: header.getSize(),
