@@ -286,7 +286,7 @@ const columns: ColumnDef<CompanyDto>[] = [
     cell: ({ row }) => {
       const company = row.original
       return (
-        <div className="flex w-full min-w-[200px] items-center justify-start gap-3 text-right">
+        <div className="flex w-full min-w-[200px] items-center justify-start gap-3 text-center">
           <Avatar className="h-9 w-9 border">
             <AvatarImage
               src={company.logoUrl && !company.logoUrl.includes('User-icon.webp') ? company.logoUrl : undefined}
@@ -313,7 +313,7 @@ const columns: ColumnDef<CompanyDto>[] = [
     size: 180,
     header: () => 'البريد الإلكتروني',
     cell: ({ row }) => (
-      <div className="w-full min-w-[150px] truncate text-right">
+      <div className="w-full min-w-[150px] truncate text-center">
         {row.getValue('email')}
       </div>
     ),
