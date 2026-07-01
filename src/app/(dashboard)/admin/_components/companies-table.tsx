@@ -252,7 +252,7 @@ const ActionCell = ({ company }: { company: CompanyDto }) => {
 }
 
 const columns: ColumnDef<CompanyDto>[] = [
-  {
+/*   {
     id: 'select',
     size: 50,
     header: ({ table }) => (
@@ -278,7 +278,7 @@ const columns: ColumnDef<CompanyDto>[] = [
     ),
     enableSorting: false,
     enableHiding: false,
-  },
+  }, */
   {
     accessorKey: 'companyName',
     size: 200,

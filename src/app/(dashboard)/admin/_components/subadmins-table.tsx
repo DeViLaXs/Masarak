@@ -203,7 +203,7 @@ const ActionCell = ({ subadmin }: { subadmin: SubAdminDto }) => {
 }
 
 const columns: ColumnDef<SubAdminDto>[] = [
-  {
+/*   {
     id: 'select',
     size: 50,
     header: ({ table }) => (
@@ -229,7 +229,7 @@ const columns: ColumnDef<SubAdminDto>[] = [
     ),
     enableSorting: false,
     enableHiding: false,
-  },
+  }, */
   {
     accessorKey: 'name',
     size: 200,
