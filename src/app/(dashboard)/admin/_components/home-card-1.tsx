@@ -26,7 +26,7 @@ export default function HomeCard1() {
                 <Skeleton className="h-8 w-16 rounded-lg" />
                 <Skeleton className="h-3 w-28 rounded-full" />
               </div>
-              <Skeleton className="size-12 rounded-2xl" />
+              <Skeleton className="size-12 rounded-2xl md:hidden lg:block" />
             </CardContent>
           </Card>
         ))}
@@ -105,7 +105,7 @@ export default function HomeCard1() {
                 </p>
               </div>
               
-              <div className={`flex size-12 items-center justify-center rounded-2xl transition-all duration-300 group-hover:scale-110 ${card.bgColorClass}`}>
+              <div className={`flex size-12 items-center justify-center rounded-2xl transition-all duration-300 group-hover:scale-110 md:hidden lg:flex ${card.bgColorClass}`}>
                 <Icon className={`size-6 ${card.colorClass}`} />
               </div>
             </CardContent>
