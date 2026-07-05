@@ -132,7 +132,7 @@ export default function InterviewsPage() {
                     <Skeleton className="h-8 w-16 rounded-lg" />
                     <Skeleton className="h-3 w-28 rounded-full" />
                   </div>
-                  <Skeleton className="size-10 lg:size-12 rounded-2xl" />
+                  <Skeleton className="size-12 rounded-2xl" />
                 </CardContent>
               </Card>
             ))}
@@ -212,8 +212,8 @@ export default function InterviewsPage() {
                         {card.description}
                       </p>
                     </div>
-                    <div className={`flex size-10 lg:size-12 items-center justify-center rounded-2xl transition-all duration-300 group-hover:scale-110 ${card.bgColorClass}`}>
-                      <Icon className={`size-5 lg:size-6 ${card.colorClass}`} />
+                    <div className={`flex size-12 items-center justify-center rounded-2xl transition-all duration-300 group-hover:scale-110 ${card.bgColorClass}`}>
+                      <Icon className={`size-6 ${card.colorClass}`} />
                     </div>
                   </CardContent>
                 </Card>
