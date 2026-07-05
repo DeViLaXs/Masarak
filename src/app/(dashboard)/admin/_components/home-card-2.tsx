@@ -30,7 +30,7 @@ export default function HomeCard2() {
                 <Skeleton className="h-8 w-16 rounded-lg" />
                 <Skeleton className="h-3 w-36 rounded-full" />
               </div>
-              <Skeleton className="hidden lg:block size-12 rounded-2xl" />
+              <Skeleton className="size-10 lg:size-12 rounded-2xl" />
             </CardContent>
             <CardFooter className="pt-4">
               <Skeleton className="h-9 w-full rounded-xl" />
@@ -103,8 +103,8 @@ export default function HomeCard2() {
                 <span className="text-3xl font-extrabold tracking-tight">{card.value}</span>
                 <p className="text-white/80 text-xs text-nowrap">{card.description}</p>
               </div>
-              <CardAction className={`hidden lg:block rounded-2xl p-3.5 transition-transform duration-300 group-hover:scale-110 ${card.bgColorClass}`}>
-                <Icon className="text-white size-6" />
+              <CardAction className={`rounded-2xl p-2.5 lg:p-3.5 transition-transform duration-300 group-hover:scale-110 ${card.bgColorClass}`}>
+                <Icon className="text-white size-5 lg:size-6" />
               </CardAction>
             </CardContent>
             
