@@ -7,7 +7,7 @@ import { Button } from './ui/button'
 
 export function MobileRestriction() {
   return (
-    <div className="bg-background fixed inset-0 z-100 flex flex-col items-center justify-center px-6 text-center md:hidden">
+    <div className="bg-background fixed inset-0 z-100 flex flex-col items-center justify-center px-6 text-center lg:hidden ">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}

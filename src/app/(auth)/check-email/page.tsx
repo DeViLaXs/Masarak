@@ -25,16 +25,9 @@ export default function CheckEmail() {
   const [timeLeft, setTimeLeft] = useState(60)
   const [canResend, setCanResend] = useState(false)
 
-  const { resendLink, isResendingLink } = useAuth({
-    // middleware: 'guest',
-  })
+  const { resendLink, isResendingLink } = useAuth({})
 
-  // useEffect(() => {
-  //   if (!isAllowed) {
-  //     router.replace('/login')
-  //   }
-  // }, [isAllowed, router])
-
+  
   useEffect(() => {
     if (canResend) return
 
@@ -67,7 +60,7 @@ export default function CheckEmail() {
     })
   }
 
-  // if (!isAllowed) return null
+  
 
   return (
     <div className="dark:bg-card fixed inset-0 z-50 flex h-full w-full flex-col overflow-hidden md:flex-row">

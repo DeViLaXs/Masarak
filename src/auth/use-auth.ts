@@ -15,17 +15,7 @@ import type {
   VerifyOtpDto,
 } from '@/services/auth-service'
 
-/**
- * Unified authentication hook
- *
- * @example
- * ```tsx
- * const { user, isLoading, login, logout } = useAuth({
- *   middleware: 'admin',
- *   redirectTo: '/login'
- * });
- * ```
- */
+
 export function useAuth(options: UseAuthOptions = {}) {
   const { middleware, redirectTo } = options
   const router = useRouter()

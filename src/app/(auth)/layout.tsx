@@ -28,9 +28,7 @@ export default function AuthLayout({
     }
   }, [])
 
-  // 🛡️ Prevent flash and loops:
-  // 1. If we are optimistically logged out (no is_logged_in cookie), show form immediately
-  // 2. Otherwise, if loading or authenticated (and no error yet), show spinner
+  
   if (!isLoggedOutOptimistic && (isLoading || isAuthenticated) && !isError) {
     return <LoadingScreen />
   }

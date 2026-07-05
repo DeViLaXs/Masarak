@@ -252,33 +252,7 @@ const ActionCell = ({ company }: { company: CompanyDto }) => {
 }
 
 const columns: ColumnDef<CompanyDto>[] = [
-/*   {
-    id: 'select',
-    size: 50,
-    header: ({ table }) => (
-      <div className="w-[50px] mx-auto">
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && 'indeterminate')
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className="w-[50px] mx-auto" onClick={(e) => e.stopPropagation()}>
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      </div>
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  }, */
+
   {
     accessorKey: 'companyName',
     size: 200,
